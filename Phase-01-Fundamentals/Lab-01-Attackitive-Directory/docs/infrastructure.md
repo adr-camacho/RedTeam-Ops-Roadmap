@@ -10,25 +10,20 @@ Para este laboratorio se ha diseñado una red aislada que permite la comunicaci�
 
 | Host | Sistema Operativo | IP | Rol |
 | :--- | :--- | :--- | :--- |
-| **DC-01** | Windows Server 2019 | `10.0.2.10` | Domain Controller (DNS/LDAP/Kerberos) |
-| **WKSTN-01** | Windows 10 Ent | DHCP | Estación de trabajo (Víctima) |
+| **DC-01** | Windows Server 2019 | `10.0.2.10` | Domain Controller | `dc01.attackitivedirectory.local` |
+| **WKSTN-01** | Windows 10 Ent | DHCP | Workstation | `wkstn01.attackitivedirectory.local` |
 | **Kali-Host** | Kali Linux 2026.1 | DHCP | Máquina Atacante |
 
 ## 2. Configuración del Controlador de Dominio (DC-01)
 
 ### A. Promoción del Dominio
 1. Se ha instalado el rol de **Active Directory Domain Services**.
-2. Nombre del Bosque: `spookysec.local`
+2. Nombre del Bosque: `attackitivedirectory.local`
 3. Nivel funcional: Windows Server 2016 (compatibilidad).
 
-> ![Captura del Asistente de Promoción](../screenshots/01-promo-dc.png)
+> ![alt text](image.png)
 
 ### B. Creación del Escenario de Vulnerabilidad
 Para replicar el laboratorio, se ha configurado una cuenta de servicio con debilidades en su política de Kerberos.
 
-**Script de Aprovisionamiento (PowerShell):**
-```powershell
-# Crear unidad organizativa y usuario
-New-ADUser -Name "svc-admin" -SamAccountName "svc-admin" -Enabled $true
-# Configurar AS-REP Roasting (Deshabilitar Pre-autenticación)
-Set-ADUser -Identity "svc-admin" -DoesNotRequirePreAuth $truegit
+![alt text](image-2.png)
