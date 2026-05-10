@@ -18,7 +18,7 @@ Para este laboratorio se ha diseñado una red aislada que permite la comunicaci�
 
 ### A. Promoción del Dominio
 1. Se ha instalado el rol de **Active Directory Domain Services**.
-2. Nombre del Bosque: `spookysec.local`
+2. Nombre del Bosque: `attackitivedirectory.local`
 3. Nivel funcional: Windows Server 2016 (compatibilidad).
 
 > ![Captura del Asistente de Promoción](../screenshots/01-promo-dc.png)
