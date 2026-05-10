@@ -27,3 +27,24 @@ Para este laboratorio se ha diseñado una red aislada que permite la comunicaci�
 Para replicar el laboratorio, se ha configurado una cuenta de servicio con debilidades en su política de Kerberos.
 
 ![alt text](image-2.png)
+
+**Script de Aprovisionamiento (PowerShell):**
+```powershell
+# Crear unidad organizativa y usuario
+New-ADUser -Name "svc-admin" -SamAccountName "svc-admin" -Enabled $true
+```
+```powershell
+# Configurar AS-REP Roasting (Deshabilitar Pre-autenticación)
+Set-ADUser -Identity "svc-admin" -DoesNotRequirePreAuth $truegit
+```
+
+## 3. Software y Herramientas Utilizadas
+
+| Herramienta | Versión | Descripción | 
+| :--- | :--- | :--- |
+| **Impacket (GetNPUsers)** | `v0.14.0.dev0` | Suite de protocolos de red utilizada para solicitar el ticket TGT del usuario vulnerable |
+| **John the Ripper** | `2.0.2-1` | Herramienta de crackeo de contraseñas utilizada para el ataque offline contra el hash Kerberos. |
+| **PowerShell** | `5.1` |Utilizado en el DC-01 para la configuración del atributo DoesNotRequirePreAuth y verificación del estado de la cuenta. |
+| **Evil-WinRM** | `Última` | Shell remota para obtener acceso interactivo al servidor tras el compromiso de credenciales. |
+| **Oracle VM VirtualBox** | `7.0` | Hipervisor utilizado para el despliegue y aislamiento del entorno de laboratorio. |
+
