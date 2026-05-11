@@ -7,6 +7,10 @@ Para emular un entorno real, se ejecutó un script de provisionamiento en el **D
     * `Admins. del dominio` (Equivalente a Domain Admins).
     * `Usuarios de administración remota` (Permite acceso vía WinRM).
     * `Todos` (Equivalente a Everyone para permisos SMB).
+* **Estructura de OUs**: Se han creado Unidades Organizativas (OUs) específicas para segmentar las identidades, lo cual es una práctica común de hardening que el atacante debe mapear:
+    * `OU=Comercial`: Contiene a `jgarcia`.
+    * `OU=Cuentas de Servicio`: Contiene a `sql_svc`.
+    * `OU=IT`: Contiene a `alberto`.
 
 ## 🎯 Vectores de Ataque Inyectados
 | Vector | Objetivo | Configuración Técnica |
@@ -16,6 +20,11 @@ Para emular un entorno real, se ejecutó un script de provisionamiento en el **D
 | **Info Leak** | `alberto` | Contraseña en texto claro en el campo "Descripción" de AD. |
 | **Privesc (LPE)** | Local | Servicio con "Unquoted Service Path" en `C:\Program Files\Servicio Critico`. |
 | **SMB Share** | Red | Recurso compartido `\\DC-01\Publico` con acceso total para `Todos`. |
+
+### 🔍 Análisis Técnico de Atributos
+Para que el laboratorio sea efectivo, se modificaron atributos específicos de los objetos:
+* **AS-REP Roasting (`jgarcia`)**: Se deshabilitó la preautenticación Kerberos (Atributo `UF_DONT_REQUIRE_PREAUTH`).
+* **Information Leak (`alberto`)**: La descripción del usuario en AD es legible por cualquier usuario autenticado del dominio, revelando credenciales temporales.
 
 ## 🛠️ Script de Provisionamiento (PowerShell)
 ```powershell

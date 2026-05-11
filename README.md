@@ -11,6 +11,14 @@ Dominar las tácticas de post-explotación, movimiento lateral y evasión de def
 
 ---
 
+## 🌐 Diseño de Red
+* **Segmento**: `10.0.2.0/24`.
+* **Controlador de Dominio (DC-01)**: `10.0.2.10`.
+* **Nombre de Host**: `dc01.attackitivedirectory.local`.
+* **Configuración**: Red NAT aislada en VirtualBox para evitar exposición de tráfico sensible.
+
+---
+
 ## 🛠️ Stack Tecnológico (Focus: Open Source)
 *   **C2 Frameworks:** Sliver (BishopFox), Havoc C2.
 *   **Pivotaje Avanzado:** Ligolo-ng, Chisel.
