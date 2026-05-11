@@ -11,8 +11,8 @@ Para este laboratorio se ha diseñado una red aislada que permite la comunicaci�
 | Host | Sistema Operativo | IP | Rol |
 | :--- | :--- | :--- | :--- |
 | **DC-01** | Windows Server 2019 | `10.0.2.10` | Domain Controller | `dc01.attackitivedirectory.local` |
-| **WKSTN-01** | Windows 10 Ent | DHCP | Workstation | `wkstn01.attackitivedirectory.local` |
-| **Kali-Host** | Kali Linux 2026.1 | DHCP | Máquina Atacante |
+| **WKSTN-01** | Windows 10 Ent | `10.0.2.X` | Workstation | `wkstn01.attackitivedirectory.local` |
+| **Kali-Host** | Kali Linux 2026.1 | `10.0.2.X` | Máquina Atacante |
 
 ## 2. Configuración del Controlador de Dominio (DC-01)
 
