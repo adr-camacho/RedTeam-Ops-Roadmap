@@ -24,27 +24,27 @@
 │                    RED NAT — LabRedTeam                         │
 │                     Segmento: 10.0.2.0/24                       │
 │                                                                 │
-│  ┌─────────────────────┐      ┌─────────────────────────────┐  │
-│  │      DC-01          │      │         WKSTN-01            │  │
-│  │  Windows Server     │      │      Windows 10 Ent.        │  │
-│  │      2019           │◄────►│        10.0.2.20            │  │
-│  │    10.0.2.10        │      │                             │  │
-│  │                     │      │  Vulnerabilidades:          │  │
-│  │  Servicios:         │      │  [W1] Token Impersonation   │  │
-│  │  • AD DS            │      │  [W2] Unquoted Service Path │  │
-│  │  • DNS              │      │  [W3] AlwaysInstallElev.    │  │
-│  │  • MSSQL Server     │      │  [W4] Autologon Creds       │  │
-│  │  • IIS 10.0         │      │  [W5] LAPS no configurado   │  │
-│  │  • SMB Shares       │      │  [W6] Weak Service Perms    │  │
-│  │                     │      └─────────────────────────────┘  │
+│  ┌─────────────────────┐      ┌─────────────────────────────┐   │
+│  │      DC-01          │      │         WKSTN-01            │   │
+│  │  Windows Server     │      │      Windows 10 Ent.        │   │
+│  │      2022           │◄────►│        10.0.2.20            │   │
+│  │    10.0.2.10        │      │                             │   │
+│  │                     │      │  Vulnerabilidades:          │   │
+│  │  Servicios:         │      │  [W1] Token Impersonation   │   │
+│  │  • AD DS            │      │  [W2] Unquoted Service Path │   │
+│  │  • DNS              │      │  [W3] AlwaysInstallElev.    │   │ 
+│  │  • MSSQL Server     │      │  [W4] Autologon Creds       │   │
+│  │  • IIS 10.0         │      │  [W5] LAPS no configurado   │   │
+│  │  • SMB Shares       │      │  [W6] Weak Service Perms    │   │
+│  │                     │      └─────────────────────────────┘   │
 │  │  Vulnerabilidades:  │                                        │
-│  │  [D1] AS-REP Roast  │      ┌─────────────────────────────┐  │
-│  │  [D2] Kerberoasting │      │          Kali               │  │
-│  │  [D3] ACL Abuse     │      │      Kali Linux 2026        │  │
-│  │  [D4] Delegación    │◄────►│        10.0.2.X             │  │
-│  │  [D5] GPO Abuse     │      │                             │  │
-│  │  [D6] MSSQL xp_cmd │      │      Máquina Atacante       │  │
-│  │  [D7] Info Leak     │      └─────────────────────────────┘  │
+│  │  [D1] AS-REP Roast  │      ┌─────────────────────────────┐   │
+│  │  [D2] Kerberoasting │      │          Kali               │   │
+│  │  [D3] ACL Abuse     │      │      Kali Linux 2026        │   │
+│  │  [D4] Delegación    │◄────►│        10.0.2.X             │   │
+│  │  [D5] GPO Abuse     │      │                             │   │
+│  │  [D6] MSSQL xp_cmd  │      │      Máquina Atacante       │   │
+│  │  [D7] Info Leak     │      └─────────────────────────────┘   │
 │  │  [D8] SMB Null Sess │                                        │
 │  └─────────────────────┘                                        │
 └─────────────────────────────────────────────────────────────────┘
@@ -58,7 +58,7 @@ Dominio: atackcorp.local
 
 | Host | SO | IP | RAM | Rol | Servicios |
 |------|----|----|-----|-----|-----------|
-| DC-01 | Windows Server 2019 | `10.0.2.10` | 2GB | Domain Controller | AD DS, DNS, MSSQL, IIS, SMB |
+| DC-01 | Windows Server 2022 Standard Evaluation | `10.0.2.10` | 2GB | Domain Controller | AD DS, DNS, MSSQL, IIS, SMB |
 | WKSTN-01 | Windows 10 Enterprise | `10.0.2.20` | 2GB | Workstation | SMB, WinRM, Servicios locales |
 | Kali | Kali Linux 2026.1 | DHCP | 2GB | Atacante | Arsenal Red Team |
 
@@ -70,10 +70,10 @@ Dominio: atackcorp.local
 
 | Software | Versión | Propósito | Vector habilitado |
 |----------|---------|-----------|-------------------|
-| Active Directory DS | Incluido en WS2019 | Controlador de dominio | Base de todo |
-| DNS Server | Incluido en WS2019 | Resolución de nombres | — |
+| Active Directory DS | Incluido en WS2022 | Controlador de dominio | Base de todo |
+| DNS Server | Incluido en WS2022 | Resolución de nombres | — |
 | MSSQL Server Express | 2019 | Base de datos corporativa | [D6] xp_cmdshell |
-| IIS 10.0 | Incluido en WS2019 | Web interna corporativa | [D7] Info Leak |
+| IIS 10.0 | Incluido en WS2022 | Web interna corporativa | [D7] Info Leak |
 | RSAT Tools | Incluido | Administración AD | — |
 
 ### Estructura de Active Directory
@@ -414,7 +414,7 @@ $webContent = @"
 <html><head><title>AtackCorp - Portal Interno</title></head>
 <body>
 <h1>Portal Interno AtackCorp</h1>
-<p>Sistema: Windows Server 2019 — IIS 10.0 — ASP.NET 4.8</p>
+<p>Sistema: Windows Server 2022 Standard Evaluation — IIS 10.0 — ASP.NET 4.8</p>
 <!-- Conexion BD: Server=dc01;Database=CorpDB;User=sql_svc;Password=SqlService123 -->
 <p>Contacto IT: it.admin@atackcorp.local</p>
 </body></html>

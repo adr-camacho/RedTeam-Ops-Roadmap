@@ -49,17 +49,17 @@ APT29 es un actor de amenaza persistente avanzada atribuido al Servicio de Intel
 │   ┌─────────────┐          ┌─────────────────────┐  │
 │   │    DC-01    │          │      WKSTN-01       │  │
 │   │  10.0.2.10  │◄────────►│     10.0.2.20       │  │
-│   │  WS 2019    │          │    Windows 10 Ent.  │  │
+│   │  WS 2022    │          │    Windows 10 Ent.  │  │
 │   │  DC / DNS   │          │    [objetivo LPE]   │  │
 │   │  MSSQL/IIS  │          └─────────────────────┘  │
-│   └─────────────┘                    ▲               │
-│          ▲                           │               │
-│          │                           │               │
-│   ┌──────┴───────────────────────────┴────────────┐  │
-│   │                  Kali Linux                   │  │
-│   │               10.0.2.X (DHCP)                │  │
-│   │           Máquina operadora APT29             │  │
-│   └───────────────────────────────────────────────┘  │
+│   └─────────────┘                    ▲              │
+│          ▲                           │              │
+│          │                           │              │
+│   ┌──────┴───────────────────────────┴────────────┐ │
+│   │                  Kali Linux                   │ │
+│   │               10.0.2.X (DHCP)                 │ │
+│   │           Máquina operadora APT29             │ │
+│   └───────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────┘
 
 Dominio objetivo: atackcorp.local
@@ -69,7 +69,7 @@ Dominio objetivo: atackcorp.local
 
 | Host | SO | IP | Rol en la operación |
 |------|----|----|---------------------|
-| DC-01 | Windows Server 2019 | `10.0.2.10` | Objetivo principal — Domain Controller |
+| DC-01 | Windows Server 2022 Standard Evaluation | `10.0.2.10` | Objetivo principal — Domain Controller |
 | WKSTN-01 | Windows 10 Enterprise | `10.0.2.20` | Objetivo intermedio — LPE + C2 staging |
 | Kali | Kali Linux 2026.1 | DHCP | Máquina operadora |
 

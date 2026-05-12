@@ -100,4 +100,11 @@ foreach ($svc in $servicios) {
 Add-ADGroupMember -Identity "Opers. de cuentas" -Members "it.admin"
 Write-Host "[!] ACL Abuse: it.admin añadido a Account Operators" -ForegroundColor Red
 
+# ── Usuarios de administración remota (WinRM) ────────────────
+$winrmUsers = @("ceo.martinez", "backup_svc", "helpdesk.ruiz")
+foreach ($u in $winrmUsers) {
+    Add-ADGroupMember -Identity "Usuarios de administración remota" -Members $u -ErrorAction SilentlyContinue
+    Write-Host "[+] WinRM habilitado para: $u" -ForegroundColor Green
+}
+
 Write-Host "`n[+] Script 02 completado." -ForegroundColor Green

@@ -8,7 +8,7 @@ Este directorio contiene todos los scripts PowerShell necesarios para desplegar 
 
 | # | Script | Máquina | Prerequisito | Reinicio |
 |---|--------|---------|-------------|---------|
-| 01 | `01_ad_promotion.ps1` | DC-01 | Windows Server 2019 limpio | ✅ Sí |
+| 01 | `01_ad_promotion.ps1` | DC-01 | Windows Server 2022 Standard Evaluation limpio | ✅ Sí |
 | 02 | `02_users_ous.ps1` | DC-01 | Script 01 + reinicio | No |
 | 03 | `03_acls_delegations.ps1` | DC-01 | Script 02 | No |
 | 04 | `04_iis_smb_gpo.ps1` | DC-01 | Script 02 | No |
