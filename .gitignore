@@ -1,0 +1,104 @@
+# ============================================================
+#  .gitignore — Red Team Ops Roadmap
+#  Evita filtrar loot real, sesiones C2, hashes y material
+#  operacional sensible fuera del entorno de lab.
+# ============================================================
+
+# ── Sliver C2 ────────────────────────────────────────────────
+sessionresume_*
+*.sliver
+.sliver/
+sliver-server.cfg
+sliver-client.cfg
+implants/
+*.sliverprofile
+*.ccache
+
+# ── Loot y credenciales reales ────────────────────────────────
+# NUNCA commitear hashes reales ni credenciales fuera del lab
+*.ntds
+ntds.dit
+SYSTEM.hive
+SAM.hive
+*.dmp
+*.dump
+loot/*.hash
+loot/*.out
+
+# Excepciones: wordlists, userfiles y hashes de lab sí se incluyen
+!loot/targeted_wordlist.txt
+!loot/custom_wordlist.txt
+!loot/users.txt
+!loot/corporate_base.txt
+!loot/asrep_hashes.txt
+!loot/kerberoast_hashes.txt
+
+# ── Binarios y payloads compilados ───────────────────────────
+*.exe
+*.dll
+*.bin
+*.shellcode
+*.donut
+*.msi
+# Excepciones: binarios de referencia documentados
+!setup/*.exe
+
+# ── Outputs de herramientas ───────────────────────────────────
+# BloodHound data (puede contener info sensible del dominio)
+*.zip
+BloodHound_*
+*_computers.json
+*_users.json
+*_groups.json
+*_domains.json
+*_gpos.json
+*_ous.json
+
+# XMLs de nmap sí se incluyen — solo excluir XMLs genéricos en raíz
+/*.xml
+# Excepciones: XMLs de nmap y docs
+!nmap/*.xml
+!**/nmap/*.xml
+!docs/*.xml
+
+# ── Archivos temporales de herramientas ───────────────────────
+*.pcap
+*.pcapng
+*.log
+*.tmp
+.msf4/
+.msf_history
+msfconsole.rc
+
+# ── Claves y certificados ────────────────────────────────────
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+*.ppk
+Administrator.ccache
+
+# ── Python / entornos virtuales ───────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+env/
+
+# ── OS / Editor ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
+\#*\#
+
+# ── Git ──────────────────────────────────────────────────────
+*.orig
+*.rej

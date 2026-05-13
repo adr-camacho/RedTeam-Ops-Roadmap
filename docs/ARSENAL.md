@@ -27,8 +27,10 @@
 - **Instalación:**
   ```bash
   curl https://sliver.sh/install | sudo bash
+  sudo systemctl start sliver
+  sliver
   ```
-- **Labs:** Phase-03, Phase-04
+- **Labs:** Lab-01, Phase-03, Phase-04
 
 ---
 
@@ -105,10 +107,11 @@
   |--------|---------|
   | `GetNPUsers.py` | AS-REP Roasting |
   | `GetUserSPNs.py` | Kerberoasting |
-  | `secretsdump.py` | Volcado de hashes NTLM |
+  | `secretsdump.py` | Volcado de hashes NTLM via DCSync |
   | `psexec.py` | Ejecución remota vía SMB |
   | `wmiexec.py` | Ejecución remota vía WMI |
   | `ticketer.py` | Forja de tickets Kerberos (Golden/Silver) |
+  | `lookupsid.py` | Enumeración de SIDs del dominio |
 - **Instalación:**
   ```bash
   sudo apt install -y impacket-scripts
@@ -141,6 +144,7 @@
 
 ### Hashcat
 - **Descripción:** Cracker de hashes GPU/CPU. Soporta más de 300 tipos de hash incluyendo Kerberos (krb5asrep, krb5tgs), NTLM y NTLMv2.
+- **Nota:** En entornos VirtualBox sin GPU, usar John the Ripper como alternativa CPU.
 - **Instalación:**
   ```bash
   sudo apt install -y hashcat
@@ -155,10 +159,16 @@
 ---
 
 ### John the Ripper
-- **Descripción:** Cracker de contraseñas clásico. Más flexible que Hashcat para detección automática de formatos.
+- **Descripción:** Cracker de contraseñas clásico. Alternativa CPU a Hashcat — preferido en entornos VirtualBox sin GPU.
 - **Instalación:**
   ```bash
   sudo apt install -y john
+  ```
+- **Uso típico:**
+  ```bash
+  john --format=krb5asrep --wordlist=loot/targeted_wordlist.txt loot/asrep_hashes.txt
+  john --format=krb5tgs --wordlist=loot/targeted_wordlist.txt loot/kerberoast_hashes.txt
+  john hash.txt --show
   ```
 - **Labs:** Lab-01, Lab-03
 
@@ -201,7 +211,10 @@
   ```
 - **Uso típico:**
   ```bash
-  evil-winrm -i 10.0.2.10 -u svcadmin -p Laboratorio123
+  # Con contraseña
+  evil-winrm -i 10.0.2.10 -u backup_svc -p 'Backup2024!'
+  # Pass-the-Hash
+  evil-winrm -i 10.0.2.10 -u Administrador -H b73fdfe10e87b4ca5c0d957f81de6863
   ```
 - **Labs:** Lab-01, Lab-04, Lab-05, Lab-06
 
@@ -213,7 +226,14 @@
   ```bash
   sudo apt install -y crackmapexec
   ```
-- **Labs:** Lab-04, Lab-10, Lab-11
+- **Uso típico:**
+  ```bash
+  # Validar credenciales
+  crackmapexec smb 10.0.2.10 -u ceo.martinez -p 'Direccion2024!'
+  # Enumerar shares
+  crackmapexec smb 10.0.2.10 -u '' -p '' --shares
+  ```
+- **Labs:** Lab-01, Lab-04, Lab-10, Lab-11
 
 ---
 
@@ -232,10 +252,11 @@
 ### AMSI Bypass
 - **Descripción:** Técnicas para deshabilitar el Antimalware Scan Interface de Windows, permitiendo ejecución de herramientas ofensivas en memoria sin detección.
 - **Técnicas documentadas:**
-  - Patch de `amsi.dll` en memoria mediante PowerShell.
-  - Ofuscación de strings con `[Char]` casting.
-  - Uso de `AmsiScanBuffer` patch vía P/Invoke.
-- **Labs:** Lab-07, Lab-09
+  - Patch de `amsi.dll` en memoria mediante PowerShell
+  - Ofuscación de strings con `[Char]` casting
+  - `Set-MpPreference -DisableScriptScanning $true` (requiere admin + Tamper Protection off)
+- **Nota:** En Windows 11 con Tamper Protection activa, el bypass en memoria también es bloqueado. Desactivar Tamper Protection desde GUI primero.
+- **Labs:** Lab-01, Lab-07, Lab-09
 
 ---
 
@@ -269,7 +290,10 @@
   ```
 - **Uso típico:**
   ```bash
-  nmap -sC -sV -p- --min-rate 5000 -oA scan 10.0.2.10
+  # Port discovery
+  nmap -p- --min-rate 5000 -oA nmap/ports 10.0.2.10
+  # Service version
+  nmap -sC -sV -p <puertos> -oA nmap/detailed 10.0.2.10
   ```
 - **Labs:** Todos
 
@@ -310,6 +334,7 @@
 
 ### RockYou
 - **Descripción:** Diccionario clásico de 14M de contraseñas. Efectivo para crackeo de hashes Kerberos en labs con contraseñas débiles.
+- **Nota:** En entornos corporativos reales, complementar con diccionarios dirigidos basados en OSINT de la empresa.
 - **Instalación:**
   ```bash
   sudo gunzip /usr/share/wordlists/rockyou.txt.gz
@@ -328,9 +353,22 @@
 
 | Host | Sistema Operativo | IP | Rol |
 |------|------------------|----|-----|
-| DC-01 | Windows Server 2019 | `10.0.2.10` | Domain Controller |
-| WKSTN-01 | Windows 10 Enterprise | `10.0.2.X` | Workstation |
-| Kali | Kali Linux 2026.1 | `10.0.2.X` | Máquina Atacante |
+| DC-01 | Windows Server 2022 Standard Evaluation | `10.0.2.10` | Domain Controller |
+| WKSTN-01 | Windows 11 Enterprise Evaluation | `10.0.2.8` | Workstation corporativa |
+| Kali | Kali Linux 2026.1 | `10.0.2.9` | Máquina atacante |
+
+### Configuración de red permanente en Kali
+
+```bash
+# IP estática via NetworkManager (persiste entre reinicios)
+sudo nmcli con add type ethernet con-name "LabRedTeam" ifname eth0 \
+  ipv4.method manual \
+  ipv4.addresses 10.0.2.9/24 \
+  ipv4.gateway 10.0.2.1 \
+  ipv4.dns 10.0.2.10 \
+  connection.autoconnect yes
+sudo nmcli con up LabRedTeam
+```
 
 ---
 
@@ -338,26 +376,26 @@
 
 | Categoría | Herramienta | Estado |
 |-----------|-------------|--------|
-| C2 | Sliver | ✅ Instalado |
+| C2 | Sliver v1.7.3 | ✅ Instalado |
 | C2 | Havoc C2 | 🔄 Pendiente compilación |
 | AD Enum | BloodHound 9.0 | ✅ Instalado |
 | AD Enum | SharpHound | ✅ Instalado |
 | AD Enum | PowerView | ✅ Instalado |
 | AD Enum | Adalanche | ✅ Instalado |
 | AD Enum | enum4linux-ng | ✅ Instalado |
-| Kerberos | Impacket | ✅ Instalado |
+| Kerberos | Impacket v0.14 | ✅ Instalado |
 | Kerberos | Rubeus | ✅ Instalado |
 | Kerberos | Kerbrute | ✅ Instalado |
 | Cracking | Hashcat | ✅ Instalado |
 | Cracking | John the Ripper | ✅ Instalado |
 | Pivoting | Ligolo-ng | ✅ Instalado |
 | Pivoting | Chisel | ✅ Instalado |
-| Post-Explot | Evil-WinRM | ✅ Instalado |
+| Post-Explot | Evil-WinRM v3.9 | ✅ Instalado |
 | Post-Explot | CrackMapExec | ✅ Instalado |
 | Post-Explot | Metasploit | ✅ Instalado |
 | Evasión | Donut | ✅ Instalado |
 | Evasión | mingw-w64 | ✅ Instalado |
-| Escaneo | Nmap | ✅ Instalado |
+| Escaneo | Nmap 7.99 | ✅ Instalado |
 | Escaneo | Masscan | ✅ Instalado |
 | Escaneo | Gobuster / Feroxbuster | ✅ Instalado |
 | Wordlists | SecLists | ✅ Instalado |

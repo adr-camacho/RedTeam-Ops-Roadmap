@@ -26,13 +26,13 @@
 │                                                                 │
 │  ┌─────────────────────┐      ┌─────────────────────────────┐   │
 │  │      DC-01          │      │         WKSTN-01            │   │
-│  │  Windows Server     │      │      Windows 10 Ent.        │   │
-│  │      2022           │◄────►│        10.0.2.20            │   │
+│  │  Windows Server     │      │   Windows 11 Enterprise     │   │
+│  │      2022           │◄────►│        10.0.2.8             │   │
 │  │    10.0.2.10        │      │                             │   │
 │  │                     │      │  Vulnerabilidades:          │   │
 │  │  Servicios:         │      │  [W1] Token Impersonation   │   │
 │  │  • AD DS            │      │  [W2] Unquoted Service Path │   │
-│  │  • DNS              │      │  [W3] AlwaysInstallElev.    │   │ 
+│  │  • DNS              │      │  [W3] AlwaysInstallElev.    │   │
 │  │  • MSSQL Server     │      │  [W4] Autologon Creds       │   │
 │  │  • IIS 10.0         │      │  [W5] LAPS no configurado   │   │
 │  │  • SMB Shares       │      │  [W6] Weak Service Perms    │   │
@@ -40,8 +40,8 @@
 │  │  Vulnerabilidades:  │                                        │
 │  │  [D1] AS-REP Roast  │      ┌─────────────────────────────┐   │
 │  │  [D2] Kerberoasting │      │          Kali               │   │
-│  │  [D3] ACL Abuse     │      │      Kali Linux 2026        │   │
-│  │  [D4] Delegación    │◄────►│        10.0.2.X             │   │
+│  │  [D3] ACL Abuse     │      │      Kali Linux 2026.1      │   │
+│  │  [D4] Delegación    │◄────►│        10.0.2.9             │   │
 │  │  [D5] GPO Abuse     │      │                             │   │
 │  │  [D6] MSSQL xp_cmd  │      │      Máquina Atacante       │   │
 │  │  [D7] Info Leak     │      └─────────────────────────────┘   │
@@ -59,8 +59,21 @@ Dominio: atackcorp.local
 | Host | SO | IP | RAM | Rol | Servicios |
 |------|----|----|-----|-----|-----------|
 | DC-01 | Windows Server 2022 Standard Evaluation | `10.0.2.10` | 2GB | Domain Controller | AD DS, DNS, MSSQL, IIS, SMB |
-| WKSTN-01 | Windows 10 Enterprise | `10.0.2.20` | 2GB | Workstation | SMB, WinRM, Servicios locales |
-| Kali | Kali Linux 2026.1 | DHCP | 2GB | Atacante | Arsenal Red Team |
+| WKSTN-01 | Windows 11 Enterprise Evaluation | `10.0.2.8` | 4GB | Workstation | SMB, WinRM, Servicios locales |
+| Kali | Kali Linux 2026.1 | `10.0.2.9` | 2GB | Atacante | Arsenal Red Team |
+
+### Configuración de red Kali (permanente)
+
+```bash
+# IP estática via NetworkManager
+sudo nmcli con add type ethernet con-name "LabRedTeam" ifname eth0 \
+  ipv4.method manual \
+  ipv4.addresses 10.0.2.9/24 \
+  ipv4.gateway 10.0.2.1 \
+  ipv4.dns 10.0.2.10 \
+  connection.autoconnect yes
+sudo nmcli con up LabRedTeam
+```
 
 ---
 
@@ -96,9 +109,9 @@ atackcorp.local
 │       └── Usuario: helpdesk.ruiz (WriteDACL sobre WKSTN-01)
 │
 ├── OU=CuentasServicio
-│   ├── sql_svc (SPN: MSSQLSvc/dc01.atackcorp.local:1433) ← Kerberoasting
-│   ├── iis_svc (SPN: HTTP/dc01.atackcorp.local) ← Kerberoasting
-│   └── backup_svc (DoesNotRequirePreAuth=True) ← AS-REP Roasting
+│   ├── sql_svc (SPN: MSSQLSvc/dc01.atackcorp.local:1433) ← Kerberoasting + Unconstrained Delegation
+│   ├── iis_svc (SPN: HTTP/dc01.atackcorp.local) ← Kerberoasting + Constrained Delegation
+│   └── backup_svc (DoesNotRequirePreAuth=True + DA) ← AS-REP Roasting
 │
 └── OU=Equipos
     └── WKSTN-01
@@ -158,6 +171,7 @@ atackcorp.local
 **[W1] Token Impersonation**
 - Usuario `helpdesk.ruiz` con privilegios `SeImpersonatePrivilege`
 - Vector: PrintSpoofer / GodPotato para elevar a SYSTEM
+- **Nota:** En Windows 11 via WinRM, los Potato attacks fallan por Network tokens. Requiere sesión interactiva.
 
 **[W2] Unquoted Service Path**
 - Servicio: `C:\Program Files\Servicio Corporativo\Monitor\monitor.exe`
@@ -204,9 +218,10 @@ Hash crackeado → Evil-WinRM → Acceso interactivo
 FASE 3 — Movimiento Lateral
 ────────────────────────────
 helpdesk.ruiz → WriteDACL sobre WKSTN-01 [D3] → Acceso a workstation
-              → SeImpersonatePrivilege [W1] → SYSTEM en WKSTN-01
-WKSTN-01 SYSTEM → Autologon creds [W4] → Credenciales rrhh.lopez
-                → LAPS ausente [W5] → Pass-the-Hash al DC
+              → SeImpersonatePrivilege [W1] → SYSTEM en WKSTN-01 (requiere sesión interactiva)
+WKSTN-01 → Autologon creds [W4] → Credenciales rrhh.lopez
+         → LAPS ausente [W5] → Pass-the-Hash al DC
+         → AlwaysInstallElevated [W3] → Escalada via MSI malicioso
 
 FASE 4 — Escalada de Privilegios (AD)
 ───────────────────────────────────────
@@ -315,7 +330,7 @@ foreach ($u in $usuarios) {
 $servicios = @(
     @{ Sam="sql_svc";    Pass="SqlService123"; SPN="MSSQLSvc/dc01.atackcorp.local:1433"; NoPreAuth=$false },
     @{ Sam="iis_svc";    Pass="IisService123";  SPN="HTTP/dc01.atackcorp.local";          NoPreAuth=$false },
-    @{ Sam="backup_svc"; Pass="Backup2024!";    SPN=$null;                                NoPreAuth=$true  }
+    @{ Sam="backup_svc"; Pass="Backup2024!";    SPN="MSSQLSvc/DC-01.atackcorp.local:1433"; NoPreAuth=$true  }
 )
 
 foreach ($svc in $servicios) {
@@ -331,6 +346,7 @@ foreach ($svc in $servicios) {
         Write-Host "[+] Cuenta de servicio creada: $($svc.Sam)"
     }
     if ($svc.SPN) {
+        # SPN hardcodeado como literal para evitar bug de interpolación en try/catch
         Set-ADUser -Identity $svc.Sam -ServicePrincipalNames @{Add=$svc.SPN}
         Write-Host "[!] Kerberoasting habilitado (SPN): $($svc.Sam) → $($svc.SPN)"
     }
@@ -340,9 +356,18 @@ foreach ($svc in $servicios) {
     }
 }
 
+# ── backup_svc → Domain Admins (por SID-512, universal) ──────
+$daGroup = Get-ADGroup -Filter {SID -eq "S-1-5-21-768292631-183641691-1245477636-512"}
+Add-ADGroupMember -Identity $daGroup -Members "backup_svc"
+Write-Host "[!] backup_svc añadido a $($daGroup.Name)"
+
 # ── it.admin → Account Operators ────────────────────────────
-Add-ADGroupMember -Identity "Account Operators" -Members "it.admin"
+Add-ADGroupMember -Identity "Opers. de cuentas" -Members "it.admin" -ErrorAction SilentlyContinue
 Write-Host "[!] ACL Abuse: it.admin añadido a Account Operators"
+
+# ── Añadir ceo.martinez a Remote Management Users ────────────
+Add-ADGroupMember -Identity "Usuarios de administración remota" -Members "ceo.martinez"
+Write-Host "[+] ceo.martinez añadido a Usuarios de administración remota"
 
 Write-Host "`n[+] Script 02 completado."
 ```
@@ -384,6 +409,28 @@ $acl2.AddAccessRule($rule2)
 Set-Acl "AD:\$($wkstn.DistinguishedName)" $acl2
 Write-Host "[!] ACL Abuse: helpdesk.ruiz tiene WriteDACL sobre WKSTN-01"
 
+# ── DCSync ACL: ceo.martinez ─────────────────────────────────
+$DomainDN = (Get-ADDomain).DistinguishedName
+$userSID  = (Get-ADUser "ceo.martinez").SID
+$aclDC    = Get-Acl "AD:\$DomainDN"
+
+foreach ($guid in @(
+    [GUID]"1131f6aa-9c07-11d1-f79f-00c04fc2dcd2",  # DS-Replication-Get-Changes
+    [GUID]"1131f6ab-9c07-11d1-f79f-00c04fc2dcd2",  # DS-Replication-Get-Changes-All
+    [GUID]"89e95b76-444d-4c62-991a-0facbeda640c"   # DS-Replication-Get-Changes-In-Filtered-Set
+)) {
+    $rule3 = New-Object System.DirectoryServices.ActiveDirectoryAccessRule(
+        $userSID,
+        [System.DirectoryServices.ActiveDirectoryRights]::ExtendedRight,
+        [System.Security.AccessControl.AccessControlType]::Allow,
+        $guid,
+        [System.DirectoryServices.ActiveDirectorySecurityInheritance]::None
+    )
+    $aclDC.AddAccessRule($rule3)
+}
+Set-Acl "AD:\$DomainDN" $aclDC
+Write-Host "[!] DCSync ACL: ceo.martinez tiene permisos de replicación"
+
 # ── Unconstrained Delegation: sql_svc ───────────────────────
 Set-ADAccountControl -Identity "sql_svc" -TrustedForDelegation $true
 Write-Host "[!] Delegación: Unconstrained Delegation habilitada en sql_svc"
@@ -394,6 +441,10 @@ Set-ADUser -Identity "iis_svc" -Add @{
 }
 Set-ADAccountControl -Identity "iis_svc" -TrustedToAuthForDelegation $true
 Write-Host "[!] Delegación: Constrained Delegation (S4U2Proxy) habilitada en iis_svc"
+
+# ── Password en Description: backup_svc ─────────────────────
+Set-ADUser "backup_svc" -Description "Backup Service - pwd temporal: Backup2024! (pendiente cambio)"
+Write-Host "[!] Info Leak: password en Description de backup_svc"
 
 Write-Host "`n[+] Script 03 completado."
 ```
@@ -409,7 +460,6 @@ Write-Host "`n[+] Script 03 completado."
 
 # ── Instalar IIS ─────────────────────────────────────────────
 Install-WindowsFeature -Name Web-Server, Web-Mgmt-Tools -IncludeManagementTools
-# Crear página web interna con info leak
 $webContent = @"
 <html><head><title>AtackCorp - Portal Interno</title></head>
 <body>
@@ -426,7 +476,6 @@ Write-Host "[!] Info Leak: credenciales en comentario HTML de IIS"
 New-Item -Path "C:\Shares\Publico" -ItemType Directory -Force
 New-Item -Path "C:\Shares\IT" -ItemType Directory -Force
 
-# Documento con credenciales (simulando mala práctica real)
 $docContent = @"
 === CREDENCIALES DE ACCESO — USO INTERNO ===
 VPN: vpn.atackcorp.local / Usuario: it.admin / Pass: ITAdmin2024!
@@ -439,7 +488,7 @@ Set-Content "C:\Shares\Publico\IT_Passwords_OLD.txt" $docContent
 New-SmbShare -Name "Publico" -Path "C:\Shares\Publico" `
     -ChangeAccess "Everyone" -ReadAccess "Everyone"
 New-SmbShare -Name "IT$" -Path "C:\Shares\IT" `
-    -FullAccess "ATACKCORP\it.admin", "ATACKCORP\Domain Admins"
+    -FullAccess "ATACKCORP\it.admin", "ATACKCORP\Admins. del dominio"
 
 Write-Host "[!] SMB: Share Publico accesible sin autenticación con credenciales expuestas"
 
@@ -448,7 +497,6 @@ Import-Module GroupPolicy
 $gpo = New-GPO -Name "IT-Baseline" -Comment "Politica base equipos IT"
 New-GPLink -Name "IT-Baseline" -Target "OU=Equipos,DC=atackcorp,DC=local"
 
-# Dar permisos de escritura al grupo Helpdesk sobre la GPO
 $gpoPath = "\\atackcorp.local\SYSVOL\atackcorp.local\Policies\{$($gpo.Id)}"
 $acl = Get-Acl $gpoPath
 $helpdesk = New-Object System.Security.Principal.NTAccount("ATACKCORP\helpdesk.ruiz")
@@ -473,46 +521,27 @@ Write-Host "`n[+] Script 04 completado."
 # Descarga: https://www.microsoft.com/en-us/sql-server/sql-server-downloads
 # =============================================================
 
-# Ejecutar después de instalar SQL Server Express
-# Requiere: sqlcmd en PATH
-
 $query = @"
--- Habilitar xp_cmdshell
 EXEC sp_configure 'show advanced options', 1;
 RECONFIGURE;
 EXEC sp_configure 'xp_cmdshell', 1;
 RECONFIGURE;
 
--- Crear login sql_svc
 IF NOT EXISTS (SELECT * FROM sys.server_principals WHERE name = 'sql_svc')
 BEGIN
     CREATE LOGIN [sql_svc] WITH PASSWORD = 'SqlService123';
     EXEC sp_addsrvrolemember 'sql_svc', 'sysadmin';
 END
 
--- Login SA con contraseña débil (fallback)
 ALTER LOGIN [sa] WITH PASSWORD = 'Sa_Admin2024!', CHECK_POLICY = OFF;
 ALTER LOGIN [sa] ENABLE;
 
--- Crear base de datos corporativa
 IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'CorpDB')
     CREATE DATABASE CorpDB;
-
-USE CorpDB;
-CREATE TABLE IF NOT EXISTS Empleados (
-    ID INT PRIMARY KEY,
-    Nombre NVARCHAR(100),
-    Email NVARCHAR(100),
-    Salario DECIMAL(10,2)
-);
-INSERT INTO Empleados VALUES
-    (1, 'Carlos Martinez', 'ceo.martinez@atackcorp.local', 85000),
-    (2, 'Laura Lopez', 'rrhh.lopez@atackcorp.local', 45000),
-    (3, 'Fernando Garcia', 'fin.garcia@atackcorp.local', 52000);
 "@
 
 sqlcmd -S localhost -Q $query -E
-Write-Host "[!] MSSQL: xp_cmdshell habilitado, login SA activo, DB CorpDB creada"
+Write-Host "[!] MSSQL: xp_cmdshell habilitado, login SA activo"
 ```
 
 ---
@@ -524,10 +553,8 @@ Ejecutar en WKSTN-01 como Administrador local **después** de unirla al dominio:
 ```powershell
 # =============================================================
 # SCRIPT 06 — Configuración vulnerable de WKSTN-01
+# Compatible con Windows 11 Enterprise Evaluation
 # =============================================================
-
-# ── Unir al dominio (si no está hecho) ───────────────────────
-# Add-Computer -DomainName "atackcorp.local" -Credential (Get-Credential) -Restart
 
 # ── Habilitar WinRM ──────────────────────────────────────────
 Enable-PSRemoting -Force
@@ -543,19 +570,14 @@ Write-Host "[!] AlwaysInstallElevated habilitado"
 
 # ── Autologon con credenciales en registry ───────────────────
 $winlogon = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
-Set-ItemProperty -Path $winlogon -Name "AutoAdminLogon"  -Value "1"
-Set-ItemProperty -Path $winlogon -Name "DefaultUserName" -Value "helpdesk.ruiz"
-Set-ItemProperty -Path $winlogon -Name "DefaultPassword" -Value "Helpdesk2024!"
+Set-ItemProperty -Path $winlogon -Name "AutoAdminLogon"    -Value "1"
+Set-ItemProperty -Path $winlogon -Name "DefaultUserName"   -Value "helpdesk.ruiz"
+Set-ItemProperty -Path $winlogon -Name "DefaultPassword"   -Value "Helpdesk2024!"
 Set-ItemProperty -Path $winlogon -Name "DefaultDomainName" -Value "ATACKCORP"
 Write-Host "[!] Autologon configurado: helpdesk.ruiz / Helpdesk2024!"
 
 # ── Servicio con Unquoted Path ───────────────────────────────
 New-Item -Path "C:\Program Files\Servicio Corporativo\Monitor" -ItemType Directory -Force
-# Crear binario ficticio (dummy)
-$dummyCode = 'while($true){Start-Sleep 60}'
-$dummyCode | Out-File "C:\Program Files\Servicio Corporativo\Monitor\monitor.ps1"
-
-# Crear servicio con ruta sin comillas
 sc.exe create "CorpMonitor" `
     binpath= "C:\Program Files\Servicio Corporativo\Monitor\monitor.exe" `
     start= auto `
@@ -566,7 +588,8 @@ sc.exe sdset CorpMonitor "D:(A;;RPWPDTLOSDRCWDWO;;;AU)(A;;CCLCSWRPWPDTLOCRSDRCWD
 Write-Host "[!] Weak Service Perms: Authenticated Users tienen control total sobre CorpMonitor"
 
 # ── SeImpersonatePrivilege para helpdesk.ruiz ────────────────
-# Añadir via GPO local o secedit
+# NOTA: En Windows 11 via WinRM, Potato attacks fallan por Network tokens
+# SeImpersonatePrivilege funciona correctamente desde sesiones interactivas
 $seceditCfg = @"
 [Unicode]
 Unicode=yes
@@ -577,11 +600,6 @@ $seceditCfg | Out-File "$env:TEMP\privs.inf" -Encoding Unicode
 secedit /configure /db "$env:TEMP\secedit.sdb" /cfg "$env:TEMP\privs.inf" /quiet
 Write-Host "[!] SeImpersonatePrivilege añadido a helpdesk.ruiz"
 
-# ── Deshabilitar Windows Defender (para el lab) ───────────────
-Set-MpPreference -DisableRealtimeMonitoring $true
-Set-MpPreference -DisableIOAVProtection $true
-Write-Host "[+] Windows Defender deshabilitado para el lab"
-
 Write-Host "`n[+] Script 06 completado. WKSTN-01 lista."
 ```
 
@@ -591,9 +609,9 @@ Write-Host "`n[+] Script 06 completado. WKSTN-01 lista."
 
 | Usuario | Contraseña | Privilegio | Vector |
 |---------|-----------|------------|--------|
-| `Administrator` | `Admin1234!` | Domain Admin | — |
-| `ceo.martinez` | `Direccion2024!` | Usuario normal | AS-REP Roasting |
-| `backup_svc` | `Backup2024!` | Cuenta servicio | AS-REP Roasting |
+| `Administrador` | `Admin1234!` | Domain Admin (built-in) | — |
+| `ceo.martinez` | `Direccion2024!` | Usuario normal + WinRM | AS-REP Roasting |
+| `backup_svc` | `Backup2024!` | **Domain Admin** | AS-REP Roasting + Kerberoasting |
 | `sql_svc` | `SqlService123` | Cuenta servicio | Kerberoasting + Unconstrained Deleg. |
 | `iis_svc` | `IisService123` | Cuenta servicio | Kerberoasting + Constrained Deleg. |
 | `fin.garcia` | `Finanzas2024!` | Usuario normal | GenericWrite sobre sql_svc |
