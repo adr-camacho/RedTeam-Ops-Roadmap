@@ -4,7 +4,7 @@
 [![Domain](https://img.shields.io/badge/Domain-Active%20Directory%20%7C%20Red%20Team-red)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap)
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-red)](./MITRE_MAPPING.md)
-[![Labs](https://img.shields.io/badge/Labs-0%2F12%20Completados-lightgrey)](./PROGRESS.md)
+[![Labs](https://img.shields.io/badge/Labs-1%2F12%20Completados-green)](./PROGRESS.md)
 
 Este repositorio documenta el proceso completo de preparación para la certificación **CRTO (Certified Red Team Operator)**, incluyendo infraestructura de laboratorio propia, metodologías de ataque sobre **Active Directory** y writeups técnicos con perspectiva de detección (Blue Team).
 
@@ -26,9 +26,9 @@ Entorno propio desplegado en **VirtualBox** simulando una empresa mediana con Ac
 
 | Host | Sistema Operativo | IP | Rol |
 |------|------------------|----|-----|
-| DC-01 | Windows Server 2019 | `10.0.2.10` | Domain Controller |
-| WKSTN-01 | Windows 10 Enterprise | `10.0.2.20` | Workstation corporativa |
-| Kali | Kali Linux 2026.1 | DHCP | Máquina atacante |
+| DC-01 | Windows Server 2022 Standard Evaluation | `10.0.2.10` | Domain Controller |
+| WKSTN-01 | Windows 11 Enterprise Evaluation | `10.0.2.8` | Workstation corporativa |
+| Kali | Kali Linux 2026.1 | `10.0.2.9` | Máquina atacante |
 
 - **Dominio:** `atackcorp.local`
 - **Red:** NAT Network `LabRedTeam` — Segmento `10.0.2.0/24`
@@ -63,7 +63,7 @@ Entorno propio desplegado en **VirtualBox** simulando una empresa mediana con Ac
 
 | # | Lab | Referencia | Técnicas principales | Estado |
 |---|-----|-----------|---------------------|--------|
-| 01 | Attacktive Directory | Lab propio (ref. THM) | AS-REP Roasting, Kerberoasting, Token Impersonation | 🔄 En progreso |
+| 01 | [Attacktive Directory](./Phase-01-Fundamentals/Lab-01-Attacktive-Directory/) | Lab propio (ref. THM) | AS-REP Roasting, Kerberoasting, DCSync, Pass-the-Hash, C2 Sliver | ✅ Completado |
 | 02 | Wreath | Lab propio (ref. THM) | Pivoting con Ligolo-ng, evasión de segmentación | ⏳ Pendiente |
 | 03 | Gatekeeper | Lab propio (ref. THM) | Buffer Overflow, explotación de servicios | ⏳ Pendiente |
 
@@ -105,10 +105,14 @@ Phase-XX-Nombre/
     │   ├── enumeration_log.md        # Bitácora de enumeración
     │   ├── exploitation.md           # Comandos y razonamiento técnico
     │   ├── post-exploitation.md      # Post-explotación y movimiento lateral
-    │   └── infrastructure.md        # Diseño de red y topología
-    ├── reports/
-    │   └── Reporte_[Lab].pdf         # Informe ejecutivo en PDF
-    └── screenshots/                  # Evidencias visuales
+    │   ├── lateral_movement.md       # Movimiento lateral y C2
+    │   ├── privilege_escalation.md   # Escalada de privilegios
+    │   ├── persistence.md            # Persistencia y Golden Ticket
+    │   └── objective_completion.md   # Objetivo final y resumen
+    ├── loot/                         # Hashes, wordlists y credenciales obtenidas
+    ├── nmap/                         # Outputs de escaneo (.nmap, .gnmap, .xml)
+    ├── setup/                        # Scripts de aprovisionamiento de vulnerabilidades
+    └── screenshots/                  # Evidencias visuales organizadas por fase
 ```
 
 Cada writeup incluye:
