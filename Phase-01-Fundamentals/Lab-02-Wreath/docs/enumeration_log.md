@@ -1,91 +1,77 @@
 # Enumeration Log — Operación SILENT BRIDGE
 ## Fases 1 y 4 — Reconnaissance externo + Enumeración red interna
 **Operación:** SILENT BRIDGE | **Adversario:** APT41 | **Framework:** MITRE ATT&CK v14  
-**Operador:** Adrián Camacho | **Fecha:** —  
+**Operador:** Adrián Camacho | **Fecha:** 14/05/2026  
 **Objetivo Fase 1:** PROD (10.0.2.200) — superficie de ataque externa  
-**Objetivo Fase 4:** Red interna — GIT server + PC Windows (post-pivote)
+**Objetivo Fase 4:** Red interna — GIT (10.0.3.150) + PC-01 Windows (10.0.3.7)
 
 ---
 
 ## FASE 1 — Reconnaissance externo
 
-**Táctica MITRE:** TA0043 — Reconnaissance  
-**Objetivo:** Mapear servicios expuestos en PROD. Confirmar versión vulnerable de Webmin. Identificar vector de explotación.
+**Táctica MITRE:** TA0043 — Reconnaissance
 
 ---
 
-### 1.1 — Network Service Discovery (Port scan completo)
+### 1.1 — Network Service Discovery
 **Técnica MITRE:** T1046  
-**Herramienta:** Nmap  
-**Captura:** `fase1-01-nmap-port-discovery.png`
+**Captura:** ![fase1-01](../screenshots/FASE-1-Reconnaissance/fase1-01-nmap-port-discovery.png)
 
 ```bash
 nmap -p- --min-rate 5000 -oA nmap/prod_ports 10.0.2.200
 ```
 
-**Resultado:**
-
 | Puerto | Estado | Servicio |
 |--------|--------|---------|
-| — | — | — |
-
-> Completar con los puertos reales identificados.
-
-**Vectores identificados:**
-- Puerto `:10000` → Webmin → **Vector principal**
-- Puerto `:22` → SSH → Acceso post-explotación
-- Puerto `:80/443` → HTTP/S → Reconocimiento web adicional
+| 22/tcp | open | ssh |
+| 10000/tcp | open | snet-sensor-mgmt (Webmin) |
 
 ---
 
 ### 1.2 — Service Version Detection
 **Técnica MITRE:** T1046  
-**Herramienta:** Nmap -sC -sV  
-**Captura:** `fase1-02-nmap-service-version.png`
+**Captura:** ![fase1-02](../screenshots/FASE-1-Reconnaissance/fase1-02-nmap-service-version.png)
 
 ```bash
-nmap -sC -sV -p 22,80,443,10000 -oA nmap/prod_detailed 10.0.2.200
+nmap -sC -sV -p 22,10000 -oA nmap/prod_detailed 10.0.2.200
 ```
-
-**Hallazgos clave:**
 
 | Hallazgo | Valor | Implicación |
 |----------|-------|-------------|
-| Webmin versión | — | Vulnerable si < 1.920 |
-| OS / Distribución | — | — |
-| SSH versión | — | — |
-| Título HTTP | — | — |
+| Webmin | `MiniServ 1.890` | **Vulnerable — CVE-2019-12840** |
+| OS | Linux Ubuntu | — |
+| SSH | OpenSSH 8.9p1 Ubuntu 3ubuntu0.10 | Acceso post-explotación |
 
 ---
 
 ### 1.3 — Webmin Fingerprint
 **Técnica MITRE:** T1592.002  
-**Herramienta:** curl  
-**Captura:** `fase1-03-webmin-fingerprint.png`
+**Captura:** ![fase1-03](../screenshots/FASE-1-Reconnaissance/fase1-03-webmin-fingerprint.png)
 
 ```bash
-curl -sk https://10.0.2.200:10000/ | grep -i "version\|webmin"
-curl -skI https://10.0.2.200:10000/
+curl -sk https://10.0.2.200:10000/ | grep -i "webmin\|title" | head -5
 ```
 
-**Versión Webmin identificada:** `_______`  
-**Vulnerable a CVE-2019-15107:** ✅ / ❌
+Página de login accesible. Versión `MiniServ 1.890` confirmada.
 
 ---
 
 ### 1.4 — CVE Identification
 **Técnica MITRE:** T1596  
-**Herramienta:** searchsploit  
-**Captura:** `fase1-04-cve-identification.png`
+**Captura:** ![fase1-04](../screenshots/FASE-1-Reconnaissance/fase1-04-cve-identification.png)
 
 ```bash
-searchsploit webmin 1.890
-searchsploit -x php/webapps/47293.rb
+searchsploit webmin 1.9
 ```
 
-**CVE-2019-15107:** RCE pre-auth via `/password_change.cgi`  
-**Condición:** `passwd_mode=2` activo en `miniserv.conf`  
-**Tipo de acceso:** RCE como `root` sin credenciales
+| Exploit | CVE | Vector |
+|---------|-----|--------|
+| 46984 — Package Updates RCE | **CVE-2019-12840** | Autenticado ← **usado** |
+| 47330 — RCE Metasploit | CVE-2019-15107 | Pre-auth (bloqueado) |
+
+**Pivote táctico documentado:** CVE-2019-15107 bloqueado por check `MINISERV_INTERNAL` en `password_change.cgi` línea 8. Se pivota a CVE-2019-12840 (Package Updates RCE autenticado) — igualmente válido para el perfil APT41.
+
+**Weaponization:** Exploit construido manualmente en Python analizando el módulo Ruby de Metasploit (`46984.rb`) — replica el proceso real de un operador APT sin depender de frameworks.
 
 ---
 
@@ -96,154 +82,130 @@ SUPERFICIE MAPEADA — PROD (10.0.2.200)
 ════════════════════════════════════════════
 
 DESCARTADO:
-  ✗ [completar tras recon]
+  ✗ CVE-2019-15107 pre-auth → MINISERV_INTERNAL check activo
+  ✗ SMB / NTLM              → no expuesto
 
 VECTORES ACTIVOS:
-  ✓ Webmin :10000  → CVE-2019-15107 RCE pre-auth
-  ✓ SSH :22        → Acceso post-explotación con credenciales
+  ✓ Webmin :10000 → CVE-2019-12840 (autenticado)
+  ✓ SSH :22       → acceso post-explotación
 
-INFORMACIÓN OBTENIDA SIN CREDENCIALES:
-  • OS:      [completar]
-  • Webmin:  [versión]
-  • SSH:     [versión]
+INFORMACIÓN OBTENIDA:
+  Webmin:  MiniServ 1.890
+  OS:      Ubuntu 22.04 / Kernel 5.15.0-119
+  SSH:     OpenSSH 8.9p1
 ```
 
-**Criterio de éxito Fase 1:** ⏳  
-→ Versión Webmin confirmada como vulnerable. CVE identificado.
+**Criterio de éxito Fase 1:** ✅
 
 ---
 
 ## FASE 4 — Enumeración red interna (post-pivote)
 
 **Táctica MITRE:** TA0007 — Discovery  
-**Prerrequisito:** Túnel Ligolo-ng activo — Fase 3 completada  
-**Objetivo:** Mapear todos los hosts de la red interna. Identificar servicios en GIT y PC. Obtener credenciales.
+**Prerrequisito:** Túnel Ligolo-ng activo (Fase 3 ✅)
 
 ---
 
-### 4.1 — Host Discovery — red interna
+### 4.1 — Host Discovery
 **Técnica MITRE:** T1046  
-**Herramienta:** Nmap (directo a través del túnel — sin proxychains)  
-**Captura:** `fase4-01-internal-host-discovery.png`
+**Captura:** ![fase4-01](../screenshots/FASE-4-Internal-Enum/fase4-01-internal-host-discovery.png)
 
 ```bash
-# Ajustar el rango al segmento real identificado en Fase 3
-nmap -sn 10.0.2.0/24 --min-rate 3000 -oA nmap/internal_sweep
+nmap -sn --unprivileged 10.0.3.0/24
 ```
 
-**Hosts vivos identificados:**
-
-| IP | Hostname | SO (estimado) | Rol |
-|----|---------|--------------|-----|
-| 10.0.2.200 | PROD | Linux | Ya comprometido |
-| — | — | — | GIT server |
-| — | — | — | PC Windows |
+| IP | SO | Rol |
+|----|-----|-----|
+| `10.0.3.7` | Windows | **PC-01 — objetivo final** |
+| `10.0.3.150` | Linux | **GIT server** |
+| `10.0.3.200` | Linux | PROD — ya comprometida |
 
 ---
 
-### 4.2 — Service Discovery — GIT Server
+### 4.2 — Service Discovery — GIT
 **Técnica MITRE:** T1046  
-**Herramienta:** Nmap  
-**Captura:** `fase4-02-nmap-git-server.png`
+**Captura:** ![fase4-02](../screenshots/FASE-4-Internal-Enum/fase4-02-nmap-git-server.png)
 
 ```bash
-nmap -sC -sV -p- --min-rate 5000 <GIT_IP> -oA nmap/git_detailed
+nmap -sT -sV -p 22,80,443,3000,8080,9418 10.0.3.150 -oA nmap/git_detailed
 ```
 
-**Servicios identificados:**
-
-| Puerto | Servicio | Versión | Relevancia |
-|--------|---------|---------|-----------|
-| — | — | — | — |
+| Puerto | Servicio | Relevancia |
+|--------|---------|-----------|
+| 22/tcp | OpenSSH 10.2p1 | Acceso remoto |
+| 9418/tcp | Git daemon | **Repositorios accesibles** |
 
 ---
 
-### 4.3 — Service Discovery — PC Windows
+### 4.3 — Service Discovery — PC-01 Windows
 **Técnica MITRE:** T1046  
-**Herramienta:** Nmap  
-**Captura:** `fase4-03-nmap-pc-windows.png`
+**Captura:** ![fase4-03](../screenshots/FASE-4-Internal-Enum/fase4-03-nmap-pc-windows.png)
 
 ```bash
-nmap -sC -sV -p 80,135,139,443,445,3389,5985,8080 <PC_IP> -oA nmap/pc_detailed
+nmap -sT -p 135,445,3389,5985 10.0.3.7 -sV
 ```
 
-**Servicios identificados:**
-
-| Puerto | Servicio | Versión | Relevancia |
-|--------|---------|---------|-----------|
-| — | — | — | — |
-
-**Vectores activos en PC:**
-- WinRM `:5985` → ✅ / ❌
-- SMB `:445` → ✅ / ❌
-- RDP `:3389` → ✅ / ❌
+| Puerto | Servicio | Relevancia |
+|--------|---------|-----------|
+| 135/tcp | msrpc | — |
+| 445/tcp | microsoft-ds | SMB |
+| 5985/tcp | Microsoft HTTPAPI 2.0 | **WinRM ← vector de acceso** |
 
 ---
 
-### 4.4 — Enumeración Web / Git — GIT Server
+### 4.4 — Repositorio Git
 **Técnica MITRE:** T1083  
-**Herramienta:** curl, gobuster, git  
-**Captura:** `fase4-04-git-repositories.png`
+**Captura:** ![fase4-04](../screenshots/FASE-4-Internal-Enum/fase4-04-git-repositories.png)
 
 ```bash
-curl -s http://<GIT_IP>/
-gobuster dir -u http://<GIT_IP> \
-  -w /usr/share/seclists/Discovery/Web-Content/common.txt
-
-# Clonar repositorio accesible
-git clone http://<GIT_IP>/<repo>.git /tmp/repo_wreath
+git clone git://10.0.3.150/wreath-web /tmp/repo_wreath
 cd /tmp/repo_wreath
 git log --oneline --all
-git show <commit_hash>
 ```
 
-**Repositorios encontrados:**
-
-| Nombre | URL | Descripción |
-|--------|-----|-------------|
-| — | — | — |
+```
+6a0f8fc (HEAD) Security fix: moved credentials to environment variables
+992ecff         Initial web application setup
+```
 
 ---
 
-### 4.5 — Credential Discovery — Git history
+### 4.5 — Credential Discovery
 **Técnica MITRE:** T1552.001  
-**Captura:** `fase4-05-credentials-found.png`
+**Captura:** ![fase4-05](../screenshots/FASE-4-Internal-Enum/fase4-05-credentials-found.png)
 
 ```bash
-cd /tmp/repo_wreath
-git log -p | grep -i "password\|passwd\|secret\|key\|token"
-git show <commit_antiguo>
+git show 992ecff
 ```
 
-**Credenciales encontradas:**
+```php
+$db_pass = "iamthegreatest";   // ← commit 992ecff
+```
 
-| Usuario | Contraseña | Dónde | Commit |
-|---------|-----------|-------|--------|
-| — | — | — | — |
+| Usuario | Contraseña | Fuente | Commit |
+|---------|-----------|--------|--------|
+| `thomas` | `iamthegreatest` | `index.php` | `992ecff` |
+
+**Nota:** El commit `6a0f8fc` intentó eliminar la credencial pero el historial Git la preserva. Reutilización de credenciales → PC-01 WinRM.
 
 ---
 
 ### Resumen Fase 4
 
 ```
-RED INTERNA MAPEADA
+RED INTERNA — Estado final
 ════════════════════════════════════════════════════════
 
 HOSTS:
-  PROD  10.0.2.___  Linux    [ya comprometido — pivote]
-  GIT   10.0.2.___  Linux    [servicios: ___]
-  PC    10.0.2.___  Windows  [WinRM: ✅/❌ | SMB: ✅/❌]
+  GIT    10.0.3.150  Linux    SSH :22 + Git :9418
+  PC-01  10.0.3.7    Windows  WinRM :5985 + SMB :445
 
-CREDENCIALES OBTENIDAS:
-  [usuario] : [contraseña] — [fuente: git history]
-
-VECTORES HACIA PC:
-  ✓ WinRM con credenciales del repositorio Git
+CREDENCIALES:
+  thomas : iamthegreatest  ←  git history (992ecff)
 ```
 
-**Criterio de éxito Fase 4:** ⏳  
-→ Hosts internos mapeados + credenciales obtenidas del repositorio Git.
+**Criterio de éxito Fase 4:** ✅
 
 ---
 
-**Siguiente:** [exploitation.md](exploitation.md) — Fase 2 | [post-exploitation.md](post-exploitation.md) — Fase 5
+**Siguiente:** [exploitation.md](exploitation.md) | [post-exploitation.md](post-exploitation.md)

