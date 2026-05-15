@@ -227,21 +227,21 @@ Lab-01-Attacktive-Directory/
 │   ├── detailed.gnmap                    ← Service version — output grepable
 │   └── detailed.xml                      ← Service version — output XML
 ├── screenshots/
-│   ├── FASE 1 — Reconnaissance/
+│   ├── FASE-1—Reconnaissance/
 │   │   ├── fase1-01-nmap-port-discovery.png
 │   │   ├── fase1-02-nmap-service-version.png
 │   │   ├── fase1-03-smb-null-session.png
 │   │   ├── fase1-04-smb-guest-denied.png
 │   │   └── fase1-05-ldap-anonymous-denied.png
-│   ├── FASE 2 — Initial Access (Credential Access)/
+│   ├── FASE-2-Initial-Access-(Credential Access)/
 │   │   ├── fase2-01-asrep-roasting-hashes.png
 │   │   ├── fase2-02-asrep-hashes-file.png
 │   │   ├── fase2-03-asrep-crack-targeted-wordlist.png
 │   │   └── fase2-04-asrep-credentials-confirmed.png
-│   ├── FASE 3 — Execution - Initial Foothold/
+│   ├── FASE-3-Execution-Initial-Foothold/
 │   │   ├── fase3-01-cme-credential-validation.png
 │   │   └── fase3-02-winrm-shell-established.png
-│   ├── FASE 4 — Discovery/
+│   ├── FASE-4-Discovery/
 │   │   ├── fase4-01-system-info.png
 │   │   ├── fase4-02-domain-users-groups.png
 │   │   ├── fase4-03-privileged-groups.png
@@ -249,7 +249,7 @@ Lab-01-Attacktive-Directory/
 │   │   ├── fase4-04-spn-enumeration.png
 │   │   ├── fase4-05-description-passwords.png
 │   │   └── fase4-06-domain-computers.png
-│   └── FASE 5 — Credential Access (Ampliada)/
+│   └── FASE-5-Credential-Access-(Ampliada)/
 │       ├── fase5-01-kerberoasting-GetUserSPNs.png
 │       ├── fase5-02-kerberoast-hashes-capturados.png
 │       ├── fase5-03-john-crack-backup_svc.png
