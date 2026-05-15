@@ -10,10 +10,10 @@
 | Métrica | Valor |
 |---------|-------|
 | Fecha de inicio | 09/05/2026 |
-| Última actualización | 13/05/2026 |
-| Labs completados | 1 / 12 |
+| Última actualización | 15/05/2026 |
+| Labs completados | 2 / 12 |
 | Labs en progreso | 0 / 12 |
-| Horas totales invertidas | ~26h |
+| Horas totales invertidas | ~44h |
 | Fase actual | Phase-01: Fundamentals |
 
 ---
@@ -25,7 +25,7 @@
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
 | Lab-01: Attacktive Directory | ✅ Completado | 09/05/2026 | 13/05/2026 | ~26h | ✅ Completo |
-| Lab-02: Wreath | ⏳ Pendiente | — | — | — | — |
+| Lab-02: Wreath | ✅ Completado | 13/05/2026 | 15/05/2026 | ~18h | ✅ Completo |
 | Lab-03: Gatekeeper | ⏳ Pendiente | — | — | — | — |
 
 ### 🟡 Phase 02 — Post-Explotación y Abuso de AD
@@ -58,124 +58,67 @@
 
 ### Semana 1 — 09/05/2026 al 11/05/2026
 
-#### 📌 09/05/2026
-**Sesión 1 — Setup inicial del proyecto**
-- Creación del repositorio `RedTeam-Ops-Roadmap` en GitHub
-- Definición de la estructura de fases y labs
-- Setup del entorno VirtualBox: DC-01, WKSTN-01, Kali
-- Red NAT `LabRedTeam` configurada en segmento `10.0.2.0/24`
+#### 📌 09/05/2026 — Sesión 1: Setup inicial
+- Repositorio `RedTeam-Ops-Roadmap` creado en GitHub
+- Entorno VirtualBox: DC-01, WKSTN-01, Kali — Red NAT `LabRedTeam` 10.0.2.0/24
 - **Horas:** ~3h
 
-#### 📌 10/05/2026
-**Sesión 2 — Lab-01: Infraestructura y AS-REP Roasting**
-- Script PowerShell de aprovisionamiento del DC ejecutado
-- Dominio `atackcorp.local` configurado con usuarios y vectores inyectados
-- AS-REP Roasting completado: hashes extraídos con `GetNPUsers` — `ceo.martinez` y `backup_svc`
-- Cracking con diccionario dirigido OSINT: `Direccion2024!` y `Backup2024!`
-- Acceso interactivo conseguido vía Evil-WinRM como `ceo.martinez`
+#### 📌 10/05/2026 — Sesión 2: Lab-01 Fases 1-3
+- AS-REP Roasting: `ceo.martinez:Direccion2024!` + `backup_svc:Backup2024!`
+- Evil-WinRM foothold como `ceo.martinez`
 - **Horas:** ~2h
 
-#### 📌 11/05/2026
-**Sesión 3 — Documentación parcial y arsenal**
-- Documentación parcial: `infrastructure_setup.md`, `exploitation.md`, `enumeration_log.md`, `post-exploitation.md`
-- Arsenal completo instalado en Kali
-- Generación de `ARSENAL.md` y `LAB_INFRASTRUCTURE.md`
+#### 📌 11/05/2026 — Sesión 3: Lab-01 documentación parcial
+- infrastructure_setup, exploitation, enumeration_log generados
 - **Horas:** ~1h
 
 ---
 
 ### Semana 2 — 12/05/2026 al 13/05/2026
 
-#### 📌 12/05/2026
-**Sesión 4 — Fases 4-5: Discovery + Kerberoasting → Domain Admin**
-
-- **Fase 4 — Discovery (T1082, T1087.002, T1069.002, T1018, T1558.003)**
-  - Enumeración completa del dominio: usuarios, grupos, SPNs, descriptions, equipos
-  - Identificación de 3 attack paths hacia Domain Admin
-  - Hallazgo: `backup_svc` con SPN + DA membership + password en Description
-  - Hallazgo: `sql_svc` con Unconstrained Delegation
-  - Capturas: `fase4-01` a `fase4-06`
-
-- **Fase 5 — Kerberoasting (T1558.003)**
-  - `impacket-GetUserSPNs` → 3 hashes TGS capturados (sql_svc, iis_svc, backup_svc)
-  - John the Ripper + diccionario custom → `backup_svc:Backup2024!` crackeado
-  - Evil-WinRM como `backup_svc` → **Domain Admin confirmado**
-  - Capturas: `fase5-01` a `fase5-04`
-
-- **Problemas encontrados:**
-  - DCSync bloqueado (token de sesión cacheado) → pivote a Kerberoasting
-  - Hashcat sin GPU en VirtualBox → John the Ripper como alternativa
-  - DNS de Kali mal configurado → fix `nmcli` con DNS al DC
-
+#### 📌 12/05/2026 — Sesión 4: Lab-01 Fases 4-5
+- Discovery completo + BloodHound attack paths
+- Kerberoasting → `backup_svc:Backup2024!` → **Domain Admin** ✅
 - **Horas:** ~8h
 
-#### 📌 13/05/2026
-**Sesión 5 — Fases 6-10: Lateral Movement, C2, LPE, Golden Ticket, Objective**
-
-- **Fase 6 — Lateral Movement (T1021.006)**
-  - Nmap WKSTN-01 → puerto 5985 WinRM abierto
-  - Evil-WinRM como `backup_svc` → shell DA en WKSTN-01
-  - Fix de red: IP estática Kali via NetworkManager
-  - Capturas: `fase6-00` a `fase6-02`
-
-- **Fase 7 — C2 Sliver (T1071.001, T1573.002)**
-  - Instalación Sliver v1.7.3 desde script oficial
-  - Listener HTTPS :443 configurado
-  - Beacon `EASY_PROFIT` generado (windows/amd64, symbol obfuscation)
-  - Upload via Evil-WinRM + ejecución `Start-Process -WindowStyle Hidden`
-  - Beacon conectado: `be691c17 EASY_PROFIT — WKSTN-01 — ATACKCORP\backup_svc`
-  - Capturas: `fase7-01` a `fase7-05`
-
-- **Fase 8 — Privilege Escalation (T1134.001, T1562.001)**
-  - `getprivs` → SeImpersonatePrivilege habilitado
-  - Tamper Protection deshabilitada desde GUI
-  - Defender deshabilitado via `Set-MpPreference`
-  - SweetPotato (PrintSpoofer, DCOM, WinRM) → todos fallaron (limitación WinRM/Win11)
-  - Decisión táctica: beacon DA suficiente para objetivos
-  - Capturas: `fase8-01` a `fase8-05`
-
-- **Fase 9 — Golden Ticket (T1558.001, T1003.006)**
-  - DCSync krbtgt → NT hash + AES256 obtenidos
-  - `impacket-ticketer` → ticket forjado (3650 días)
-  - `KDC_ERR_TGT_REVOKED` → PAC Validation en Windows Server 2022
-  - Capturas: `fase9-01` a `fase9-03`
-
-- **Fase 10 — Objective Completion (T1003.006, T1550.002)**
-  - DCSync `Administrador` → NT hash `b73fdfe10e87b4ca5c0d957f81de6863`
-  - Pass-the-Hash via Evil-WinRM → shell como `atackcorp\administrador`
-  - Grupos confirmados: DA + EA + Schema Admins — **dominio comprometido**
-  - Capturas: `fase10-01`, `fase10-02`
-
-- **Documentación generada:**
-  - `lateral_movement.md`, `privilege_escalation.md`, `persistence.md`, `objective_completion.md`
-  - `mitigations.md`, `lessons_learned.md`
-  - `README.md` actualizado (Lab-01 completado, badge 1/12)
-  - `PROGRESS.md` actualizado (este fichero)
-
+#### 📌 13/05/2026 — Sesión 5: Lab-01 Fases 6-10 + documentación completa
+- Lateral Movement WKSTN-01 + C2 Sliver `EASY_PROFIT`
+- LPE: Potato attacks fallaron en WinRM (Network tokens)
+- Golden Ticket: `KDC_ERR_TGT_REVOKED` (PAC Validation WS2022)
+- DCSync Administrator → Pass-the-Hash → **Domain Admin** ✅
+- Documentación completa Lab-01
 - **Horas:** ~12h
 
 ---
 
-## 🧠 Lecciones Aprendidas
+### Semana 3 — 13/05/2026 al 15/05/2026
 
-### Lab-01 — Attacktive Directory
+#### 📌 13/05/2026 — Sesión 6: Lab-02 Setup infraestructura
+- Red `LabInternal` (10.0.3.0/24) creada en VirtualBox
+- VMs PROD y GIT creadas con Ubuntu Server
+- **Problema:** Ubuntu 26.04 incompatible con Webmin 1.890 → reinstalación con Ubuntu 22.04
+- IPs estáticas: PROD (10.0.2.200 / 10.0.3.200), GIT (10.0.3.150)
+- PC-01 Windows 11 creado en LabInternal (10.0.3.7)
+- **Horas:** ~4h
 
-| # | Lección | Categoría |
-|---|---------|-----------|
-| 1 | IP estática en Kali via NetworkManager, no `ip addr add` — persiste entre sesiones | Infraestructura |
-| 2 | Usar SIDs universales para grupos built-in en entornos en español | Scripting |
-| 3 | El nombre built-in `Administrator` es `Administrador` en español | Localización |
-| 4 | Añadir `sessionresume_*` al `.gitignore` desde el inicio | Git |
-| 5 | Diccionario dirigido OSINT > rockyou.txt en entornos corporativos | Cracking |
-| 6 | Permisos AD aplican en el siguiente logon del usuario, no inmediatamente | Active Directory |
-| 7 | Verificar SPNs registrados tras setup — bug de interpolación en `try/catch` PowerShell | Scripting |
-| 8 | Golden Ticket clásico falla en Windows Server 2022 por PAC Validation | Kerberos |
-| 9 | Potato attacks requieren token interactivo — WinRM genera tokens de red | LPE |
-| 10 | AMSI es independiente de las exclusiones de carpeta de Defender | AV Evasion |
-| 11 | Documentar fallos con análisis técnico es tan valioso como documentar éxitos | Documentación |
-| 12 | Definir nomenclatura de capturas antes de empezar el lab | Documentación |
+#### 📌 14/05/2026 — Sesión 7: Lab-02 Fases 1-3
+- Webmin 1.890 instalado en PROD con dependencias manuales
+- **Fase 1:** Nmap → MiniServ 1.890 → CVE-2019-12840 identificado
+- **Fase 2:** CVE-2019-15107 bloqueado por MINISERV_INTERNAL
+  - Metasploit inoperativo → exploit Python construido desde `46984.rb`
+  - Shell reversa `root@prod` ✅
+- **Fase 3:** Ligolo-ng v0.7.5 → túnel TLS → red interna 10.0.3.0/24 enrutada ✅
+- **Horas:** ~8h
 
-> 📄 Lecciones detalladas con causa raíz y solución: [Lab-01/docs/lessons_learned.md](./Phase-01-Fundamentals/Lab-01-Attacktive-Directory/docs/lessons_learned.md)
+#### 📌 15/05/2026 — Sesión 8: Lab-02 Fases 4-7 + documentación completa
+- **Fase 4:** Git clone → `git show 992ecff` → `thomas:iamthegreatest` ✅
+- **Fase 5:** Evil-WinRM → PC-01 Windows 11 (pc-01\thomas, Admin local) ✅
+- **Fase 6:** Beacon `SUDDEN_COMMUNICATION` en PC-01 via relay PROD ✅
+  - Beacon v1 fallaba → `listener_add` PROD → beacon v2 apuntando a 10.0.3.200
+- **Fase 7:** schtasks + Registry Run Key + SAM dump + objetivo completado ✅
+  - Hashes: `thomas:e1168d5763d3da51868e0fefc70d18e8`
+- Documentación completa Lab-02
+- **Horas:** ~6h
 
 ---
 
@@ -187,46 +130,34 @@
 | Kerberoasting | T1558.003 | Lab-01 | ✅ Dominada |
 | DCSync | T1003.006 | Lab-01 | ✅ Dominada |
 | Pass-the-Hash | T1550.002 | Lab-01 | ✅ Dominada |
-| WinRM Lateral Movement | T1021.006 | Lab-01 | ✅ Dominada |
-| C2 Sliver (beacon HTTPS) | T1071.001 | Lab-01 | ✅ Dominada |
-| ACL Abuse (DCSync perms) | T1484.001 | Lab-01 | ✅ Dominada |
-| Impair Defenses | T1562.001 | Lab-01 | ✅ Dominada |
+| WinRM Lateral Movement | T1021.006 | Lab-01/02 | ✅ Dominada |
+| C2 Sliver HTTPS | T1071.001 | Lab-01/02 | ✅ Dominada |
+| Web RCE (CVE-2019-12840) | T1190 | Lab-02 | ✅ Dominada |
+| Protocol Tunneling Ligolo-ng | T1572 | Lab-02 | ✅ Dominada |
+| Relay C2 (Ligolo listener) | T1090 | Lab-02 | ✅ Dominada |
+| Credential Discovery Git | T1552.001 | Lab-02 | ✅ Dominada |
+| SAM Credential Dump | T1003.002 | Lab-02 | ✅ Dominada |
+| Scheduled Task Persistence | T1053.005 | Lab-02 | ✅ Dominada |
+| Exploit Python (weaponización) | T1587.001 | Lab-02 | ✅ Dominada |
 | Golden Ticket | T1558.001 | Lab-01 | 🔄 Parcial (PAC Validation) |
 | Token Impersonation | T1134.001 | Lab-01 | 🔄 Parcial (WinRM limitación) |
-| Password in Description | T1087.002 | Lab-01 | ✅ Dominada |
 
 ---
 
-## 🔧 Problemas Encontrados y Soluciones
+## 🔧 Incidencias globales
 
-| Fecha | Problema | Causa | Solución |
-|-------|---------|-------|---------|
-| 12/05/2026 | DCSync `ACCESS_DENIED` pese a ACL correcta | Token de sesión cacheado pre-permisos | Pivotar a Kerberoasting |
-| 12/05/2026 | Hashcat falla en VirtualBox | Sin GPU disponible | John the Ripper (CPU) |
-| 12/05/2026 | Kali no resuelve dominio | DNS no apunta al DC | `nmcli` con `ipv4.dns 10.0.2.10` |
-| 13/05/2026 | WKSTN-01 no alcanzable | VM apagada / IP Kali sin ruta | Encender VM + `ip route add` |
-| 13/05/2026 | SweetPotato falla (todos los métodos) | WinRM genera Network tokens | Decisión táctica: beacon DA suficiente |
-| 13/05/2026 | Golden Ticket revocado | PAC Validation Windows Server 2022 | Pass-the-Hash como alternativa |
-| 13/05/2026 | AMSI bloquea SweetPotato.ps1 | Escaneo en memoria independiente de exclusiones | Deshabilitar script scanning |
-| 13/05/2026 | `"Domain Admins"` no encontrado | Windows en español → `Admins. del dominio` | Usar SID-512 universal |
-| 13/05/2026 | SPN registrado vacío (`MSSQLSvc/`) | Bug interpolación variable en `try/catch` PS | Hardcodear SPN como literal |
-
----
-
-## 📚 Recursos Consultados
-
-| Recurso | Tipo | Lab relacionado |
-|---------|------|----------------|
-| [HackTricks - AS-REP Roasting](https://book.hacktricks.xyz/windows-hardening/active-directory-methodology/asreproast) | Documentación | Lab-01 |
-| [HackTricks - Kerberoasting](https://book.hacktricks.xyz/windows-hardening/active-directory-methodology/kerberoast) | Documentación | Lab-01 |
-| [Impacket - secretsdump](https://github.com/fortra/impacket) | Tool docs | Lab-01 |
-| [Evil-WinRM GitHub](https://github.com/Hackplayers/evil-winrm) | Tool docs | Lab-01 |
-| [Sliver C2 Docs](https://sliver.sh/docs) | Tool docs | Lab-01 |
-| [ired.team - DCSync](https://www.ired.team/offensive-security-experiments/active-directory-kerberos-abuse/dump-password-hashes-from-domain-controller-with-dcsync) | Documentación | Lab-01 |
-| [MITRE ATT&CK - APT29](https://attack.mitre.org/groups/G0016/) | Framework | Lab-01 |
-| [SweetPotato GitHub](https://github.com/CCob/SweetPotato) | Tool docs | Lab-01 |
+| Fecha | Problema | Solución |
+|-------|---------|---------|
+| 12/05 | DCSync bloqueado (token cacheado) | Pivotar a Kerberoasting |
+| 12/05 | Hashcat sin GPU en VirtualBox | John the Ripper (CPU) |
+| 13/05 | Golden Ticket KDC_ERR_TGT_REVOKED | Pass-the-Hash alternativa |
+| 13/05 | Potato attacks fallan en WinRM | Beacon DA suficiente |
+| 13/05 | Ubuntu 26.04 incompatible Webmin | Reinstalar Ubuntu 22.04 |
+| 14/05 | CVE-2019-15107 MINISERV_INTERNAL | CVE-2019-12840 autenticado |
+| 14/05 | Metasploit inoperativo | Exploit Python manual |
+| 15/05 | WinRM perfil Público | `winrm quickconfig -force` |
+| 15/05 | Beacon sin visibilidad hacia Kali | `listener_add` relay en PROD |
 
 ---
 
-*⚡ Leyenda de estados:*  
-✅ Completado | 🔄 En progreso | ⏳ Pendiente | ❌ Bloqueado
+*⚡ Leyenda: ✅ Completado | 🔄 Parcial | ⏳ Pendiente*

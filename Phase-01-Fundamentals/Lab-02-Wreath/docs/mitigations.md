@@ -1,48 +1,134 @@
 # Mitigations — Operación SILENT BRIDGE
 ## Lab-02: Wreath — Perspectiva Blue Team
 **Operación:** SILENT BRIDGE | **Adversario:** APT41 | **Framework:** MITRE ATT&CK v14  
-**Operador:** Adrián Camacho | **Fecha:** — (completar al finalizar)
-
-> Completar este documento tras ejecutar todas las fases.  
-> Para cada vector explotado, documentar la mitigación técnica concreta.
+**Operador:** Adrián Camacho | **Fecha:** 15/05/2026
 
 ---
 
-## Mitigaciones por vector
+## Mitigaciones por vector explotado
 
-### CVE-2019-15107 — Webmin RCE
-- Actualizar Webmin a versión ≥ 1.920
-- Deshabilitar `passwd_mode` si no es necesario: eliminar o establecer `passwd_mode=0` en `miniserv.conf`
-- Restringir acceso a Webmin (:10000) a IPs de administración — no exponer a Internet
-- Web Application Firewall: alertar sobre POST a `/password_change.cgi` con metacaracteres
+### CVE-2019-12840 — Webmin Package Updates RCE
+**Técnica:** T1190 — Exploit Public-Facing Application  
+**Impacto:** RCE como root en servidor de producción expuesto
 
-### Credenciales en repositorio Git
-- Implementar pre-commit hooks que detecten patrones de credenciales (`git-secrets`, `truffleHog`)
-- Rotar credenciales inmediatamente si se detectan en historial — el historial git persiste aunque se elimine el archivo
-- Usar variables de entorno o vaults (HashiCorp Vault, AWS Secrets Manager) para credenciales
-- Auditoría periódica de repositorios con `truffleHog` o `gitleaks`
+**Mitigaciones:**
+- Actualizar Webmin a versión ≥ 1.920 inmediatamente
+- Restringir acceso a Webmin `:10000` a IPs de administración — no exponer a Internet
+- Deshabilitar el módulo Package Updates si no es necesario: `Webmin → Webmin Configuration → Webmin Modules`
+- WAF: alertar sobre POST a `/package-updates/update.cgi` con metacaracteres en parámetro `u`
+- Principio de mínimo privilegio: Webmin no debería correr como root
 
-### Ligolo-ng — Protocol Tunneling
-- Monitorizar creación de interfaces `tun` en hosts Linux (auditd)
-- Alertar sobre conexiones TLS salientes a puertos no estándar desde servidores
-- Network segmentation estricta: PROD no debería tener acceso saliente a Internet salvo puertos necesarios
-- Inspección TLS en gateway si es posible (certificados autofirmados son indicador)
+**Detección:**
+- Web access log: POST a `/package-updates/update.cgi` con `u=%20%7C%20` (pipe URL-encoded)
+- Proceso hijo de `miniserv.pl` lanzando bash/python/nc
+- Conexión saliente TCP desde el proceso de Webmin
 
-### WinRM — Lateral Movement
+---
+
+### T1552.001 — Credenciales en historial Git
+**Impacto:** Credenciales de usuario obtenidas sin autenticación desde repositorio interno
+
+**Mitigaciones:**
+- Implementar pre-commit hooks: `git-secrets`, `truffleHog`, `gitleaks`
+- Nunca commitear credenciales — usar variables de entorno o vaults (HashiCorp Vault)
+- Si ya están en historial: rotar credenciales inmediatamente + `git filter-repo` para reescribir historial
+- Auditoría periódica de repositorios: `truffleHog --regex --entropy=False .`
+- Formación del equipo de desarrollo en secure coding practices
+
+**Detección:**
+- Monitorizar clonaciones masivas de repositorios internos
+- Alertar sobre accesos a `/commit/<hash>` que muestren archivos con patrones de credenciales
+
+---
+
+### T1572 — Protocol Tunneling (Ligolo-ng)
+**Impacto:** Acceso transparente a red interna segmentada desde atacante externo
+
+**Mitigaciones:**
+- Monitorizar creación de interfaces `tun` en hosts Linux (auditd rule: `ip tuntap add`)
+- Alertar sobre conexiones TLS salientes a puertos no estándar (11601) desde servidores
+- Segmentación de red estricta: PROD no debería tener acceso saliente sin restricciones
+- Inspección TLS en gateway — certificados autofirmados son indicador de tunneling
+- EDR en servidores Linux con detección de procesos que abren sockets TLS persistentes
+
+**Detección (auditd):**
+```
+-a always,exit -F arch=b64 -S ioctl -k tun_create
+-a always,exit -F arch=b64 -S connect -F uid!=0 -k outbound_nonroot
+```
+
+**Regla Suricata:**
+```
+alert tls any any -> any 11601 (msg:"Possible Ligolo-ng tunnel"; sid:9000001;)
+```
+
+---
+
+### T1021.006 — WinRM Lateral Movement
+**Impacto:** Acceso interactivo a PC Windows interno con credenciales reutilizadas
+
+**Mitigaciones:**
+- No reutilizar credenciales entre servicios (Git ≠ WinRM)
 - Restringir WinRM a IPs de administración conocidas via Windows Firewall
 - Habilitar logging de WinRM: `wevtutil sl Microsoft-Windows-WinRM/Operational /e:true`
-- Alertar sobre logons tipo 3 con wsmprovhost.exe desde IPs no habituales
+- Usar cuentas de servicio dedicadas con contraseñas únicas y rotación automática
+- MFA para acceso remoto a sistemas críticos
 
-### Sliver Beacon — C2 HTTPS
-- EDR con detección de comportamiento (no solo firmas) — Sliver usa obfuscación de símbolos
-- Alertar sobre procesos no firmados en directorios de usuario con conexiones HTTPS periódicas
-- Network monitoring: patrón de beaconing (conexiones regulares a misma IP externa)
-- Application whitelisting: solo ejecutables firmados en rutas de usuario
+**Detección:**
+- Event ID 4624 (Logon Type 3) + `wsmprovhost.exe` desde IPs no habituales
+- Event ID 4648 — explicit credential logon
 
-### Scheduled Task — Persistence
-- Auditar Event ID 4698 (scheduled task creada) en todos los endpoints
-- Alertar sobre tareas con ejecutables en rutas de usuario (`C:\Users\*`)
-- Revisar periódicamente tareas programadas no autorizadas: `schtasks /query /fo LIST /v`
+---
+
+### T1562.001 — Impair Defenses (Defender)
+**Impacto:** Defender desactivado permitiendo ejecución de beacon sin detección
+
+**Mitigaciones:**
+- **Tamper Protection activa** — ya estaba activa en el lab, correctamente configurada
+- Alertar sobre intentos de `Set-MpPreference` via WinRM (Event ID 4104 — script block logging)
+- Microsoft Defender for Endpoint — detecta desactivación de Defender aunque se haga con admin local
+- WDAC (Windows Defender Application Control) para whitelist de ejecutables
+
+**Detección:**
+- Event ID 5001 — Real-time protection disabled
+- Sysmon Event 13 — `Set-MpPreference` en registry de Defender
+
+---
+
+### T1053.005 — Scheduled Task Persistence
+**Impacto:** Beacon re-ejecutado en cada inicio de sesión — persistencia post-reinicio
+
+**Mitigaciones:**
+- Alertar sobre Event ID 4698 (scheduled task creada) con rutas en `C:\Users\*`
+- Auditoría periódica de tareas programadas no autorizadas: `schtasks /query /fo CSV`
+- Application whitelisting — solo ejecutables firmados pueden crear tareas programadas
+- Revisión de tareas con nombres que imitan software legítimo ("WindowsUpdateHelper")
+
+---
+
+### T1003.002 — SAM Credential Dumping
+**Impacto:** Hashes NTLM de todos los usuarios locales obtenidos
+
+**Mitigaciones:**
+- Credential Guard — protege hashes en memoria de forma virtualizada
+- LAPS (Local Administrator Password Solution) — contraseñas únicas por máquina
+- Alertar sobre `reg save HKLM\SAM` y `reg save HKLM\SYSTEM` (Sysmon Event 1)
+- Monitorizar creación de archivos `.bak` en directorios de usuario
+
+**Detección:**
+```yaml
+# Regla SIGMA
+title: SAM Registry Hive Export
+detection:
+  selection:
+    EventID: 1
+    CommandLine|contains:
+      - 'reg save'
+      - 'HKLM\SAM'
+      - 'HKLM\SYSTEM'
+  condition: selection
+level: high
+```
 
 ---
 
@@ -50,12 +136,14 @@
 
 | Vector | Criticidad | Complejidad explotación | Mitigación disponible |
 |--------|-----------|------------------------|----------------------|
-| CVE-2019-15107 | Crítica | Baja (pre-auth, sin creds) | ✅ Patch disponible |
-| Git credentials exposure | Alta | Baja (lectura historial) | ✅ git-secrets / vault |
-| WinRM con creds reusadas | Alta | Baja (creds directas) | ✅ Segmentación + MFA |
-| Protocol Tunneling | Media | Media (requiere foothold) | ⚠️ Difícil detectar |
-| C2 Beacon HTTPS | Media | Media (requiere foothold) | ⚠️ Requiere EDR avanzado |
+| CVE-2019-12840 Webmin | 🔴 Crítica | Baja (herramienta disponible) | ✅ Patch inmediato |
+| Git credentials exposure | 🔴 Alta | Baja (git show) | ✅ Pre-commit hooks + rotación |
+| Protocol Tunneling (Ligolo) | 🟡 Media | Media (requiere foothold) | ⚠️ Difícil detectar |
+| WinRM con creds reutilizadas | 🔴 Alta | Baja (credenciales directas) | ✅ No reutilizar + MFA |
+| Defender desactivado | 🟡 Media | Baja (requiere admin local) | ✅ Tamper Protection |
+| Scheduled Task persistence | 🟡 Media | Baja (schtasks nativo) | ✅ Event ID 4698 alerting |
+| SAM dump (reg save) | 🔴 Alta | Baja (LOLBin nativo) | ✅ Credential Guard + LAPS |
 
 ---
 
-*Completar con valores reales tras ejecutar la operación — Adrián Camacho*
+*Operación SILENT BRIDGE — Adrián Camacho | Mayo 2026*

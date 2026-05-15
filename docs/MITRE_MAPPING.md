@@ -76,29 +76,29 @@
 
 | Táctica | Técnica | Sub-técnica | ID | Herramienta | Estado |
 |---------|---------|-------------|-----|-------------|--------|
-| Reconnaissance | Network Service Discovery | — | T1046 | Nmap | ⏳ |
-| Reconnaissance | Gather Victim Host Info | Software | T1592.002 | curl / whatweb | ⏳ |
-| Reconnaissance | Search Open Technical Databases | — | T1596 | searchsploit / exploitdb | ⏳ |
-| Initial Access | Exploit Public-Facing Application | — | T1190 | CVE-2019-15107 Webmin | ⏳ |
-| Execution | Command and Scripting Interpreter | Unix Shell | T1059.004 | Bash reverse shell | ⏳ |
-| Discovery | System Network Configuration | — | T1016 | ip addr, ip route | ⏳ |
-| Discovery | System Information Discovery | — | T1082 | id, uname, hostname | ⏳ |
-| Command & Control | Protocol Tunneling | — | T1572 | Ligolo-ng (proxy+agent) | ⏳ |
-| Command & Control | Proxy | — | T1090 | Ligolo-ng (routing) | ⏳ |
-| Command & Control | Ingress Tool Transfer | — | T1105 | wget / curl (agent a PROD) | ⏳ |
-| Discovery | Network Service Discovery | — | T1046 | Nmap (vía túnel) | ⏳ |
-| Discovery | Network Share Discovery | — | T1135 | smbclient / CrackMapExec | ⏳ |
-| Credential Access | Unsecured Credentials | Credentials in Files | T1552.001 | Git repos / Gitea | ⏳ |
-| Lateral Movement | Remote Services | Windows Remote Management | T1021.006 | Evil-WinRM | ⏳ |
-| Lateral Movement | Remote Services | SMB/Windows Admin Shares | T1021.002 | CrackMapExec | ⏳ |
-| Command & Control | Application Layer Protocol | Web Protocols | T1071.001 | Sliver HTTPS | ⏳ |
-| Command & Control | Encrypted Channel | Asymmetric Cryptography | T1573.002 | Sliver mTLS | ⏳ |
-| Command & Control | Develop Capabilities | Malware | T1587.001 | Sliver generate (Windows) | ⏳ |
-| Execution | User Execution | Malicious File | T1204.002 | Start-Process -Hidden | ⏳ |
-| Persistence | Scheduled Task/Job | Scheduled Task | T1053.005 | schtasks | ⏳ |
-| Persistence | Boot or Logon Autostart | Registry Run Keys | T1547.001 | reg add | ⏳ |
-| Credential Access | OS Credential Dumping | LSASS Memory | T1003.001 | Mimikatz / Sliver hashdump | ⏳ |
-| Collection | Data from Network Shared Drive | — | T1039 | SMB / Evil-WinRM download | ⏳ |
+| Reconnaissance | Network Service Discovery | — | T1046 | Nmap | ✅  |
+| Reconnaissance | Gather Victim Host Info | Software | T1592.002 | curl / whatweb | ✅  |
+| Reconnaissance | Search Open Technical Databases | — | T1596 | searchsploit / exploitdb | ✅  |
+| Initial Access | Exploit Public-Facing Application | — | T1190 | CVE-2019-15107 Webmin | ✅  |
+| Execution | Command and Scripting Interpreter | Unix Shell | T1059.004 | Bash reverse shell | ✅  |
+| Discovery | System Network Configuration | — | T1016 | ip addr, ip route | ✅  |
+| Discovery | System Information Discovery | — | T1082 | id, uname, hostname | ✅  |
+| Command & Control | Protocol Tunneling | — | T1572 | Ligolo-ng (proxy+agent) | ✅  |
+| Command & Control | Proxy | — | T1090 | Ligolo-ng (routing) | ✅  |
+| Command & Control | Ingress Tool Transfer | — | T1105 | wget / curl (agent a PROD) | ✅  |
+| Discovery | Network Service Discovery | — | T1046 | Nmap (vía túnel) | ✅  |
+| Discovery | Network Share Discovery | — | T1135 | smbclient / CrackMapExec | ✅  |
+| Credential Access | Unsecured Credentials | Credentials in Files | T1552.001 | Git repos / Gitea | ✅  |
+| Lateral Movement | Remote Services | Windows Remote Management | T1021.006 | Evil-WinRM | ✅  |
+| Lateral Movement | Remote Services | SMB/Windows Admin Shares | T1021.002 | CrackMapExec | ❌  |
+| Command & Control | Application Layer Protocol | Web Protocols | T1071.001 | Sliver HTTPS | ✅  |
+| Command & Control | Encrypted Channel | Asymmetric Cryptography | T1573.002 | Sliver mTLS | ✅  |
+| Command & Control | Develop Capabilities | Malware | T1587.001 | Sliver generate (Windows) | ✅  |
+| Execution | User Execution | Malicious File | T1204.002 | Start-Process -Hidden | ✅  |
+| Persistence | Scheduled Task/Job | Scheduled Task | T1053.005 | schtasks | ✅  |
+| Persistence | Boot or Logon Autostart | Registry Run Keys | T1547.001 | reg add | ✅  |
+| Credential Access | OS Credential Dumping | Security Account Manager | T1003.002 | reg save + impacket-secretsdump | ✅ |
+| Collection | Data from Network Shared Drive | — | T1039 | SMB / Evil-WinRM download | ✅  |
 
 ---
 
@@ -239,23 +239,23 @@
 | **Sub-técnicas mapeadas** | 28 |
 | **Tácticas MITRE cubiertas** | 10 / 14 |
 | **Adversarios emulados** | 6 (APT29, APT41, FIN7, APT28, Lazarus, APT10) |
-| **Labs completados** | 1 / 12 |
-| **Técnicas ejecutadas** | 14 / 47 |
+| **Labs completados** | 2 / 12 |
+| **Técnicas ejecutadas** | 27 / 47 |
 
 ### Tácticas cubiertas
 
 | Táctica | ID | Labs | Estado |
 |---------|-----|------|--------|
-| Reconnaissance | TA0043 | Lab-01, Lab-02 | ✅ Iniciado |
-| Initial Access | TA0001 | Lab-02, Lab-03 | ⏳ |
-| Execution | TA0002 | Lab-01, Lab-02 | ✅ Iniciado |
-| Persistence | TA0003 | Lab-01, Lab-02, Lab-03 | ⏳ |
+| Reconnaissance | TA0043 | Lab-01, Lab-02 | ✅ |
+| Initial Access | TA0001 | Lab-02, Lab-03 | ✅ Iniciado |
+| Execution | TA0002 | Lab-01, Lab-02 | ✅ |
+| Persistence | TA0003 | Lab-01, Lab-02, Lab-03 | ✅ Iniciado |
 | Privilege Escalation | TA0004 | Lab-01, Lab-03, Lab-04 | ⏳ |
 | Defense Evasion | TA0005 | Lab-07, Lab-08 | ⏳ |
 | Credential Access | TA0006 | Lab-01, Lab-02, Lab-04 | ✅ Iniciado |
 | Discovery | TA0007 | Lab-01, Lab-02, Lab-04 | ✅ Iniciado |
 | Lateral Movement | TA0008 | Lab-01, Lab-02, Lab-04 | ✅ Iniciado |
-| Collection | TA0009 | Lab-02, Lab-10 | ⏳ |
+| Collection | TA0009 | Lab-02, Lab-10 | ✅ Iniciado |
 | Command & Control | TA0011 | Lab-01, Lab-02, Lab-07 | ✅ Iniciado |
 | Exfiltration | TA0010 | Lab-10 | ⏳ |
 

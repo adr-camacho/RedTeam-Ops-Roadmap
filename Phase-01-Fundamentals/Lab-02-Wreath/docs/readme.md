@@ -79,12 +79,12 @@ Operación de pivotaje en red segmentada de tres nodos, emulando las TTPs de **A
 |-----------|-------------|--------|
 | [OPERATION_SILENT_BRIDGE.md](./OPERATION_SILENT_BRIDGE.md) | Plan completo de la operación | ✅ |
 | [infrastructure_setup.md](./docs/infrastructure_setup.md) | Topología, vectores y configuración | ✅ |
-| [enumeration_log.md](./docs/enumeration_log.md) | Fases 1 y 4 — recon externo e interno | ⏳ |
-| [exploitation.md](./docs/exploitation.md) | Fase 2 — CVE-2019-15107 Webmin | ⏳ |
-| [pivoting.md](./docs/pivoting.md) | Fase 3 — Ligolo-ng setup y túnel | ✅ (template) |
-| [post-exploitation.md](./docs/post-exploitation.md) | Fase 5 — Lateral Movement al PC | ⏳ |
-| [c2_sliver.md](./docs/c2_sliver.md) | Fase 6 — Beacon en red interna | ⏳ |
-| [persistence.md](./docs/persistence.md) | Fase 7 — Persistencia y objetivo | ⏳ |
+| [enumeration_log.md](./docs/enumeration_log.md) | Fases 1 y 4 — recon externo e interno | ✅ |
+| [exploitation.md](./docs/exploitation.md) | Fase 2 — CVE-2019-12840 Webmin RCE | ✅ |
+| [pivoting.md](./docs/pivoting.md) | Fase 3 — Ligolo-ng setup y túnel | ✅ |
+| [post-exploitation.md](./docs/post-exploitation.md) | Fase 5 — Lateral Movement al PC | ✅ |
+| [c2_sliver.md](./docs/c2_sliver.md) | Fase 6 — Beacon en red interna | ✅ |
+| [persistence.md](./docs/persistence.md) | Fase 7 — Persistencia y objetivo | ✅ |
 
 ---
 

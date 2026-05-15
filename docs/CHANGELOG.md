@@ -2,81 +2,82 @@
 
 > Registro de cambios estructurales del repositorio.  
 > Formato: `[YYYY-MM-DD] — Tipo — Descripción`  
-> Tipos: `ADD` (nuevo contenido) | `UPDATE` (actualización) | `FIX` (corrección) | `REFACTOR` (reestructuración) | `DOCS` (documentación pura)
+> Tipos: `ADD` | `UPDATE` | `FIX` | `REFACTOR` | `DOCS`
+
+---
+
+## [2026-05-15] — Lab-02 SILENT BRIDGE completado — Fases 5-7
+
+### ADD
+- `Lab-02-Wreath/docs/post-exploitation.md` — Fase 5: lateral movement PC-01, incidencia WinRM perfil Público
+- `Lab-02-Wreath/docs/c2_sliver.md` — Fase 6: beacon SUDDEN_COMMUNICATION, arquitectura relay PROD
+- `Lab-02-Wreath/docs/persistence.md` — Fase 7: schtasks + Run Key + SAM dump + kill chain completo
+- `Lab-02-Wreath/docs/lessons_learned.md` — 14 lecciones, comparativa Lab-01 vs Lab-02
+- `Lab-02-Wreath/docs/mitigations.md` — mitigaciones por vector + reglas SIGMA + tabla de criticidad
+- Screenshots Fases 5-7
+
+### UPDATE
+- `docs/PROGRESS.md` — Lab-02 completado, sesiones 6-8, técnicas dominadas actualizadas
+- `docs/CHANGELOG.md` — esta entrada
+
+---
+
+## [2026-05-14] — Lab-02 SILENT BRIDGE — Fases 1-4 completadas
+
+### ADD
+- `Lab-02-Wreath/docs/enumeration_log.md` — Fases 1 y 4 con datos reales
+- `Lab-02-Wreath/docs/exploitation.md` — CVE-2019-12840, exploit Python desde 46984.rb
+- `Lab-02-Wreath/docs/pivoting.md` — Ligolo-ng v0.7.5, agent ID real, ruta 10.0.3.0/24
+- Screenshots Fases 1-4
+
+### FIX
+- Beacon v1 → v2: `listener_add` en PROD como relay C2 (PC-01 sin visibilidad hacia Kali)
 
 ---
 
 ## [2026-05-13] — Lab-02 iniciado + Reestructuración de raíz
 
 ### ADD
-- `Phase-01-Fundamentals/Lab-02-Wreath/` — estructura completa del lab creada
-- `Lab-02-Wreath/OPERATION_SILENT_BRIDGE.md` — plan de operación APT41
-- `Lab-02-Wreath/README.md` — índice del lab con attack path y MITRE mapping
-- `Lab-02-Wreath/docs/infrastructure_setup.md` — topología y vectores Wreath
-- `Lab-02-Wreath/docs/pivoting.md` — referencia operacional Ligolo-ng (template)
-- `docs/CHANGELOG.md` — este fichero
-- `docs/OPSEC_NOTES.md` — aprendizajes OPSEC transversales
-- `docs/DETECTION_RULES.md` — reglas SIGMA y Event IDs consolidados
-- `docs/` — carpeta de documentación raíz creada
+- `Lab-02-Wreath/` — estructura completa + OPERATION_SILENT_BRIDGE.md + setup script
+- `docs/CHANGELOG.md`, `docs/OPSEC_NOTES.md`, `docs/DETECTION_RULES.md`
+- `.gitignore` — Sliver sessions, loot hashes, binarios, JSONs BloodHound
 
 ### UPDATE
-- `docs/MITRE_MAPPING.md` — añadido perfil multi-APT (6 adversarios), Lab-02 con 23 técnicas APT41, columna Adversario en índice, sección de estadísticas
-- `README.md` — links actualizados a `docs/`, Lab-02 añadido como In Progress
+- `docs/MITRE_MAPPING.md` — perfil multi-APT, Lab-02 (23 TTPs APT41)
+- `README.md` — links a `docs/`, Lab-02 añadido
 
 ### REFACTOR
-- Archivos `.md` de raíz movidos a `docs/` — raíz queda solo con `README.md`
+- Archivos `.md` de raíz movidos a `docs/`
 
 ---
 
 ## [2026-05-13] — Lab-01 completado
 
 ### ADD
-- `Lab-01-Attacktive-Directory/docs/lateral_movement.md` — Fases 6-7: LM + C2 Sliver
-- `Lab-01-Attacktive-Directory/docs/privilege_escalation.md` — Fase 8: LPE WKSTN-01
-- `Lab-01-Attacktive-Directory/docs/persistence.md` — Fase 9: Golden Ticket
-- `Lab-01-Attacktive-Directory/docs/objective_completion.md` — Fase 10: DCSync + DA
-- `Lab-01-Attacktive-Directory/docs/lessons_learned.md` — 12 lecciones documentadas
-- `Lab-01-Attacktive-Directory/docs/mitigations.md` — mitigaciones Blue Team
-- Screenshots Fases 6-10 — capturas de evidencia operacional
-
-### UPDATE
-- `PROGRESS.md` — sesión 5 documentada (Fases 6-10), 12h registradas
-- `README.md` — Lab-01 marcado como ✅ Completado, badge 1/12
+- `Lab-01/docs/lateral_movement.md`, `privilege_escalation.md`, `persistence.md`
+- `Lab-01/docs/objective_completion.md`, `lessons_learned.md`, `mitigations.md`
+- Screenshots Fases 6-10
 
 ### FIX
-- `setup/Setup-Lab01-GhostForest.ps1` → v1.1: SPN hardcodeado como literal, DA por SID-512 universal
+- `Setup-Lab01-GhostForest.ps1` v1.1: SPN hardcodeado, DA por SID-512 universal
 
 ---
 
-## [2026-05-12] — Lab-01: Fases 1-5 completadas
+## [2026-05-12] — Lab-01 Fases 1-5 completadas
 
 ### ADD
-- `Lab-01-Attacktive-Directory/docs/enumeration_log.md` — Fase 1: Reconnaissance
-- `Lab-01-Attacktive-Directory/docs/exploitation.md` — Fases 2-3: AS-REP Roasting + foothold
-- `Lab-01-Attacktive-Directory/docs/post_exploitation.md` — Fases 4-5: Discovery + Kerberoasting → DA
-- `Lab-01-Attacktive-Directory/loot/` — users.txt, asrep_hashes.txt, targeted_wordlist.txt
-- `Lab-01-Attacktive-Directory/nmap/` — outputs completos (ports, detailed, wkstn01)
-- Screenshots Fases 1-5 — capturas de evidencia operacional
-
-### UPDATE
-- `PROGRESS.md` — sesiones 2-4 documentadas
+- `Lab-01/docs/enumeration_log.md`, `exploitation.md`, `post_exploitation.md`
+- `Lab-01/loot/`, `Lab-01/nmap/`, screenshots Fases 1-5
 
 ---
 
 ## [2026-05-11] — Setup inicial del proyecto
 
 ### ADD
-- Repositorio `RedTeam-Ops-Roadmap` creado en GitHub
-- `README.md` — índice principal del roadmap (12 labs, 4 fases)
-- `ARSENAL.md` — arsenal de herramientas completo con guías de instalación
-- `LAB_INFRASTRUCTURE.md` — entorno vulnerable: 6 scripts PowerShell de aprovisionamiento
-- `MITRE_MAPPING.md` — mapping inicial (APT29, 39 técnicas)
-- `PROGRESS.md` — tracker de progreso inicializado
-- `WRITEUP_TEMPLATE.md` — plantilla estándar para writeups
-- `Lab-01-Attacktive-Directory/OPERATION_GHOST_FOREST.md` — plan de operación APT29
-- `Lab-01-Attacktive-Directory/docs/infrastructure_setup.md` — entorno Lab-01
-- `Lab-01-Attacktive-Directory/setup/Setup-Lab01-GhostForest.ps1` — v1.0
-- Entorno VirtualBox: DC-01, WKSTN-01, Kali — Red NAT `LabRedTeam` `10.0.2.0/24`
+- Repositorio creado, estructura completa 12 labs / 4 fases
+- ARSENAL.md, LAB_INFRASTRUCTURE.md, MITRE_MAPPING.md, PROGRESS.md, WRITEUP_TEMPLATE.md
+- Lab-01 OPERATION_GHOST_FOREST.md + Setup-Lab01-GhostForest.ps1 v1.0
+- Entorno VirtualBox: DC-01, WKSTN-01, Kali — LabRedTeam 10.0.2.0/24
 
 ---
 
