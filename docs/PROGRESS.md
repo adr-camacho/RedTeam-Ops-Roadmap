@@ -1,6 +1,6 @@
 # 📊 Progress Tracker — Red Team Ops Roadmap
 
-> Diario de progreso del roadmap hacia la certificación CRTO.  
+> Diario de progreso del roadmap Red Team.
 > Actualizado manualmente tras cada sesión de trabajo.
 
 ---
@@ -10,47 +10,47 @@
 | Métrica | Valor |
 |---------|-------|
 | Fecha de inicio | 09/05/2026 |
-| Última actualización | 15/05/2026 |
-| Labs completados | 2 / 12 |
+| Última actualización | 17/05/2026 |
+| Labs completados | 3 / 12 |
 | Labs en progreso | 0 / 12 |
-| Horas totales invertidas | ~44h |
+| Horas totales invertidas | ~60h |
 | Fase actual | Phase-01: Fundamentals |
 
 ---
 
 ## 📈 Progreso por Fase
 
-### 🟢 Phase 01 — Fundamentos y Pivotaje
+### 🟢 Phase-01 — Fundamentos y Pivotaje
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
 | Lab-01: Attacktive Directory | ✅ Completado | 09/05/2026 | 13/05/2026 | ~26h | ✅ Completo |
 | Lab-02: Wreath | ✅ Completado | 13/05/2026 | 15/05/2026 | ~18h | ✅ Completo |
-| Lab-03: Gatekeeper | ⏳ Pendiente | — | — | — | — |
+| Lab-03: ADCS Abuse | ✅ Completado | 16/05/2026 | 17/05/2026 | ~16h | ✅ Completo |
 
-### 🟡 Phase 02 — Post-Explotación y Abuso de AD
+### 🟡 Phase-02 — AD Avanzado
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
 | Lab-04: Forest | ⏳ Pendiente | — | — | — | — |
-| Lab-05: Monteverde | ⏳ Pendiente | — | — | — | — |
-| Lab-06: Support | ⏳ Pendiente | — | — | — | — |
+| Lab-05: Delegation Abuse | ⏳ Pendiente | — | — | — | — |
+| Lab-06: GPO + Trust Attacks | ⏳ Pendiente | — | — | — | — |
 
-### 🔴 Phase 03 — Red Team & Evasión de Defensas
-
-| Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
-|-----|--------|-------------|-----------|-------|---------|
-| Lab-07: Red Team Pathway | ⏳ Pendiente | — | — | — | — |
-| Lab-08: AD Enum & Attacks | ⏳ Pendiente | — | — | — | — |
-| Lab-09: Holo | ⏳ Pendiente | — | — | — | — |
-
-### 🏴 Phase 04 — Simulación de Infraestructura Real
+### 🔴 Phase-03 — Red Team & Evasión
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
-| Lab-10: Dante | ⏳ Pendiente | — | — | — | — |
-| Lab-11: Offshore | ⏳ Pendiente | — | — | — | — |
-| Lab-12: Zephyr | ⏳ Pendiente | — | — | — | — |
+| Lab-07: EDR Evasion (Lazarus) | ⏳ Pendiente | — | — | — | — |
+| Lab-08: Havoc C2 (Lazarus) | ⏳ Pendiente | — | — | — | — |
+| Lab-09: Holo (Lazarus) | ⏳ Pendiente | — | — | — | — |
+
+### 🏴 Phase-04 — Simulación Real
+
+| Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
+|-----|--------|-------------|-----------|-------|---------|
+| Lab-10: Dante (APT10) | ⏳ Pendiente | — | — | — | — |
+| Lab-11: Offshore (APT10) | ⏳ Pendiente | — | — | — | — |
+| Lab-12: Zephyr (APT10) | ⏳ Pendiente | — | — | — | — |
 
 ---
 
@@ -95,30 +95,46 @@
 
 #### 📌 13/05/2026 — Sesión 6: Lab-02 Setup infraestructura
 - Red `LabInternal` (10.0.3.0/24) creada en VirtualBox
-- VMs PROD y GIT creadas con Ubuntu Server
-- **Problema:** Ubuntu 26.04 incompatible con Webmin 1.890 → reinstalación con Ubuntu 22.04
-- IPs estáticas: PROD (10.0.2.200 / 10.0.3.200), GIT (10.0.3.150)
-- PC-01 Windows 11 creado en LabInternal (10.0.3.7)
+- PROD + GIT (Ubuntu 22.04) + PC-01 (Windows 11) configurados
+- **Problema:** Ubuntu 26.04 incompatible con Webmin 1.890 → reinstalación Ubuntu 22.04
 - **Horas:** ~4h
 
 #### 📌 14/05/2026 — Sesión 7: Lab-02 Fases 1-3
-- Webmin 1.890 instalado en PROD con dependencias manuales
-- **Fase 1:** Nmap → MiniServ 1.890 → CVE-2019-12840 identificado
-- **Fase 2:** CVE-2019-15107 bloqueado por MINISERV_INTERNAL
-  - Metasploit inoperativo → exploit Python construido desde `46984.rb`
-  - Shell reversa `root@prod` ✅
-- **Fase 3:** Ligolo-ng v0.7.5 → túnel TLS → red interna 10.0.3.0/24 enrutada ✅
+- Webmin 1.890 instalado con dependencias manuales
+- CVE-2019-15107 bloqueado → CVE-2019-12840 — exploit Python construido desde `46984.rb`
+- Shell reversa `root@prod` ✅ | Ligolo-ng v0.7.5 → red interna enrutada ✅
 - **Horas:** ~8h
 
-#### 📌 15/05/2026 — Sesión 8: Lab-02 Fases 4-7 + documentación completa
-- **Fase 4:** Git clone → `git show 992ecff` → `thomas:iamthegreatest` ✅
-- **Fase 5:** Evil-WinRM → PC-01 Windows 11 (pc-01\thomas, Admin local) ✅
-- **Fase 6:** Beacon `SUDDEN_COMMUNICATION` en PC-01 via relay PROD ✅
-  - Beacon v1 fallaba → `listener_add` PROD → beacon v2 apuntando a 10.0.3.200
-- **Fase 7:** schtasks + Registry Run Key + SAM dump + objetivo completado ✅
-  - Hashes: `thomas:e1168d5763d3da51868e0fefc70d18e8`
-- Documentación completa Lab-02
+#### 📌 15/05/2026 — Sesión 8: Lab-02 Fases 4-7 + documentación
+- Git history → `thomas:iamthegreatest` ✅
+- Evil-WinRM PC-01 + beacon `SUDDEN_COMMUNICATION` via relay PROD ✅
+- schtasks + SAM dump + objetivo completado ✅
 - **Horas:** ~6h
+
+---
+
+### Semana 4 — 16/05/2026 al 17/05/2026
+
+#### 📌 16/05/2026 — Sesión 9: Lab-03 Setup + Arsenal Kali
+- ADCS instalado en DC-01 → `AtackCorp-CA` corriendo ✅
+- ESC1: plantilla `VulnerableUser` (msPKI-Certificate-Name-Flag=1) ✅
+- ESC4: `fin.garcia` GenericWrite + WriteDacl sobre VulnerableUser ✅
+- ESC8: Web Enrollment HTTP → `http://10.0.2.10/certsrv/` ✅
+- Kali conectada a Internet (Adaptador 2 NAT)
+- Arsenal instalado: Certipy v5.0.4, PetitPotam, NetExec, PowerView, WinPEAS, Rubeus, SharpHound
+- Scripts de utilidad: arsenal_setup.sh, lab_start.sh, lab_stop.sh, kali_network_check.sh
+- Setup-Lab01-GhostForest-v2.ps1 generado (7 vulnerabilidades + OUs + usuarios)
+- **Horas:** ~8h
+
+#### 📌 17/05/2026 — Sesión 10: Lab-03 Fases 1-6 + documentación completa
+- **Fase 1:** certipy-ad find → ESC1 + ESC8 confirmados ✅
+- **Fase 2:** ESC1 — ceo.martinez → cert Administrador → hash `b73fdfe1...` → DA ✅
+- **Fase 3:** ESC4 — fin.garcia → plantilla modificada → cert DA → restaurada (OPSEC) ✅
+- **Fase 4:** ESC8 — PetitPotam exitoso, relay bloqueado KB5005413 (WS2022) → documentado ✅
+- **Fase 5:** C2 `CLINICAL_CHAIRMAN` en DC-01 — 3 beacons activos simultáneamente ✅
+- **Fase 6:** Cert persistence — válido post-rotación → hash `bc3abc2e...` → DA confirmado ✅
+- Documentación completa Lab-03 (9 documentos)
+- **Horas:** ~8h
 
 ---
 
@@ -129,34 +145,38 @@
 | AS-REP Roasting | T1558.004 | Lab-01 | ✅ Dominada |
 | Kerberoasting | T1558.003 | Lab-01 | ✅ Dominada |
 | DCSync | T1003.006 | Lab-01 | ✅ Dominada |
-| Pass-the-Hash | T1550.002 | Lab-01 | ✅ Dominada |
-| WinRM Lateral Movement | T1021.006 | Lab-01/02 | ✅ Dominada |
-| C2 Sliver HTTPS | T1071.001 | Lab-01/02 | ✅ Dominada |
+| Pass-the-Hash | T1550.002 | Lab-01/03 | ✅ Dominada |
+| WinRM Lateral Movement | T1021.006 | Lab-01/02/03 | ✅ Dominada |
+| C2 Sliver HTTPS | T1071.001 | Lab-01/02/03 | ✅ Dominada |
 | Web RCE (CVE-2019-12840) | T1190 | Lab-02 | ✅ Dominada |
 | Protocol Tunneling Ligolo-ng | T1572 | Lab-02 | ✅ Dominada |
 | Relay C2 (Ligolo listener) | T1090 | Lab-02 | ✅ Dominada |
 | Credential Discovery Git | T1552.001 | Lab-02 | ✅ Dominada |
 | SAM Credential Dump | T1003.002 | Lab-02 | ✅ Dominada |
 | Scheduled Task Persistence | T1053.005 | Lab-02 | ✅ Dominada |
-| Exploit Python (weaponización) | T1587.001 | Lab-02 | ✅ Dominada |
+| Exploit Python manual | T1587.001 | Lab-02/03 | ✅ Dominada |
+| ADCS Enumeration (Certipy) | T1046 | Lab-03 | ✅ Dominada |
+| ESC1 — SAN Abuse | T1649 | Lab-03 | ✅ Dominada |
+| ESC4 — Template Modification | T1222+T1649 | Lab-03 | ✅ Dominada |
+| ESC8 — NTLM Relay ADCS | T1557.001 | Lab-03 | ✅ Identificada |
+| Certificate Persistence | T1649 | Lab-03 | ✅ Dominada |
+| NTLM Coercion (PetitPotam) | T1187 | Lab-03 | ✅ Dominada |
 | Golden Ticket | T1558.001 | Lab-01 | 🔄 Parcial (PAC Validation) |
-| Token Impersonation | T1134.001 | Lab-01 | 🔄 Parcial (WinRM limitación) |
+| Token Impersonation | T1134.001 | Lab-01 | 🔄 Parcial (WinRM) |
 
 ---
 
-## 🔧 Incidencias globales
+## 📋 Pendientes por lab
 
-| Fecha | Problema | Solución |
-|-------|---------|---------|
-| 12/05 | DCSync bloqueado (token cacheado) | Pivotar a Kerberoasting |
-| 12/05 | Hashcat sin GPU en VirtualBox | John the Ripper (CPU) |
-| 13/05 | Golden Ticket KDC_ERR_TGT_REVOKED | Pass-the-Hash alternativa |
-| 13/05 | Potato attacks fallan en WinRM | Beacon DA suficiente |
-| 13/05 | Ubuntu 26.04 incompatible Webmin | Reinstalar Ubuntu 22.04 |
-| 14/05 | CVE-2019-15107 MINISERV_INTERNAL | CVE-2019-12840 autenticado |
-| 14/05 | Metasploit inoperativo | Exploit Python manual |
-| 15/05 | WinRM perfil Público | `winrm quickconfig -force` |
-| 15/05 | Beacon sin visibilidad hacia Kali | `listener_add` relay en PROD |
+| Lab | Pendiente | Prioridad |
+|-----|----------|-----------|
+| Lab-01 | Fase 11: Unconstrained + Constrained Delegation | Alta |
+| Lab-01 | Fase 12: GPO Abuse (helpdesk.ruiz → IT-Baseline) | Alta |
+| Lab-01 | Fase 13: ACL Abuse completo (fin.garcia → sql_svc) | Alta |
+| Lab-02 | Segundo pivote (tercer segmento de red) | Media |
+| Lab-02 | Evasión Defender real (Lab-07) | Media |
+| Lab-03 | Setup-Lab03-DarkGate.ps1 actualizado con fixes reales | Baja |
+| Lab-03 | Setup-Lab02-SilentBridge.sh (bash — PROD + GIT) | Media |
 
 ---
 

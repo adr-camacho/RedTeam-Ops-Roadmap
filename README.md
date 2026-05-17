@@ -1,139 +1,179 @@
-# 🚩 Red Team Ops & CRTO Preparation Path
+# 🚩 Red Team Ops Roadmap
 
 [![Status](https://img.shields.io/badge/Status-In%20Progress-orange)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap)
 [![Domain](https://img.shields.io/badge/Domain-Active%20Directory%20%7C%20Red%20Team-red)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap)
-[![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-red)](./MITRE_MAPPING.md)
-[![Labs](https://img.shields.io/badge/Labs-1%2F12%20Completados-green)](./PROGRESS.md)
+[![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-red)](./docs/MITRE_MAPPING.md)
+[![Labs](https://img.shields.io/badge/Labs-3%2F12%20Completados-green)](./docs/PROGRESS.md)
 
-Este repositorio documenta el proceso completo de preparación para la certificación **CRTO (Certified Red Team Operator)**, incluyendo infraestructura de laboratorio propia, metodologías de ataque sobre **Active Directory** y writeups técnicos con perspectiva de detección (Blue Team).
+Repositorio de operaciones Red Team con enfoque en **entornos reales de Active Directory**. Documenta el proceso de aprendizaje progresivo desde fundamentos hasta simulación de infraestructura corporativa compleja, emulando adversarios reales mediante frameworks C2 modernos y open source.
 
-El enfoque principal es la simulación de adversarios reales mediante **C2 Frameworks modernos y Open Source**, profundizando en el funcionamiento interno de cada técnica en lugar de limitarse a su ejecución mecánica.
-
----
-
-## 🎯 Objetivo
-
-Dominar las tácticas de post-explotación, movimiento lateral y evasión de defensas propias del CRTO, replicando las capacidades de Cobalt Strike mediante frameworks abiertos como **Sliver** y **Havoc C2**, y documentando cada técnica tanto desde la perspectiva ofensiva como defensiva.
-
-**Adversario simulado:** APT29 (Cozy Bear) — Actor de estado con especialización en AD y evasión de defensas. Ver [MITRE_MAPPING.md](./MITRE_MAPPING.md) para el mapeo completo de TTPs.
+El objetivo no es ejecutar herramientas mecánicamente — es **entender cada técnica a nivel de protocolo**, construir exploits desde cero cuando las herramientas fallan, y documentar tanto la perspectiva ofensiva como la defensiva en cada operación.
 
 ---
 
-## 🏗️ Infraestructura del Laboratorio
+## 🎯 Enfoque
 
-Entorno propio desplegado en **VirtualBox** simulando una empresa mediana con Active Directory, SQL Server, IIS y shares corporativos. Red NAT aislada para evitar exposición de tráfico sensible.
+**Red Team puro** — emulación de adversarios reales (APT29, APT41, FIN7, APT28, Lazarus, APT10) con técnicas aplicables en engagements profesionales 2024-2026.
 
-| Host | Sistema Operativo | IP | Rol |
-|------|------------------|----|-----|
-| DC-01 | Windows Server 2022 Standard Evaluation | `10.0.2.10` | Domain Controller |
-| WKSTN-01 | Windows 11 Enterprise Evaluation | `10.0.2.8` | Workstation corporativa |
-| Kali | Kali Linux 2026.1 | `10.0.2.9` | Máquina atacante |
+- Exploits construidos manualmente cuando los frameworks fallan
+- C2 con Sliver (open source, equivalente a Cobalt Strike)
+- Documentación de vulnerabilidades bloqueadas (comportamiento real en entornos modernos)
+- Perspectiva Blue Team en cada lab (detección, Event IDs, reglas SIGMA)
+
+---
+
+## 🏗️ Infraestructura
+
+Entornos propios desplegados en **VirtualBox** — control total sobre vectores y configuración.
+
+### Red NAT — LabRedTeam (10.0.2.0/24)
+
+| Host | SO | IP | Rol |
+|------|----|----|-----|
+| DC-01 | Windows Server 2022 | `10.0.2.10` | Domain Controller + ADCS |
+| WKSTN-01 | Windows 11 Enterprise | `10.0.2.8` | Workstation corporativa |
+| PROD | Ubuntu 22.04 LTS | `10.0.2.200` | Servidor producción (Webmin) |
+| Kali | Kali Linux 2026.1 | `10.0.2.9` | Máquina operadora (compartida) |
+
+### Red NAT — LabInternal (10.0.3.0/24)
+
+| Host | SO | IP | Rol |
+|------|----|----|-----|
+| PROD | Ubuntu 22.04 LTS | `10.0.3.200` | Pivote hacia red interna |
+| GIT | Ubuntu 22.04 LTS | `10.0.3.150` | Servidor Git interno |
+| PC-01 | Windows 11 Enterprise | `10.0.3.7` | Endpoint Windows interno |
 
 - **Dominio:** `atackcorp.local`
-- **Red:** NAT Network `LabRedTeam` — Segmento `10.0.2.0/24`
-- **Vectores preconfigurados:** AS-REP Roasting, Kerberoasting, ACL Abuse, Unconstrained/Constrained Delegation, GPO Abuse, xp_cmdshell, SMB Null Session, Unquoted Service Path, Token Impersonation
+- **CA:** `AtackCorp-CA` (ADCS — ESC1/ESC4/ESC8 configurados)
+- **Kali compartida** entre todos los labs — arsenal instalado una vez
 
-> 📄 Documentación completa del entorno y scripts de aprovisionamiento: [LAB_INFRASTRUCTURE.md](./LAB_INFRASTRUCTURE.md)
+> 📄 Infraestructura completa: [LAB_INFRASTRUCTURE.md](./docs/LAB_INFRASTRUCTURE.md)
 
 ---
 
-## 🛠️ Stack Tecnológico
+## 🛠️ Arsenal
 
 | Categoría | Herramientas |
 |-----------|-------------|
-| **C2 Frameworks** | Sliver (BishopFox), Havoc C2 |
-| **Enumeración AD** | BloodHound, PowerView, Adalanche, enum4linux-ng |
-| **Ataques Kerberos** | Rubeus, Impacket, Kerbrute |
+| **C2** | Sliver v1.7.3, Havoc C2 (Phase-03) |
+| **ADCS Abuse** | Certipy v5.0.4 |
+| **Enumeración AD** | BloodHound, PowerView, enum4linux-ng |
+| **Kerberos** | Impacket, Kerbrute, Rubeus |
+| **Pivoting** | Ligolo-ng v0.7.5 |
+| **Acceso remoto** | Evil-WinRM, NetExec |
+| **Coerción NTLM** | PetitPotam, Coercer, PrinterBug |
+| **Post-Explotación** | WinPEAS, LinPEAS, PrivescCheck |
 | **Cracking** | Hashcat, John the Ripper |
-| **Pivoting** | Ligolo-ng, Chisel |
-| **Post-Explotación** | Evil-WinRM, CrackMapExec, Metasploit |
-| **Evasión** | AMSI Bypass, Donut, mingw-w64 |
-| **Escaneo** | Nmap, Masscan, Gobuster, Feroxbuster |
+| **Escaneo** | Nmap, Gobuster, Feroxbuster |
 
-> 📄 Lista completa con comandos de instalación y referencia por lab: [ARSENAL.md](./ARSENAL.md)
+> 📄 Arsenal completo + setup: [scripts/arsenal_setup.sh](./scripts/arsenal_setup.sh) | [ARSENAL.md](./docs/ARSENAL.md)
 
 ---
 
-## 🗺️ Roadmap de Operaciones
+## 🗺️ Roadmap
 
-> ⚠️ **Todos los labs son entornos propios** desplegados en VirtualBox. Cada escenario replica las técnicas y configuraciones de los labs de referencia (THM, HTB) pero sobre infraestructura construida y aprovisionada manualmente, lo que permite un control total sobre los vectores de ataque y una comprensión más profunda del entorno.
+### 🟢 Phase-01 — Fundamentos y Pivotaje
 
-### 🟢 Fase 1 — Fundamentos y Pivotaje
+| # | Operación | Adversario | Técnicas | Estado |
+|---|-----------|-----------|---------|--------|
+| 01 | [GHOST FOREST](./Phase-01-Fundamentals/Lab-01-Attackitive-Directory/) | APT29 | AS-REP Roasting, Kerberoasting, DCSync, Pass-the-Hash, C2 Sliver | ✅ Completado |
+| 02 | [SILENT BRIDGE](./Phase-01-Fundamentals/Lab-02-Wreath/) | APT41 | CVE-2019-12840, Ligolo-ng, Git history, relay C2 | ✅ Completado |
+| 03 | [DARK GATE](./Phase-01-Fundamentals/Lab-03-Gatekeeper/) | APT29 | ADCS ESC1/ESC4/ESC8, Certipy, cert persistence | ✅ Completado |
 
-| # | Lab | Referencia | Técnicas principales | Estado |
-|---|-----|-----------|---------------------|--------|
-| 01 | [Attacktive Directory](./Phase-01-Fundamentals/Lab-01-Attacktive-Directory/) | Lab propio (ref. THM) | AS-REP Roasting, Kerberoasting, DCSync, Pass-the-Hash, C2 Sliver | ✅ Completado |
-| 02 | Wreath | Lab propio (ref. THM) | Pivoting con Ligolo-ng, evasión de segmentación | ⏳ Pendiente |
-| 03 | Gatekeeper | Lab propio (ref. THM) | Buffer Overflow, explotación de servicios | ⏳ Pendiente |
+### 🟡 Phase-02 — AD Avanzado
 
-### 🟡 Fase 2 — Post-Explotación y Abuso de AD
+| # | Operación | Adversario | Técnicas | Estado |
+|---|-----------|-----------|---------|--------|
+| 04 | Forest | APT28 | ACL Abuse, DCSync, Forest Trusts | ⏳ Pendiente |
+| 05 | Delegation Abuse | APT28 | Unconstrained + Constrained + RBCD | ⏳ Pendiente |
+| 06 | GPO + Trust Attacks | APT28 | GPO Abuse, SID History, Trust Exploitation | ⏳ Pendiente |
 
-| # | Lab | Referencia | Técnicas principales | Estado |
-|---|-----|-----------|---------------------|--------|
-| 04 | Forest | Lab propio (ref. HTB) | ACL Abuse, DCSync, Pass-the-Hash, Golden Ticket | ⏳ Pendiente |
-| 05 | Monteverde | Lab propio (ref. HTB) | Azure AD, Cloud-to-OnPremise | ⏳ Pendiente |
-| 06 | Support | Lab propio (ref. HTB) | Memory dumps, extracción de secretos | ⏳ Pendiente |
+### 🔴 Phase-03 — Red Team & Evasión
 
-### 🔴 Fase 3 — Red Team & Evasión de Defensas
+| # | Operación | Adversario | Técnicas | Estado |
+|---|-----------|-----------|---------|--------|
+| 07 | EDR Evasion | Lazarus | AMSI bypass, process injection, syscalls directas | ⏳ Pendiente |
+| 08 | Havoc C2 | Lazarus | C2 avanzado, sleep obfuscation, BOFs | ⏳ Pendiente |
+| 09 | Holo | Lazarus | Simulación corporativa multicapa, pivoting avanzado | ⏳ Pendiente |
 
-| # | Lab | Referencia | Técnicas principales | Estado |
-|---|-----|-----------|---------------------|--------|
-| 07 | Red Team Pathway | Lab propio (ref. THM) | C2 infrastructure, EDR/AMSI evasion | ⏳ Pendiente |
-| 08 | AD Enum & Attacks | Lab propio (ref. HTB Academy) | BloodHound avanzado, Attack Paths, GPO Abuse | ⏳ Pendiente |
-| 09 | Holo | Lab propio (ref. THM) | Simulación corporativa completa, pivoting multicapa | ⏳ Pendiente |
+### 🏴 Phase-04 — Simulación Real
 
-### 🏴 Fase 4 — Simulación de Infraestructura Real
-
-| # | Lab | Referencia | Técnicas principales | Estado |
-|---|-----|-----------|---------------------|--------|
-| 10 | Dante | Lab propio (ref. HTB Pro Lab) | Red masiva mixta, persistencia, exfiltración | ⏳ Pendiente |
-| 11 | Offshore | Lab propio (ref. HTB Pro Lab) | Escenario espejo del examen CRTO | ⏳ Pendiente |
-| 12 | Zephyr | Lab propio (ref. HTB Pro Lab) | Forest Trusts, técnicas modernas Red Team | ⏳ Pendiente |
+| # | Operación | Adversario | Técnicas | Estado |
+|---|-----------|-----------|---------|--------|
+| 10 | Dante | APT10 | Red masiva mixta, persistencia, exfiltración | ⏳ Pendiente |
+| 11 | Offshore | APT10 | Forest Trusts avanzados, CRTO preparation | ⏳ Pendiente |
+| 12 | Zephyr | APT10 | AD completo — repaso total | ⏳ Pendiente |
 
 ---
 
-## 📂 Metodología de Documentación
+## 📋 Pendientes por lab
 
-Cada laboratorio sigue una estructura estandarizada:
+### Lab-01 — Fases adicionales (revisión futura)
+- Fase 11: Unconstrained + Constrained Delegation (sql_svc / iis_svc configurados)
+- Fase 12: GPO Abuse (helpdesk.ruiz → IT-Baseline)
+- Fase 13: ACL Abuse completo (fin.garcia → GenericWrite → sql_svc)
+
+### Lab-02 — Mejoras (revisión futura)
+- Segundo pivote (tercer segmento de red)
+- Evasión de Defender real sin desactivar Tamper Protection
+
+---
+
+## 📂 Estructura del repositorio
 
 ```
-Phase-XX-Nombre/
-└── Lab-XX-Nombre/
-    ├── docs/
-    │   ├── infrastructure_setup.md   # Configuración del entorno y vectores inyectados
-    │   ├── enumeration_log.md        # Bitácora de enumeración
-    │   ├── exploitation.md           # Comandos y razonamiento técnico
-    │   ├── post-exploitation.md      # Post-explotación y movimiento lateral
-    │   ├── lateral_movement.md       # Movimiento lateral y C2
-    │   ├── privilege_escalation.md   # Escalada de privilegios
-    │   ├── persistence.md            # Persistencia y Golden Ticket
-    │   └── objective_completion.md   # Objetivo final y resumen
-    ├── loot/                         # Hashes, wordlists y credenciales obtenidas
-    ├── nmap/                         # Outputs de escaneo (.nmap, .gnmap, .xml)
-    ├── setup/                        # Scripts de aprovisionamiento de vulnerabilidades
-    └── screenshots/                  # Evidencias visuales organizadas por fase
+Red-Team_Labs/
+├── scripts/                        ← utilidades globales
+│   ├── arsenal_setup.sh            ← instala todo el arsenal en Kali
+│   ├── lab_start.sh                ← arranca entorno de un lab
+│   ├── lab_stop.sh                 ← limpia entre labs
+│   └── kali_network_check.sh       ← diagnóstico de red
+├── docs/                           ← documentación global
+│   ├── ARSENAL.md
+│   ├── CHANGELOG.md
+│   ├── DETECTION_RULES.md
+│   ├── LAB_INFRASTRUCTURE.md
+│   ├── MITRE_MAPPING.md
+│   ├── OPSEC_NOTES.md
+│   ├── PROGRESS.md
+│   └── WRITEUP_TEMPLATE.md
+├── Phase-01-Fundamentals/
+│   ├── Lab-01-Attackitive-Directory/   ✅ GHOST FOREST (APT29)
+│   ├── Lab-02-Wreath/                  ✅ SILENT BRIDGE (APT41)
+│   └── Lab-03-Gatekeeper/              ✅ DARK GATE (APT29)
+├── Phase-02-Post-Exploitation/
+├── Phase-03-Red-Team-Operations/
+├── Phase-04-Enterprise-Simulation/
+└── setup/                          ← scripts de setup de infraestructura base
 ```
 
-Cada writeup incluye:
-1. **Summary:** Resumen ejecutivo orientado a negocio
-2. **Attack Path:** Mapa visual del compromiso
-3. **Exploitation:** Comandos con razonamiento técnico
-4. **Detection:** Cómo detectar cada técnica (Event IDs, reglas SIGMA)
-
-> 📄 Plantilla reutilizable para cada lab: [WRITEUP_TEMPLATE.md](./WRITEUP_TEMPLATE.md)
+Cada lab sigue la estructura:
+```
+Lab-XX/
+├── OPERATION_NAME.md       ← plan de operación + adversario
+├── README.md               ← índice + attack path + estado
+├── docs/                   ← writeups por fase
+├── screenshots/            ← evidencias organizadas por fase
+├── setup/                  ← scripts de aprovisionamiento
+├── loot/                   ← hashes y credenciales obtenidas
+└── nmap/                   ← outputs de escaneo
+```
 
 ---
 
-## 📊 Progreso y Documentos del Proyecto
+## 📊 Documentación global
 
 | Documento | Descripción |
 |-----------|-------------|
-| [PROGRESS.md](./PROGRESS.md) | Diario de sesiones, horas invertidas y lecciones aprendidas |
-| [ARSENAL.md](./ARSENAL.md) | Arsenal de herramientas instaladas con guía de uso |
-| [LAB_INFRASTRUCTURE.md](./LAB_INFRASTRUCTURE.md) | Entorno vulnerable: software, scripts PowerShell y diagrama |
-| [MITRE_MAPPING.md](./MITRE_MAPPING.md) | Mapeo de 39 técnicas ATT&CK a los 12 labs del roadmap |
-| [WRITEUP_TEMPLATE.md](./WRITEUP_TEMPLATE.md) | Plantilla estándar para writeups con sección Blue Team |
+| [PROGRESS.md](./docs/PROGRESS.md) | Diario de sesiones, horas y técnicas dominadas |
+| [MITRE_MAPPING.md](./docs/MITRE_MAPPING.md) | Mapeo completo de TTPs por adversario y lab |
+| [ARSENAL.md](./docs/ARSENAL.md) | Arsenal de herramientas con referencia por lab |
+| [CHANGELOG.md](./docs/CHANGELOG.md) | Registro de cambios del repositorio |
+| [DETECTION_RULES.md](./docs/DETECTION_RULES.md) | Event IDs y reglas SIGMA consolidadas |
+| [OPSEC_NOTES.md](./docs/OPSEC_NOTES.md) | Notas de OPSEC transversales |
+| [LAB_INFRASTRUCTURE.md](./docs/LAB_INFRASTRUCTURE.md) | Entorno VirtualBox + scripts de aprovisionamiento |
+| [WRITEUP_TEMPLATE.md](./docs/WRITEUP_TEMPLATE.md) | Plantilla estándar para writeups |
 
 ---
 
