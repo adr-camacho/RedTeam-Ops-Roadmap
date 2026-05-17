@@ -139,9 +139,9 @@ Red-Team_Labs/
 │   ├── PROGRESS.md
 │   └── WRITEUP_TEMPLATE.md
 ├── Phase-01-Fundamentals/
-│   ├── Lab-01-Attackitive-Directory/   ✅ GHOST FOREST (APT29)
-│   ├── Lab-02-Wreath/                  ✅ SILENT BRIDGE (APT41)
-│   └── Lab-03-Gatekeeper/              ✅ DARK GATE (APT29)
+│   ├── Lab-01-Ghost-Forest/            ✅ GHOST FOREST (APT29)
+│   ├── Lab-02-Silent-Bridge/           ✅ SILENT BRIDGE (APT41)
+│   └── Lab-03-Dark-Gate/               ✅ DARK GATE (APT29)
 ├── Phase-02-Post-Exploitation/
 ├── Phase-03-Red-Team-Operations/
 ├── Phase-04-Enterprise-Simulation/

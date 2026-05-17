@@ -763,7 +763,7 @@ tags:
 
 ## 📊 Resumen de Event IDs por lab
 
-### Lab-01 — Attacktive Directory (APT29)
+### Lab-01 — Ghost Forest (APT29)
 
 | TTP | Event ID | Fuente | Prioridad |
 |-----|----------|--------|-----------|
@@ -777,7 +777,7 @@ tags:
 | Golden Ticket | 4769 (lifetime anómalo) | DC Security | 🔴 Alta |
 | AMSI Bypass | Sysmon 13 | Sysmon | 🟡 Media |
 
-### Lab-02 — Wreath (APT41)
+### Lab-02 — Silent Bridge (APT41)
 
 | TTP | Event ID | Fuente | Prioridad |
 |-----|----------|--------|-----------|
