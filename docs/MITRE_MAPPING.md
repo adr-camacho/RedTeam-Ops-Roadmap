@@ -13,9 +13,9 @@
 | **Phase-01** | Lab-01 | APT29 / Cozy Bear | Rusia (SVR) | Espionaje, persistencia | Kerberos abuse, LOLBins, C2 encubierto |
 | **Phase-01** | Lab-02 | APT41 / Double Dragon | China (MSS) | Espionaje + económica | Web RCE, pivotaje agresivo, implantes multicapa |
 | **Phase-01** | Lab-03 | APT29 / Cozy Bear | Rusia (SVR) | Espionaje, persistencia | ADCS Abuse, certificate persistence, NTLM relay |
-| **Phase-02** | Labs 04-06 | APT28 / Fancy Bear | Rusia (GRU) | Espionaje, sabotaje | ACL Abuse, DCSync, Delegation, GPO Abuse |
-| **Phase-03** | Labs 07-09 | Lazarus Group | Corea del Norte (RGB) | Espionaje + financiera | EDR Evasion, AMSI Bypass, C2 avanzado |
-| **Phase-04** | Labs 10-12 | APT10 / Stone Panda | China (MSS) | Espionaje, supply chain | Forest Trusts, exfiltración masiva, Pro Labs |
+| **Phase-02** | Iron Forest, Silver Chain, Black Policy |  APT28 / Fancy Bear | Rusia (GRU) | Espionaje, sabotaje | ACL Abuse, DCSync, Delegation, GPO Abuse |
+| **Phase-03** | Ghost Signal, Dark Current, Deep Holo | Lazarus Group | Corea del Norte (RGB) | Espionaje + financiera | EDR Evasion, AMSI Bypass, C2 avanzado |
+| **Phase-04** | Red Dante, Deep Water, Operation Zephyr | APT10 / Stone Panda | China (MSS) | Espionaje, supply chain | Forest Trusts, exfiltración masiva, Pro Labs |
 
 > **Referencia:** [MITRE ATT&CK Groups](https://attack.mitre.org/groups/)
 

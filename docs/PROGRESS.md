@@ -26,31 +26,31 @@
 |-----|--------|-------------|-----------|-------|---------|
 | Lab-01: Ghost Forest | ✅ Completado | 09/05/2026 | 13/05/2026 | ~26h | ✅ Completo |
 | Lab-02: Silent Bridge | ✅ Completado | 13/05/2026 | 15/05/2026 | ~18h | ✅ Completo |
-| Lab-03: ADCS Abuse | ✅ Completado | 16/05/2026 | 17/05/2026 | ~16h | ✅ Completo |
+| Lab-03: Dark Gate | ✅ Completado | 16/05/2026 | 17/05/2026 | ~16h | ✅ Completo |
 
 ### 🟡 Phase-02 — AD Avanzado
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
-| Lab-04: Forest | ⏳ Pendiente | — | — | — | — |
-| Lab-05: Delegation Abuse | ⏳ Pendiente | — | — | — | — |
-| Lab-06: GPO + Trust Attacks | ⏳ Pendiente | — | — | — | — |
+| Lab-04: Iron Forest | ⏳ Pendiente | — | — | — | — |
+| Lab-05: Silver Chain | ⏳ Pendiente | — | — | — | — |
+| Lab-06: Black Policy | ⏳ Pendiente | — | — | — | — |
 
 ### 🔴 Phase-03 — Red Team & Evasión
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
-| Lab-07: EDR Evasion (Lazarus) | ⏳ Pendiente | — | — | — | — |
-| Lab-08: Havoc C2 (Lazarus) | ⏳ Pendiente | — | — | — | — |
-| Lab-09: Holo (Lazarus) | ⏳ Pendiente | — | — | — | — |
+| Lab-07: Ghost Signal (Lazarus) | ⏳ Pendiente | — | — | — | — |
+| Lab-08: Dark Current (Lazarus) | ⏳ Pendiente | — | — | — | — |
+| Lab-09: Deep Holo (Lazarus) | ⏳ Pendiente | — | — | — | — |
 
 ### 🏴 Phase-04 — Simulación Real
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
-| Lab-10: Dante (APT10) | ⏳ Pendiente | — | — | — | — |
-| Lab-11: Offshore (APT10) | ⏳ Pendiente | — | — | — | — |
-| Lab-12: Zephyr (APT10) | ⏳ Pendiente | — | — | — | — |
+| Lab-10: Red Dante (APT10) | ⏳ Pendiente | — | — | — | — |
+| Lab-11: Deep Water (APT10) | ⏳ Pendiente | — | — | — | — |
+| Lab-12: Operation Zephyr (APT10) | ⏳ Pendiente | — | — | — | — |
 
 ---
 
@@ -175,8 +175,7 @@
 | Lab-01 | Fase 13: ACL Abuse completo (fin.garcia → sql_svc) | Alta |
 | Lab-02 | Segundo pivote (tercer segmento de red) | Media |
 | Lab-02 | Evasión Defender real (Lab-07) | Media |
-| Lab-03 | Setup-Lab03-DarkGate.ps1 actualizado con fixes reales | Baja |
-| Lab-03 | Setup-Lab02-SilentBridge.sh (bash — PROD + GIT) | Media |
+| Lab-02 | Setup-Lab02-SilentBridge.sh (bash — PROD + GIT setup Ubuntu) | Media |
 
 ---
 

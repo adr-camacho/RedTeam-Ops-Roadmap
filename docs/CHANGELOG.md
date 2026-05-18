@@ -26,7 +26,7 @@
 - `tooling/kali_network_check.sh` — diagnóstico de red
 
 ### UPDATE
-- `README.md` — giro Red Team puro, roadmap actualizado, Lab-03 ADCS, estructura scripts/
+- `README.md` — giro Red Team puro, roadmap actualizado, Lab-03 ADCS, tooling/ y setup/provisioning/
 - `docs/PROGRESS.md` — Lab-03 completado, sesiones 9-10, 19 técnicas dominadas
 - `docs/CHANGELOG.md` — esta entrada
 - `Lab-03-Dark-Gate/OPERATION_DARK_GATE.md` — plan actualizado con datos reales

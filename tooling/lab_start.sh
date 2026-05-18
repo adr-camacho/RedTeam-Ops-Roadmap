@@ -42,7 +42,7 @@ banner() {
 lab_config() {
     case $LAB in
         "01")
-            LAB_NAME="GHOST FOREST — Ghost Forest (APT29)"
+            LAB_NAME="GHOST FOREST (APT29)"
             TARGETS=("10.0.2.10:DC-01" "10.0.2.8:WKSTN-01")
             NEEDS_LIGOLO=false
             SLIVER_LISTENER="https"

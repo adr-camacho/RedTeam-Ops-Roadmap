@@ -85,25 +85,25 @@ Entornos propios desplegados en **VirtualBox** — control total sobre vectores 
 
 | # | Operación | Adversario | Técnicas | Estado |
 |---|-----------|-----------|---------|--------|
-| 04 | Forest | APT28 | ACL Abuse, DCSync, Forest Trusts | ⏳ Pendiente |
-| 05 | Delegation Abuse | APT28 | Unconstrained + Constrained + RBCD | ⏳ Pendiente |
-| 06 | GPO + Trust Attacks | APT28 | GPO Abuse, SID History, Trust Exploitation | ⏳ Pendiente |
+| 04 | [IRON FOREST](./Phase-02-Post-Exploitation/Lab-04-Iron-Forest/) | APT28 | ACL Abuse, DCSync, Forest Trusts | ⏳ Pendiente |
+| 05 | [SILVER CHAIN](./Phase-02-Post-Exploitation/Lab-05-Silver-Chain/) | APT28 | Unconstrained + Constrained + RBCD | ⏳ Pendiente |
+| 06 | [BLACK POLICY](./Phase-02-Post-Exploitation/Lab-06-Black-Policy/) | APT28 | GPO Abuse, SID History, Trust Exploitation | ⏳ Pendiente |
 
 ### 🔴 Phase-03 — Red Team & Evasión
 
 | # | Operación | Adversario | Técnicas | Estado |
 |---|-----------|-----------|---------|--------|
-| 07 | EDR Evasion | Lazarus | AMSI bypass, process injection, syscalls directas | ⏳ Pendiente |
-| 08 | Havoc C2 | Lazarus | C2 avanzado, sleep obfuscation, BOFs | ⏳ Pendiente |
-| 09 | Holo | Lazarus | Simulación corporativa multicapa, pivoting avanzado | ⏳ Pendiente |
+| 07 | [GHOST SIGNAL](./Phase-03-Red-Team-Operations/Lab-07-Ghost-Signals/) | Lazarus | AMSI bypass, process injection, syscalls directas | ⏳ Pendiente |
+| 08 | [DARK CURRENT](./Phase-03-Red-Team-Operations/Lab-08-Dark-Current/) | Lazarus | C2 avanzado, sleep obfuscation, BOFs | ⏳ Pendiente |
+| 09 | [DEEP HOLO](./Phase-03-Red-Team-Operations/Lab-09-Deep-Holo/) | Lazarus | Simulación corporativa multicapa, pivoting avanzado | ⏳ Pendiente |
 
 ### 🏴 Phase-04 — Simulación Real
 
 | # | Operación | Adversario | Técnicas | Estado |
 |---|-----------|-----------|---------|--------|
-| 10 | Dante | APT10 | Red masiva mixta, persistencia, exfiltración | ⏳ Pendiente |
-| 11 | Offshore | APT10 | Forest Trusts avanzados, CRTO preparation | ⏳ Pendiente |
-| 12 | Zephyr | APT10 | AD completo — repaso total | ⏳ Pendiente |
+| 10 | [RED DANTE](./Phase-04-Enterprise-Simulation/Lab-10-Red-Dante/) | APT10 | Red masiva mixta, persistencia, exfiltración | ⏳ Pendiente |
+| 11 | [DEEP WATER](./Phase-04-Enterprise-Simulation/Lab-11-Deep-Water/) | APT10 | Forest Trusts avanzados, CRTO preparation | ⏳ Pendiente |
+| 12 | [OPERATION ZEPHYR](./Phase-04-Enterprise-Simulation/Lab-12-Operation-Zephyr/) | APT10 | AD completo — repaso total | ⏳ Pendiente |
 
 ---
 
