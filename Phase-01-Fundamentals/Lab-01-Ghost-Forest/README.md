@@ -1,4 +1,4 @@
-# 🔴 Lab-01: Attacktive Directory
+# 🔴 Lab-01: Ghost Forest
 ## Operación GHOST FOREST — APT29 Emulation
 
 **Fase:** Phase-01 Fundamentals | **Dificultad:** Media-Alta | **Estado:** ✅ Completado  

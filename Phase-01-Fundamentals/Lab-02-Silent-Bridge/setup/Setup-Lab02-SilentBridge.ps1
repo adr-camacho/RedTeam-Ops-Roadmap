@@ -1,16 +1,16 @@
 # ============================================================
-#  SILENT BRIDGE — Lab-02 Wreath
+#  SILENT BRIDGE — Lab-02 Silent Bridge
 #  Setup Script: Entorno de red segmentada (tres nodos)
 #  Operación: APT41 Emulation | MITRE ATT&CK v14
 #  Autor: Red Team Ops Roadmap — Adrián Camacho
 #
 #  TOPOLOGÍA:
 #    Kali (10.0.2.9) → PROD Linux (10.0.2.200) → Red interna
-#                                                  ├── GIT Linux (10.0.2.150)
-#                                                  └── PC Windows (10.0.2.100)
+#                                                  ├── GIT Linux (10.0.3.150)
+#                                                  └── PC-01 Windows (10.0.3.7)
 #
 #  ESTE SCRIPT configura:
-#    [1] PROD  — Webmin vulnerable (CVE-2019-15107) + SSH
+#    [1] PROD  — Webmin vulnerable (CVE-2019-12840) + SSH
 #    [2] GIT   — Gitea con credenciales en repositorio
 #    [3] PC    — WinRM + usuario con credenciales del repo
 #
@@ -40,7 +40,7 @@ nc -zv 10.0.2.200 22 2>&1
 
 # ──────────────────────────────────────────────────────────────
 # BLOQUE 1 — PROD: Downgrade Webmin a versión vulnerable
-# CVE-2019-15107 — RCE pre-auth via /password_change.cgi
+# CVE-2019-12840 — RCE pre-auth via /password_change.cgi
 # Afecta a Webmin < 1.920 con passwd_mode habilitado
 # ──────────────────────────────────────────────────────────────
 
@@ -54,7 +54,7 @@ dpkg -i webmin_1.890_all.deb
 # Verificar versión instalada
 grep "^version=" /etc/webmin/version || cat /usr/share/webmin/version
 
-# Habilitar passwd_mode (necesario para CVE-2019-15107)
+# Habilitar passwd_mode (necesario para CVE-2019-12840)
 # En /etc/webmin/miniserv.conf añadir o verificar:
 grep "passwd_mode" /etc/webmin/miniserv.conf || echo "passwd_mode=2" >> /etc/webmin/miniserv.conf
 
@@ -208,18 +208,18 @@ echo ""
 # GIT — Puerto Git o HTTP
 echo "[*] GIT — Repositorio accesible"
 # Ajustar IP real del GIT server
-curl -s http://10.0.2.150/ | head -5
+curl -s http://10.0.3.150/ | head -5
 echo ""
 
 # PC — WinRM
 echo "[*] PC — WinRM :5985"
 # Ajustar IP real del PC Windows
-nc -zv 10.0.2.100 5985 2>&1
+nc -zv 10.0.3.7 5985 2>&1
 echo ""
 
 echo "============================================================"
 echo "  Kill Chain disponible:"
-echo "  PROD (CVE-2019-15107) → Ligolo-ng → GIT (git history)"
+echo "  PROD (CVE-2019-12840) → Ligolo-ng → GIT (git history)"
 echo "  → credenciales thomas:iamthegreatest → PC WinRM → DA"
 echo "============================================================"
 '
@@ -234,22 +234,22 @@ ENTORNO WREATH — SILENT BRIDGE
 
 HOSTS:
   PROD    10.0.2.200  Linux    Webmin 1.890 vulnerable
-  GIT     10.0.2.150  Linux    Git repo con credenciales
-  PC      10.0.2.100  Windows  WinRM habilitado
+  GIT     10.0.3.150  Linux    Git repo con credenciales
+  PC-01   10.0.3.7    Windows  WinRM habilitado
   Kali    10.0.2.9    Linux    Atacante
 
 CREDENCIALES:
-  PROD root   → acceso via CVE-2019-15107 (no requiere credenciales)
+  PROD root   → acceso via CVE-2019-12840 (no requiere credenciales)
   GIT  thomas → thomas:thomas (SSH local)
   PC   thomas → thomas:iamthegreatest (WinRM — reutilización)
 
 VECTORES:
-  [V1] CVE-2019-15107 → RCE en PROD sin autenticación
+  [V1] CVE-2019-12840 → RCE en PROD sin autenticación
   [V2] Git history    → credenciales en commit antiguo
   [V3] WinRM + PtH/creds → acceso al PC Windows
 
 KILL CHAIN:
-  Nmap PROD → CVE-2019-15107 → shell PROD
+  Nmap PROD → CVE-2019-12840 → shell PROD
     → Ligolo-ng agent → túnel TLS
     → Enumeración interna → GIT server
     → git log / git show → thomas:iamthegreatest

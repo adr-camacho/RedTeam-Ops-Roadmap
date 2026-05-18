@@ -14,7 +14,7 @@ El objetivo no es ejecutar herramientas mecánicamente — es **entender cada t�
 
 ## 🎯 Enfoque
 
-**Red Team puro** — emulación de adversarios reales (APT29, APT41, FIN7, APT28, Lazarus, APT10) con técnicas aplicables en engagements profesionales 2024-2026.
+**Red Team puro** — emulación de adversarios reales (APT29, APT41, APT28, Lazarus, APT10) con técnicas aplicables en engagements profesionales 2024-2026.
 
 - Exploits construidos manualmente cuando los frameworks fallan
 - C2 con Sliver (open source, equivalente a Cobalt Strike)
@@ -67,7 +67,7 @@ Entornos propios desplegados en **VirtualBox** — control total sobre vectores 
 | **Cracking** | Hashcat, John the Ripper |
 | **Escaneo** | Nmap, Gobuster, Feroxbuster |
 
-> 📄 Arsenal completo + setup: [scripts/arsenal_setup.sh](./scripts/arsenal_setup.sh) | [ARSENAL.md](./docs/ARSENAL.md)
+> 📄 Arsenal completo + setup: [tooling/arsenal_setup.sh](./tooling/arsenal_setup.sh) | [ARSENAL.md](./docs/ARSENAL.md)
 
 ---
 
@@ -77,9 +77,9 @@ Entornos propios desplegados en **VirtualBox** — control total sobre vectores 
 
 | # | Operación | Adversario | Técnicas | Estado |
 |---|-----------|-----------|---------|--------|
-| 01 | [GHOST FOREST](./Phase-01-Fundamentals/Lab-01-Attackitive-Directory/) | APT29 | AS-REP Roasting, Kerberoasting, DCSync, Pass-the-Hash, C2 Sliver | ✅ Completado |
-| 02 | [SILENT BRIDGE](./Phase-01-Fundamentals/Lab-02-Wreath/) | APT41 | CVE-2019-12840, Ligolo-ng, Git history, relay C2 | ✅ Completado |
-| 03 | [DARK GATE](./Phase-01-Fundamentals/Lab-03-Gatekeeper/) | APT29 | ADCS ESC1/ESC4/ESC8, Certipy, cert persistence | ✅ Completado |
+| 01 | [GHOST FOREST](./Phase-01-Fundamentals/Lab-01-Ghost-Forest/) | APT29 | AS-REP Roasting, Kerberoasting, DCSync, Pass-the-Hash, C2 Sliver | ✅ Completado |
+| 02 | [SILENT BRIDGE](./Phase-01-Fundamentals/Lab-02-Silent-Bridge/) | APT41 | CVE-2019-12840, Ligolo-ng, Git history, relay C2 | ✅ Completado |
+| 03 | [DARK GATE](./Phase-01-Fundamentals/Lab-03-Dark-Gate/) | APT29 | ADCS ESC1/ESC4/ESC8, Certipy, cert persistence | ✅ Completado |
 
 ### 🟡 Phase-02 — AD Avanzado
 
@@ -124,7 +124,7 @@ Entornos propios desplegados en **VirtualBox** — control total sobre vectores 
 
 ```
 Red-Team_Labs/
-├── scripts/                        ← utilidades globales
+├── tooling/                        ← utilidades del operador (Kali)
 │   ├── arsenal_setup.sh            ← instala todo el arsenal en Kali
 │   ├── lab_start.sh                ← arranca entorno de un lab
 │   ├── lab_stop.sh                 ← limpia entre labs
@@ -145,7 +145,8 @@ Red-Team_Labs/
 ├── Phase-02-Post-Exploitation/
 ├── Phase-03-Red-Team-Operations/
 ├── Phase-04-Enterprise-Simulation/
-└── setup/                          ← scripts de setup de infraestructura base
+└── setup/                          ← aprovisionamiento del dominio (DC-01)
+    └── provisioning/               ← PowerShell scripts para DC-01
 ```
 
 Cada lab sigue la estructura:

@@ -1,5 +1,5 @@
 # 🎯 OPERATION SILENT BRIDGE
-### Plan de Operación — Lab-02: Wreath
+### Plan de Operación — Lab-02: Silent Bridge
 
 ---
 
@@ -8,7 +8,7 @@
 | Campo | Detalle |
 |-------|---------|
 | **Nombre en clave** | SILENT BRIDGE |
-| **Fecha de inicio** | — |
+| **Fecha de inicio** | 13/05/2026 |
 | **Operador** | Adrián Camacho |
 | **Adversario simulado** | APT41 (Double Dragon) |
 | **Framework** | MITRE ATT&CK v14 — Enterprise |
@@ -27,7 +27,7 @@ APT41 es un actor de amenaza persistente avanzada atribuido al Ministerio de Seg
 
 | Característica | Implementación en el lab |
 |---------------|--------------------------|
-| **Explotación de aplicaciones web** | Webmin CVE-2019-15107 como vector de entrada inicial |
+| **Explotación de aplicaciones web** | Webmin CVE-2019-12840 como vector de entrada inicial |
 | **Pivotaje agresivo** | Ligolo-ng para atravesar segmentación de red sin reglas de firewall |
 | **Implantes en capas** | Beacon Sliver desplegado en red interna, fuera de la DMZ |
 | **Living-off-the-Land en Windows** | Comandos nativos antes de subir herramientas externas |
@@ -57,8 +57,8 @@ APT41 es un actor de amenaza persistente avanzada atribuido al Ministerio de Seg
 │          │         ▼                                                 │
 │          │   ┌──────────────────────┐   ┌──────────────────────┐   │
 │          │   │   GIT SERVER (Linux) │   │   PC (Windows)       │   │
-│          │   │   10.0.2.150         │   │   10.0.2.100         │   │
-│          │   │   Gitea :3000        │   │   SMB / RDP / WinRM  │   │
+│          │   │   10.0.3.150         │   │   10.0.3.7         │   │
+│          │   │   Git HTTP                │   │   SMB / RDP / WinRM  │   │
 │          │   └──────────────────────┘   └──────────────────────┘   │
 │          │                                                           │
 │          └──────── (acceso vía túnel Ligolo-ng) ───────────────────►│
@@ -73,11 +73,11 @@ El pivotaje se realiza a través de PROD — único nodo con acceso a ambas rede
 | Host | SO | IP | Rol en la operación |
 |------|----|----|---------------------|
 | Kali | Kali Linux 2026.1 | `10.0.2.9` | Máquina operadora APT41 |
-| PROD | Linux (CentOS/Ubuntu) | `10.0.2.200` | Objetivo externo — punto de pivote |
-| GIT | Linux | `10.0.2.150` (aprox.) | Servidor interno — escalada |
-| PC | Windows 10/11 | `10.0.2.100` (aprox.) | Objetivo final — red interna |
+| PROD | Ubuntu 22.04 | `10.0.2.200` | Objetivo externo — punto de pivote |
+| GIT | Linux | `10.0.3.150`  | Servidor interno — escalada |
+| PC-01 | Windows 11 | `10.0.3.7`  | Objetivo final — red interna |
 
-> ⚠️ Las IPs internas (.150, .100) son estimadas. Se confirmarán mediante enumeración post-pivote.
+> ⚠️ IPs confirmadas tras ejecución real del lab.
 
 ---
 
@@ -94,19 +94,19 @@ El pivotaje se realiza a través de PROD — único nodo con acceso a ambas rede
 | 1.1 | Network Service Discovery | T1046 | Nmap (port scan completo) | ✅ Output completo del escaneo |
 | 1.2 | Service Version Detection | T1046 | Nmap -sC -sV | ✅ Versiones de servicios identificadas |
 | 1.3 | Web Application Fingerprint | T1592.002 | curl / whatweb / Wappalyzer | ✅ Tecnologías y versión Webmin |
-| 1.4 | CVE Identification | T1588.006 | searchsploit / exploitdb | ✅ CVE-2019-15107 confirmado |
+| 1.4 | CVE Identification | T1588.006 | searchsploit / exploitdb | ✅ CVE-2019-12840 confirmado |
 
-**Criterio de éxito:** Versión de Webmin confirmada como vulnerable. CVE-2019-15107 identificado como vector de explotación.
+**Criterio de éxito:** Versión de Webmin confirmada como vulnerable. CVE-2019-12840 identificado como vector de explotación.
 
 ---
 
 ### FASE 2 — Initial Access (Foothold en PROD)
 **Táctica MITRE:** TA0001 — Initial Access  
-**Objetivo:** Obtener ejecución remota de código en PROD mediante explotación del CVE-2019-15107 en Webmin.
+**Objetivo:** Obtener ejecución remota de código en PROD mediante explotación del CVE-2019-12840 en Webmin.
 
 | # | Técnica | ID MITRE | Herramienta | Captura requerida |
 |---|---------|----------|-------------|-------------------|
-| 2.1 | Exploit Public-Facing Application | T1190 | CVE-2019-15107 (manual / Metasploit) | ✅ RCE confirmado — shell en PROD |
+| 2.1 | Exploit Public-Facing Application | T1190 | CVE-2019-12840 (manual / Metasploit) | ✅ RCE confirmado — shell en PROD |
 | 2.2 | Command Execution | T1059.004 | Bash reverse shell | ✅ Shell reversa estable |
 | 2.3 | System Information Discovery | T1082 | id, uname -a, hostname, ip addr | ✅ Contexto del sistema comprometido |
 | 2.4 | Network Interface Discovery | T1016 | ip addr, ip route, ifconfig | ✅ Interfaces y redes accesibles desde PROD |
@@ -227,7 +227,7 @@ ligolo-ng » start            # activar túnel
 | 1 | `fase1-01-nmap-port-discovery.png` | Output completo Nmap — PROD |
 | 1 | `fase1-02-nmap-service-version.png` | Versiones de servicios — Webmin confirmado |
 | 1 | `fase1-03-webmin-fingerprint.png` | Webmin versión vulnerable |
-| 1 | `fase1-04-cve-identification.png` | CVE-2019-15107 identificado |
+| 1 | `fase1-04-cve-identification.png` | CVE-2019-12840 identificado |
 | 2 | `fase2-01-webmin-exploit-rce.png` | RCE exitoso en PROD |
 | 2 | `fase2-02-shell-prod-established.png` | Shell reversa estable |
 | 2 | `fase2-03-prod-sysinfo.png` | id / uname / hostname |
@@ -261,7 +261,7 @@ ligolo-ng » start            # activar túnel
 | Documento | Descripción |
 |-----------|-------------|
 | `enumeration_log.md` | Bitácora de reconocimiento externo e interno |
-| `exploitation.md` | Fase 2: CVE-2019-15107 — explotación Webmin |
+| `exploitation.md` | Fase 2: CVE-2019-12840 — explotación Webmin |
 | `pivoting.md` | Fase 3: Ligolo-ng — setup, túnel y routing |
 | `post-exploitation.md` | Fases 4-5: enumeración interna + lateral movement |
 | `c2_sliver.md` | Fase 6: Beacon Sliver en red interna |

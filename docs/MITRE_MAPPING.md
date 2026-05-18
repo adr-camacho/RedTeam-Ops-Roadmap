@@ -39,7 +39,7 @@
 
 ### 🟢 Phase-01 — Fundamentos y Pivotaje (Labs 01-03)
 
-#### Lab-01 — Attacktive Directory | Adversario: APT29 (Cozy Bear)
+#### Lab-01 — Ghost Forest | Adversario: APT29 (Cozy Bear)
 
 | Táctica | Técnica | Sub-técnica | ID | Herramienta | Estado |
 |---------|---------|-------------|-----|-------------|--------|
@@ -66,7 +66,7 @@
 
 ---
 
-#### Lab-02 — Wreath | Adversario: APT41 (Double Dragon)
+#### Lab-02 — Silent Bridge | Adversario: APT41 (Double Dragon)
 
 | Táctica | Técnica | Sub-técnica | ID | Herramienta | Estado |
 |---------|---------|-------------|-----|-------------|--------|

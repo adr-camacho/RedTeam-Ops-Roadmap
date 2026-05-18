@@ -38,7 +38,7 @@ Write-Host "`n[*] Creando usuarios corporativos..." -ForegroundColor Cyan
 $usuarios = @(
     @{ Name="Carlos Martinez"; Sam="ceo.martinez"; Pass="Direccion2024!"; OU="OU=Direccion,OU=Corporativo,DC=atackcorp,DC=local"; NoPreAuth=$true },
     @{ Name="Laura Lopez";     Sam="rrhh.lopez";   Pass="RRHH2024!";      OU="OU=RRHH,OU=Corporativo,DC=atackcorp,DC=local";      NoPreAuth=$false },
-    @{ Name="Fernando Garcia"; Sam="fin.garcia";   Pass="Finanzas2024!";  OU="OU=Finanzas,OU=Corporativo,DC=atackcorp,DC=local";  NoPreAuth=$false },
+    @{ Name="Fernando Garcia"; Sam="fin.garcia";   Pass="Finance2024!" ;  OU="OU=Finanzas,OU=Corporativo,DC=atackcorp,DC=local";  NoPreAuth=$false },
     @{ Name="IT Admin";        Sam="it.admin";     Pass="ITAdmin2024!";   OU="OU=Administradores,OU=IT,DC=atackcorp,DC=local";    NoPreAuth=$false },
     @{ Name="Helpdesk Ruiz";   Sam="helpdesk.ruiz";Pass="Helpdesk2024!";  OU="OU=Helpdesk,OU=IT,DC=atackcorp,DC=local";          NoPreAuth=$false }
 )

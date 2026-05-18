@@ -303,7 +303,7 @@ foreach ($ou in $OUs) {
 $usuarios = @(
     @{ Name="Carlos Martinez"; Sam="ceo.martinez"; Pass="Direccion2024!"; OU="OU=Direccion,OU=Corporativo,DC=atackcorp,DC=local"; NoPreAuth=$true },
     @{ Name="Laura Lopez";     Sam="rrhh.lopez";   Pass="RRHH2024!";      OU="OU=RRHH,OU=Corporativo,DC=atackcorp,DC=local";      NoPreAuth=$false },
-    @{ Name="Fernando Garcia"; Sam="fin.garcia";   Pass="Finanzas2024!";  OU="OU=Finanzas,OU=Corporativo,DC=atackcorp,DC=local";  NoPreAuth=$false },
+    @{ Name="Fernando Garcia"; Sam="fin.garcia";   Pass="Finance2024!" ;  OU="OU=Finanzas,OU=Corporativo,DC=atackcorp,DC=local";  NoPreAuth=$false },
     @{ Name="IT Admin";        Sam="it.admin";     Pass="ITAdmin2024!";   OU="OU=Administradores,OU=IT,DC=atackcorp,DC=local";    NoPreAuth=$false },
     @{ Name="Helpdesk Ruiz";   Sam="helpdesk.ruiz";Pass="Helpdesk2024!";  OU="OU=Helpdesk,OU=IT,DC=atackcorp,DC=local";          NoPreAuth=$false }
 )
@@ -614,7 +614,7 @@ Write-Host "`n[+] Script 06 completado. WKSTN-01 lista."
 | `backup_svc` | `Backup2024!` | **Domain Admin** | AS-REP Roasting + Kerberoasting |
 | `sql_svc` | `SqlService123` | Cuenta servicio | Kerberoasting + Unconstrained Deleg. |
 | `iis_svc` | `IisService123` | Cuenta servicio | Kerberoasting + Constrained Deleg. |
-| `fin.garcia` | `Finanzas2024!` | Usuario normal | GenericWrite sobre sql_svc |
+| `fin.garcia` | `Finance2024!` | Usuario normal | GenericWrite sobre sql_svc |
 | `it.admin` | `ITAdmin2024!` | Account Operators | ACL Abuse |
 | `helpdesk.ruiz` | `Helpdesk2024!` | Helpdesk | WriteDACL, GPO, SeImpersonate |
 | `rrhh.lopez` | `RRHH2024!` | Usuario normal | Credenciales en share |

@@ -1,7 +1,7 @@
-# 🔴 Lab-02: Wreath — Pivotaje Avanzado con Ligolo-ng
+# 🔴 Lab-02: Silent Bridge — Pivotaje Avanzado con Ligolo-ng
 
-![Status](https://img.shields.io/badge/Status-In%20Progress-orange)
-![Platform](https://img.shields.io/badge/Platform-Lab%20Propio%20(ref.%20THM)-red)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
+![Platform](https://img.shields.io/badge/Platform-Lab%20Propio-red)
 ![Phase](https://img.shields.io/badge/Phase-01%20Fundamentals-blue)
 ![Adversary](https://img.shields.io/badge/Adversary-APT41%20Double%20Dragon-darkred)
 ![Focus](https://img.shields.io/badge/Focus-Pivoting%20%7C%20Network%20Segmentation-purple)
@@ -11,13 +11,13 @@
 
 ## 🎯 Resumen Ejecutivo
 
-Operación de pivotaje en red segmentada de tres nodos, emulando las TTPs de **APT41 (Double Dragon)**. Se compromete una máquina de producción Linux expuesta públicamente explotando **CVE-2019-15107** (Webmin RCE pre-auth), para desde ella establecer un **túnel TLS con Ligolo-ng** hacia la red interna segmentada, alcanzar un servidor Git con credenciales expuestas y comprometer finalmente un **PC Windows no accesible desde Internet**.
+Operación de pivotaje en red segmentada de tres nodos, emulando las TTPs de **APT41 (Double Dragon)**. Se compromete una máquina de producción Linux expuesta públicamente explotando **CVE-2019-12840** (Webmin RCE autenticado), para desde ella establecer un **túnel TLS con Ligolo-ng** hacia la red interna segmentada, alcanzar un servidor Git con credenciales expuestas y comprometer finalmente un **PC Windows no accesible desde Internet**.
 
 | Campo | Detalle |
 |-------|---------|
 | **Nombre de operación** | SILENT BRIDGE |
 | **Adversario simulado** | APT41 (Double Dragon) — MSS China |
-| **Vector inicial** | CVE-2019-15107 — Webmin RCE (pre-auth) |
+| **Vector inicial** | CVE-2019-12840 — Webmin RCE (autenticado) |
 | **Técnica de pivotaje** | Ligolo-ng — TLS tunnel + kernel tuntap interface |
 | **C2 final** | Sliver beacon en PC Windows (red interna) |
 | **Objetivo primario** | Compromiso del PC Windows en red interna |
@@ -33,10 +33,10 @@ Operación de pivotaje en red segmentada de tres nodos, emulando las TTPs de **A
                                      Ligolo-ng TLS
                                      (tuntap tunnel)
                                             │
-                              Red Interna (.X/24)
+                              LabInternal (10.0.3.0/24)
                            ┌────────────────┴───────────────┐
                            │                                │
-                    [GIT Server Linux]            [PC Windows]
+                    [GIT Server 10.0.3.150]            [PC-01 10.0.3.7]
                     Gitea :3000                   SMB :445
                     SSH :22                       WinRM :5985
                     [credenciales en repos]        [objetivo final]
@@ -49,7 +49,7 @@ Operación de pivotaje en red segmentada de tres nodos, emulando las TTPs de **A
 | # | Fase | Técnica | ID MITRE | Herramienta |
 |---|------|---------|----------|-------------|
 | 1 | Reconnaissance | Network Service Discovery | T1046 | Nmap |
-| 2 | Initial Access | Exploit Public-Facing App | T1190 | CVE-2019-15107 |
+| 2 | Initial Access | Exploit Public-Facing App | T1190 | CVE-2019-12840 |
 | 3 | Pivoting | Protocol Tunneling | T1572 | Ligolo-ng |
 | 4 | Internal Recon | Network Service Discovery | T1046 | Nmap (vía túnel) |
 | 4 | Credential Discovery | Credentials in Files | T1552.001 | Git / Gitea |
@@ -63,7 +63,7 @@ Operación de pivotaje en red segmentada de tres nodos, emulando las TTPs de **A
 
 | Categoría | Herramienta |
 |-----------|-------------|
-| **Explotación** | CVE-2019-15107 (Webmin RCE) |
+| **Explotación** | CVE-2019-12840 (Webmin RCE) |
 | **Pivotaje** | Ligolo-ng v0.7.x (proxy + agent) |
 | **Acceso remoto** | Evil-WinRM |
 | **C2** | Sliver (BishopFox) — beacon HTTPS |
@@ -111,7 +111,7 @@ Operación de pivotaje en red segmentada de tres nodos, emulando las TTPs de **A
 
 ```
 TA0043 Reconnaissance   → T1046 (Nmap), T1592.002 (Web fingerprint)
-TA0001 Initial Access   → T1190 (CVE-2019-15107 Webmin RCE)
+TA0001 Initial Access   → T1190 (CVE-2019-12840 Webmin RCE)
 TA0011 C&C              → T1572 (Ligolo-ng tunnel), T1573.002 (Sliver HTTPS)
 TA0011 C&C              → T1071.001 (HTTP/S C2), T1090 (Proxy via PROD)
 TA0007 Discovery        → T1046 (Nmap interno), T1135 (SMB enum)

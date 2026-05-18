@@ -19,11 +19,11 @@
 - `Lab-03-Dark-Gate/docs/mitigations.md` — mitigaciones + reglas SIGMA + CRL/OCSP
 - `Lab-03-Dark-Gate/setup/Setup-Lab03-DarkGate.ps1` — script setup ADCS 4 bloques
 - `Lab-03-Dark-Gate/screenshots/` — fases 1-6 con capturas reales
-- `Phase-01-Fundamentals/Lab-01-Attackitive-Directory/setup/Setup-Lab01-GhostForest-v2.ps1`
-- `scripts/arsenal_setup.sh` — arsenal completo Kali (12 bloques)
-- `scripts/lab_start.sh` — arranque rápido por lab
-- `scripts/lab_stop.sh` — limpieza entre labs
-- `scripts/kali_network_check.sh` — diagnóstico de red
+- `Phase-01-Fundamentals/Lab-01-Ghost-Forest/setup/Setup-Lab01-GhostForest-v2.ps1`
+- `tooling/arsenal_setup.sh` — arsenal completo Kali (12 bloques)
+- `tooling/lab_start.sh` — arranque rápido por lab
+- `tooling/lab_stop.sh` — limpieza entre labs
+- `tooling/kali_network_check.sh` — diagnóstico de red
 
 ### UPDATE
 - `README.md` — giro Red Team puro, roadmap actualizado, Lab-03 ADCS, estructura scripts/
@@ -48,7 +48,7 @@
 ### FIX
 - `OPERATION_DARK_GATE.md` movido a `Lab-03-Dark-Gate/` (estaba en Phase-01 raíz)
 - `SILENT_BRIDGE.md` → `OPERATION_SILENT_BRIDGE.md` (consistencia naming)
-- `setup/sripts/` → `setup/scripts/` (typo corregido)
+- `setup/provisioning/` → `setup/provisioning/` (typo corregido)
 - `Lab-01/docs/README.md` → `Lab-01/README.md` (ubicación correcta)
 
 ---

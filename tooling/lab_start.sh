@@ -42,14 +42,14 @@ banner() {
 lab_config() {
     case $LAB in
         "01")
-            LAB_NAME="GHOST FOREST — Attacktive Directory (APT29)"
+            LAB_NAME="GHOST FOREST — Ghost Forest (APT29)"
             TARGETS=("10.0.2.10:DC-01" "10.0.2.8:WKSTN-01")
             NEEDS_LIGOLO=false
             SLIVER_LISTENER="https"
             SLIVER_PORT=443
             ;;
         "02")
-            LAB_NAME="SILENT BRIDGE — Wreath (APT41)"
+            LAB_NAME="SILENT BRIDGE (APT41)"
             TARGETS=("10.0.2.200:PROD" "10.0.3.150:GIT" "10.0.3.7:PC-01")
             NEEDS_LIGOLO=true
             LIGOLO_NETWORK="10.0.3.0/24"

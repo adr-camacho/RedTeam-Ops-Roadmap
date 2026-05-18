@@ -1,5 +1,5 @@
 # 🎯 OPERATION GHOST FOREST
-### Plan de Operación — Lab-01: Attacktive Directory
+### Plan de Operación — Lab-01: Ghost Forest
 
 ---
 

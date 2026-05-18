@@ -42,7 +42,7 @@ Tras ejecutar todos los scripts el entorno queda configurado con:
 | `backup_svc` | `Backup2024!` | AS-REP Roasting |
 | `sql_svc` | `SqlService123` | Kerberoasting + Unconstrained Delegation |
 | `iis_svc` | `IisService123` | Kerberoasting + Constrained Delegation |
-| `fin.garcia` | `Finanzas2024!` | GenericWrite sobre sql_svc |
+| `fin.garcia` | `Finance2024!` | GenericWrite sobre sql_svc |
 | `it.admin` | `ITAdmin2024!` | Account Operators |
 | `helpdesk.ruiz` | `Helpdesk2024!` | WriteDACL + GPO Abuse + SeImpersonate |
 | `rrhh.lopez` | `RRHH2024!` | Credenciales en share SMB |

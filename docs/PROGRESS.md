@@ -24,8 +24,8 @@
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
-| Lab-01: Attacktive Directory | ✅ Completado | 09/05/2026 | 13/05/2026 | ~26h | ✅ Completo |
-| Lab-02: Wreath | ✅ Completado | 13/05/2026 | 15/05/2026 | ~18h | ✅ Completo |
+| Lab-01: Ghost Forest | ✅ Completado | 09/05/2026 | 13/05/2026 | ~26h | ✅ Completo |
+| Lab-02: Silent Bridge | ✅ Completado | 13/05/2026 | 15/05/2026 | ~18h | ✅ Completo |
 | Lab-03: ADCS Abuse | ✅ Completado | 16/05/2026 | 17/05/2026 | ~16h | ✅ Completo |
 
 ### 🟡 Phase-02 — AD Avanzado
@@ -101,7 +101,7 @@
 
 #### 📌 14/05/2026 — Sesión 7: Lab-02 Fases 1-3
 - Webmin 1.890 instalado con dependencias manuales
-- CVE-2019-15107 bloqueado → CVE-2019-12840 — exploit Python construido desde `46984.rb`
+- CVE-2019-15107 bloqueado (MINISERV_INTERNAL) → CVE-2019-12840 — exploit Python construido desde `46984.rb`
 - Shell reversa `root@prod` ✅ | Ligolo-ng v0.7.5 → red interna enrutada ✅
 - **Horas:** ~8h
 
