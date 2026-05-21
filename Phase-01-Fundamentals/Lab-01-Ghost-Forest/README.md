@@ -2,7 +2,7 @@
 ## Operación GHOST FOREST — APT29 Emulation
 
 **Fase:** Phase-01 Fundamentals | **Dificultad:** Media-Alta | **Estado:** ✅ Completado  
-**Fecha:** 09/05/2026 → 13/05/2026 | **Tiempo invertido:** ~26h  
+**Fecha:** 09/05/2026 → 20/05/2026 | **Tiempo invertido:** ~40h  
 **Adversario simulado:** APT29 (Cozy Bear) | **Framework:** MITRE ATT&CK v14
 
 ---
@@ -16,6 +16,8 @@ El acceso inicial se obtuvo explotando configuraciones inseguras de Kerberos (**
 Posteriormente se desplegó infraestructura C2 real (**Sliver**) en la workstation, se volcaron todos los hashes NTLM del dominio via **DCSync** y se obtuvo acceso interactivo como la cuenta `Administrador` built-in mediante **Pass-the-Hash**.
 
 **Impacto:** Crítico — compromiso total del dominio `atackcorp.local`. Acceso a todos los sistemas, datos y credenciales del entorno.
+
+Las Fases 11-13 amplían la cadena de ataque con técnicas avanzadas de post-explotación AD: **Unconstrained/Constrained Delegation**, **GPO Abuse** y **ACL Abuse (Targeted Kerberoasting)**. Se incorpora **BloodHound CE** como herramienta metodológica central para mapear attack paths.
 
 ---
 
@@ -65,6 +67,22 @@ Kali (10.0.2.9)
       │
       ▼
 atackcorp\Administrador — Domain Admin — DC-01 comprometido 🏆
+      │
+      ▼
+[Fase 11] Unconstrained Delegation (sql_svc) → TGT DC-01$ capturado
+          Constrained Delegation (iis_svc) → S4U2Proxy como Administrador
+          BloodHound CE → Attack paths mapeados
+          T1558.001, T1187, T1003.006
+      │
+      ▼
+[Fase 12] GPO Abuse (helpdesk.ruiz → IT-Baseline → SYSTEM en WKSTN-01)
+          helpdesk.ruiz → Administradores locales WKSTN-01 ✅
+          T1484.001, T1053.005
+      │
+      ▼
+[Fase 13] ACL Abuse (fin.garcia → GenericWrite → sql_svc → Kerberoast → DA)
+          SQLService2024! crackeada via Targeted Kerberoasting ✅
+          T1222, T1558.003, T1110.002
 ```
 
 ---
@@ -80,6 +98,11 @@ atackcorp\Administrador — Domain Admin — DC-01 comprometido 🏆
 | C2 activo en WKSTN-01 | ✅ |
 | Escalada a SYSTEM (LPE) | ⚠️ Bloqueado por WinRM/Win11 |
 | Golden Ticket persistencia | ⚠️ Bloqueado por PAC Validation WS2022 |
+| Unconstrained Delegation (sql_svc) | ✅ |
+| Constrained Delegation (iis_svc) | ✅ |
+| BloodHound CE — attack paths | ✅ |
+| GPO Abuse (helpdesk.ruiz → WKSTN-01) | ✅ |
+| ACL Abuse (fin.garcia → sql_svc → DA) | ✅ |
 
 ---
 
@@ -104,6 +127,13 @@ atackcorp\Administrador — Domain Admin — DC-01 comprometido 🏆
 | Persistence | Golden Ticket | T1558.001 | ⚠️ Parcial |
 | Credential Access | DCSync | T1003.006 | ✅ |
 | Lateral Movement | Pass-the-Hash | T1550.002 | ✅ |
+| Credential Access | Unconstrained Delegation | T1558.001 | ✅ |
+| Credential Access | Forced Authentication (PetitPotam) | T1187 | ✅ |
+| Credential Access | Constrained Delegation (S4U2Proxy) | T1558.001 | ✅ |
+| Privilege Escalation | Group Policy Modification | T1484.001 | ✅ |
+| Execution | Scheduled Task via GPO | T1053.005 | ✅ |
+| Credential Access | ACL Abuse (GenericWrite→SPN) | T1222 | ✅ |
+| Credential Access | Targeted Kerberoasting | T1558.003 | ✅ |
 
 ---
 
@@ -115,6 +145,8 @@ atackcorp\Administrador — Domain Admin — DC-01 comprometido 🏆
 | `backup_svc` | `Backup2024!` | AS-REP Roasting + Kerberoasting | **Domain Admin** |
 | `krbtgt` | `d5237a2e43cb315c90679e2a5dae34ad` (NT) | DCSync | — |
 | `Administrador` | `b73fdfe10e87b4ca5c0d957f81de6863` (NT) | DCSync | **Domain Admin** |
+| `sql_svc` | `SQLService2024!` | Targeted Kerberoasting (fin.garcia GenericWrite) | Unconstrained Delegation |
+| `helpdesk.ruiz` | `Helpdesk2024!` | GPO Abuse (admin local WKSTN-01) | Admin local WKSTN-01 |
 
 ---
 
@@ -143,7 +175,11 @@ atackcorp\Administrador — Domain Admin — DC-01 comprometido 🏆
 | [persistence.md](docs/persistence.md) | Fase 9: Golden Ticket |
 | [objective_completion.md](docs/objective_completion.md) | Fase 10: DCSync + Pass-the-Hash |
 | [mitigations.md](docs/mitigations.md) | Blue Team: detección, SIGMA rules, hardening |
-| [lessons_learned.md](docs/lessons_learned.md) | 13 lecciones técnicas con causa raíz |
+| [delegation.md](docs/delegation.md) | Fase 11: Unconstrained + Constrained Delegation |
+| [gpo_abuse.md](docs/gpo_abuse.md) | Fase 12: GPO Abuse via helpdesk.ruiz |
+| [acl_abuse.md](docs/acl_abuse.md) | Fase 13: ACL Abuse + Targeted Kerberoasting |
+| [bloodhound.md](docs/bloodhound.md) | BloodHound CE — metodología y attack paths |
+| [lessons_learned.md](docs/lessons_learned.md) | 19 lecciones técnicas con causa raíz |
 
 ---
 

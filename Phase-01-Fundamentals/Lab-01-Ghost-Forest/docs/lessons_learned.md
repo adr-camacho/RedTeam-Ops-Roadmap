@@ -1,5 +1,5 @@
 # Lessons Learned — Operación GHOST FOREST
-## Lab-01: Attacktive Directory
+## Lab-01: Ghost Forest
 **Operación:** GHOST FOREST | **Adversario:** APT29 | **Framework:** MITRE ATT&CK v14  
 **Fecha:** 13/05/2026 | **Operador:** Adrián Camacho
 
@@ -236,6 +236,170 @@ faseX-NN-descripcion-corta.png
 | L-10 | AMSI es independiente de las exclusiones de carpeta | Alto |
 
 ### Operacional
+| ID | Lección | Impacto |
+|----|---------|---------|
+| L-11 | OSINT define el éxito del cracking offline | Alto |
+| L-12 | Documentar fallos con análisis técnico es valioso | Alto |
+| L-13 | Definir nomenclatura de capturas antes de empezar | Medio |
+---
+
+## 5. Fases 11-13 — Delegation, GPO Abuse y ACL Abuse
+
+### L-14 — Rubeus ptt falla en sesiones WinRM (Network Logon)
+
+**Problema:** `Rubeus.exe ptt /ticket:...` devolvía `Error 1312 — La sesión de inicio especificada no existe`.
+
+**Causa:** WinRM genera **Network Logon tokens** (Logon Type 3). Rubeus `ptt` requiere manipular la caché de tickets Kerberos de la sesión, operación que solo funciona con tokens interactivos (Logon Type 2) o de servicio. Los Network Logon tokens no tienen una sesión Kerberos asociada modificable.
+
+**Solución:** Usar el TGT capturado directamente desde Kali con impacket, convirtiendo el base64 a formato ccache:
+
+```python
+import base64
+ticket = open('/tmp/dc01.ticket').read().strip()
+with open('/tmp/dc01.ccache', 'wb') as f:
+    f.write(base64.b64decode(ticket))
+```
+
+**Lección:** Las limitaciones de WinRM afectan a múltiples técnicas (Potato attacks en Fase 8, ptt en Fase 11). Para operaciones que requieren manipulación de tokens Kerberos, usar sesiones RDP o consola directa, o trabajar desde Kali con impacket.
+
+---
+
+### L-15 — SharpHound corrupto en el arsenal — siempre verificar el tamaño del binario
+
+**Problema:** `SharpHound.exe` en `/opt/redteam/windows/` tenía solo 12 bytes y fallaba con `not a valid application for this OS platform`.
+
+**Causa:** El archivo placeholder en el arsenal nunca fue reemplazado por el binario real. Al hacer upload con Evil-WinRM se subió el placeholder vacío.
+
+**Solución:** Verificar siempre el tamaño del binario antes de subir:
+
+```bash
+ls -la /opt/redteam/windows/SharpHound.exe
+# Correcto: ~1.5MB | Corrupto: < 100 bytes
+```
+
+Descargar SharpHound real directamente:
+
+```bash
+curl -sL "https://github.com/BloodHoundAD/SharpHound/releases/download/v2.5.9/SharpHound-v2.5.9.zip" \
+  -o /tmp/SharpHound.zip
+unzip -q /tmp/SharpHound.zip -d /tmp/SharpHound
+```
+
+**Lección:** El arsenal debe contener binarios reales verificados. Añadir verificación de tamaño al script de setup. Actualizar `arsenal_setup.sh` con descarga directa de SharpHound desde GitHub.
+
+---
+
+### L-16 — bloodhound-python LEGACY no recolecta ACLs de GPOs ni paths ADCS
+
+**Problema:** BloodHound mostraba "Path not found" para helpdesk.ruiz y ceo.martinez al usar datos de bloodhound-python. Con datos de SharpHound aparecían múltiples paths.
+
+**Causa:** bloodhound-python está diseñado para BloodHound 4.x (LEGACY). No recolecta:
+- ACLs sobre objetos GPO
+- Permisos extendidos DCSync via ACEs
+- Paths ADCS (ESC1, ESC3, etc.)
+- Algunos flags de delegación en conjuntos específicos
+
+**Solución:** Usar SharpHound para coverage completo. Usar bloodhound-python cuando el OPSEC sea prioritario (sin binarios en el objetivo).
+
+**Lección:** Siempre complementar bloodhound-python con SharpHound en una segunda pasada cuando se tenga acceso privilegiado. bloodhound-python es ideal para la recolección inicial silenciosa, SharpHound para el análisis profundo.
+
+---
+
+### L-17 — Las tareas inmediatas de GPO requieren fecha de trigger futura
+
+**Problema:** La tarea `ImmediateTaskV2` con `StartBoundary` en fecha pasada no se ejecutó al aplicar la GPO con `gpupdate /force`.
+
+**Causa:** Windows evalúa el trigger antes de ejecutar la tarea. Si la fecha de inicio ya pasó y no hay `StartWhenAvailable`, la tarea no se ejecuta.
+
+**Solución:**
+
+```xml
+<TimeTrigger>
+  <StartBoundary>FECHA-FUTURA</StartBoundary>
+  <EndBoundary>FECHA-FUTURA+1DIA</EndBoundary>
+  <Enabled>true</Enabled>
+</TimeTrigger>
+<Settings>
+  <StartWhenAvailable>true</StartWhenAvailable>
+  <DeleteExpiredTaskAfter>PT0S</DeleteExpiredTaskAfter>
+</Settings>
+```
+
+**Lección para labs futuros:** Cuando se configure GPO Abuse con tareas inmediatas, usar siempre una fecha de StartBoundary en el futuro inmediato y activar `StartWhenAvailable`. Alternativamente, ejecutar el payload directamente via Evil-WinRM si ya se tiene acceso.
+
+---
+
+### L-18 — bloodyAD como alternativa OPSEC a impacket-addspn
+
+**Observación:** `impacket-addspn` no estaba disponible en la instalación actual de impacket. `bloodyAD` proporciona la misma funcionalidad desde Kali sin necesidad de binarios adicionales.
+
+**Solución:**
+
+```bash
+# Añadir SPN via bloodyAD (OPSEC — solo tráfico LDAP desde Kali)
+bloodyAD -u fin.garcia -p 'Finance2024!' -d atackcorp.local \
+  --host 10.0.2.10 \
+  set object sql_svc servicePrincipalName -v "fake/dc01.atackcorp.local"
+```
+
+**Lección:** Conocer múltiples herramientas para cada técnica. Si una no está disponible, otra puede hacer lo mismo. El arsenal no debe depender de una sola herramienta por técnica.
+
+---
+
+### L-19 — Kali necesita Adaptador 3 NAT para Internet permanente en el lab
+
+**Problema:** Kali perdía acceso a Internet al reiniciar porque la default route apuntaba a eth0 (red del lab) en lugar de eth2 (NAT Internet).
+
+**Solución permanente via NetworkManager:**
+
+```bash
+# eth0 — red del lab, nunca default gateway
+sudo nmcli con modify "LabRedTeam" ipv4.never-default yes
+sudo nmcli con modify "LabRedTeam" +ipv4.routes "10.0.3.0/24 10.0.2.1"
+
+# eth2 — NAT Internet, default gateway con métrica baja
+sudo nmcli con modify "Wired connection 1" ipv4.route-metric 50
+```
+
+**Lección:** Configurar las rutas via NetworkManager (permanentes) en lugar de `ip route` (temporales). La métrica determina qué ruta se usa como default: la de menor métrica gana.
+
+---
+
+## 6. Actualización del Resumen de Lecciones
+
+### Infraestructura (actualizado)
+
+| ID | Lección | Impacto |
+|----|---------|---------|
+| L-01 | IP estática via NetworkManager, no `ip addr add` | Alto |
+| L-02 | Usar SIDs para grupos built-in en entornos en español | Alto |
+| L-03 | Verificar nombre localizado de cuentas built-in | Medio |
+| L-04 | Añadir `sessionresume_*` al `.gitignore` | Bajo |
+| L-15 | Verificar tamaño de binarios antes de subir | Alto |
+| L-19 | Kali NAT Internet via Adaptador 3 + NetworkManager | Alto |
+
+### Técnicas Ofensivas (actualizado)
+
+| ID | Lección | Impacto |
+|----|---------|---------|
+| L-05 | Diccionario dirigido > rockyou.txt en entornos corporativos | Alto |
+| L-06 | Permisos AD aplican en el siguiente logon | Alto |
+| L-07 | Verificar SPNs registrados tras el setup | Medio |
+| L-08 | Golden Ticket clásico falla en Windows Server 2022 | Alto |
+| L-09 | Potato attacks requieren token interactivo, no de red | Alto |
+| L-10 | AMSI es independiente de las exclusiones de carpeta | Alto |
+| L-14 | Rubeus ptt falla en sesiones WinRM (Network Logon) | Alto |
+| L-17 | GPO ImmediateTask requiere fecha futura en trigger | Medio |
+| L-18 | bloodyAD como alternativa a impacket-addspn | Medio |
+
+### BloodHound y Metodología
+
+| ID | Lección | Impacto |
+|----|---------|---------|
+| L-16 | bloodhound-python LEGACY no recolecta ACLs de GPOs | Alto |
+
+### Operacional (actualizado)
+
 | ID | Lección | Impacto |
 |----|---------|---------|
 | L-11 | OSINT define el éxito del cracking offline | Alto |

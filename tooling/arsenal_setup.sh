@@ -228,10 +228,20 @@ curl -sL "https://github.com/r3motecontrol/Ghostpack-CompiledBinaries/raw/master
     -o $TOOLS_DIR/windows/Rubeus.exe
 ok "Rubeus → $TOOLS_DIR/windows/Rubeus.exe"
 
-# SharpHound (BloodHound collector)
-curl -sL "https://github.com/BloodHoundAD/SharpHound/releases/latest/download/SharpHound.exe" \
-    -o $TOOLS_DIR/windows/SharpHound.exe
-ok "SharpHound → $TOOLS_DIR/windows/SharpHound.exe"
+# SharpHound v2.5.9 (BloodHound collector)
+# NOTA: descargar el ZIP y extraer el .exe — la URL directa al .exe falla
+SH_VERSION="v2.5.9"
+SH_ZIP="/tmp/SharpHound-${SH_VERSION}.zip"
+curl -sL "https://github.com/BloodHoundAD/SharpHound/releases/download/${SH_VERSION}/SharpHound-${SH_VERSION}.zip" \
+    -o "$SH_ZIP"
+if [ -f "$SH_ZIP" ] && [ $(stat -c%s "$SH_ZIP") -gt 100000 ]; then
+    unzip -q "$SH_ZIP" SharpHound.exe -d /tmp/sh_extract 2>/dev/null
+    cp /tmp/sh_extract/SharpHound.exe "$TOOLS_DIR/windows/SharpHound.exe"
+    rm -rf /tmp/sh_extract "$SH_ZIP"
+    ok "SharpHound ${SH_VERSION} → $TOOLS_DIR/windows/SharpHound.exe"
+else
+    warn "SharpHound: descarga fallida — descargar manualmente desde GitHub"
+fi
 
 # ─────────────────────────────────────────────────────────────
 # BLOQUE 10 — Sliver C2

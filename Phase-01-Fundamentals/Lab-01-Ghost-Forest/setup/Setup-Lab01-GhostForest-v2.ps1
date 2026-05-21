@@ -1,8 +1,16 @@
 # ============================================================
-#  GHOST FOREST — Lab-01 Attacktive Directory
-#  Setup Script v2.0: Infraestructura completa + Vulnerabilidades
+#  GHOST FOREST — Lab-01 Ghost Forest
+#  Setup Script v2.1: Infraestructura completa + Vulnerabilidades + OU IT + WinRM
 #  Operación: APT29 Emulation | MITRE ATT&CK v14
 #  Autor: Red Team Ops Roadmap — Adrián Camacho
+#
+#  CAMBIOS v2.1:
+#    - OU IT bajo Corporativo + vinculación WKSTN-01 + GPO IT-Baseline link
+#    - sql_svc/iis_svc/helpdesk.ruiz añadidos a grupo WinRM
+#    - C:\Temp creado con permisos Everyone
+#    - Constrained Delegation: CIFS → MSSQLSvc/dc01:1433 (corrección)
+#    - GPO IT-Baseline vinculada a OU=IT,OU=Corporativo (ruta correcta)
+#    - Bloques renumerados (8→11)
 #  Ejecutar como: Administrador en DC-01 (atackcorp.local)
 #
 #  ESTRUCTURA CREADA:
@@ -174,6 +182,29 @@ try {
     Write-Host "    [*] ceo.martinez ya está en Remote Management Users" -ForegroundColor Yellow
 }
 
+# Añadir cuentas de servicio a Remote Management Users (para WinRM en DC-01)
+$winrmAccounts = @("sql_svc", "iis_svc", "helpdesk.ruiz")
+foreach ($account in $winrmAccounts) {
+    try {
+        # Buscar grupo por nombre en español
+        $groupName = (net localgroup | Select-String "administraci" | Select-Object -First 1).ToString().Trim().TrimStart('*')
+        if (-not $groupName) { $groupName = "Remote Management Users" }
+        net localgroup $groupName "$account" /add 2>$null | Out-Null
+        Write-Host "    [+] $account añadido a grupo WinRM" -ForegroundColor Green
+    } catch {
+        Write-Host "    [*] $account ya está en grupo WinRM o error: $_" -ForegroundColor Yellow
+    }
+}
+
+# Crear C:\Temp con permisos Everyone (para uploads de herramientas)
+try {
+    New-Item -ItemType Directory -Path "C:\Temp" -Force | Out-Null
+    icacls "C:\Temp" /grant "Everyone:(OI)(CI)F" | Out-Null
+    Write-Host "    [+] C:\Temp creado con permisos Everyone" -ForegroundColor Green
+} catch {
+    Write-Host "    [*] C:\Temp ya existe" -ForegroundColor Yellow
+}
+
 # ─────────────────────────────────────────────────────────────
 # BLOQUE 3 — Vulnerabilidad 1: AS-REP Roasting
 # T1558.004 — Steal or Forge Kerberos Tickets: AS-REP Roasting
@@ -276,14 +307,43 @@ Write-Host "[*] BLOQUE 7 — Configurando Constrained Delegation (iis_svc)..." -
 
 try {
     Set-ADAccountControl -Identity "iis_svc" -TrustedToAuthForDelegation $true
-    Set-ADUser "iis_svc" -Add @{'msDS-AllowedToDelegateTo'=@("CIFS/DC-01.atackcorp.local","CIFS/DC-01")}
-    Write-Host "    [+] Constrained Delegation (S4U2Proxy) habilitada en iis_svc → CIFS/DC-01" -ForegroundColor Green
+    Set-ADUser "iis_svc" -Add @{'msDS-AllowedToDelegateTo'=@("MSSQLSvc/dc01.atackcorp.local:1433","MSSQLSvc/dc01")}
+    Write-Host "    [+] Constrained Delegation (S4U2Proxy) habilitada en iis_svc → MSSQLSvc/dc01:1433" -ForegroundColor Green
 } catch {
     Write-Host "    [!] Error: $_" -ForegroundColor Red
 }
 
 # ─────────────────────────────────────────────────────────────
-# BLOQUE 8 — Vulnerabilidad 6: GPO Abuse
+# BLOQUE 8 — OU IT + WKSTN-01 + GPO IT-Baseline link
+# Prerequisito para GPO Abuse (Fase 12)
+# Condición: WKSTN-01 en OU IT → GPO IT-Baseline aplicada
+# ─────────────────────────────────────────────────────────────
+Write-Host ""
+Write-Host "[*] BLOQUE 8 — Configurando OU IT y vinculación WKSTN-01..." -ForegroundColor Yellow
+
+try {
+    # Crear OU IT bajo Corporativo si no existe
+    try {
+        New-ADOrganizationalUnit -Name "IT" -Path "OU=Corporativo,$DomainDN" -ErrorAction Stop
+        Write-Host "    [+] OU IT creada bajo Corporativo" -ForegroundColor Green
+    } catch {
+        Write-Host "    [*] OU IT ya existe bajo Corporativo" -ForegroundColor Yellow
+    }
+
+    # Mover WKSTN-01 al OU IT si existe
+    $wkstn = Get-ADComputer "WKSTN-01" -ErrorAction SilentlyContinue
+    if ($wkstn) {
+        Move-ADObject -Identity $wkstn.DistinguishedName -TargetPath "OU=IT,OU=Corporativo,$DomainDN" -ErrorAction SilentlyContinue
+        Write-Host "    [+] WKSTN-01 movida a OU=IT,OU=Corporativo" -ForegroundColor Green
+    } else {
+        Write-Host "    [*] WKSTN-01 no encontrada — vincular manualmente cuando se una al dominio" -ForegroundColor Yellow
+    }
+} catch {
+    Write-Host "    [!] Error: $_" -ForegroundColor Red
+}
+
+# ─────────────────────────────────────────────────────────────
+# BLOQUE 9 — Vulnerabilidad 6: GPO Abuse
 # T1484.001 — Domain Policy Modification: Group Policy
 # Condición: helpdesk.ruiz tiene FullControl sobre GPO IT-Baseline
 #            → modificar GPO → ejecutar código como SYSTEM en equipos del OU IT
@@ -296,8 +356,8 @@ try {
     $GPO = Get-GPO -Name "IT-Baseline" -ErrorAction SilentlyContinue
     if (-not $GPO) {
         $GPO = New-GPO -Name "IT-Baseline"
-        New-GPLink -Name "IT-Baseline" -Target "OU=IT,$DomainDN" | Out-Null
-        Write-Host "    [+] GPO IT-Baseline creada y vinculada a OU=IT" -ForegroundColor Green
+        New-GPLink -Name "IT-Baseline" -Target "OU=IT,OU=Corporativo,$DomainDN" | Out-Null
+        Write-Host "    [+] GPO IT-Baseline creada y vinculada a OU=IT,OU=Corporativo" -ForegroundColor Green
     } else {
         Write-Host "    [*] GPO IT-Baseline ya existe" -ForegroundColor Yellow
     }
@@ -320,7 +380,7 @@ try {
 }
 
 # ─────────────────────────────────────────────────────────────
-# BLOQUE 9 — Vulnerabilidad 7: ACL Abuse (GenericWrite)
+# BLOQUE 10 — Vulnerabilidad 7: ACL Abuse (GenericWrite)
 # T1098 — Account Manipulation
 # Condición: fin.garcia tiene GenericWrite sobre sql_svc
 #            → puede modificar atributos de sql_svc
@@ -328,7 +388,7 @@ try {
 #            → o añadirse a grupos de sql_svc
 # ─────────────────────────────────────────────────────────────
 Write-Host ""
-Write-Host "[*] BLOQUE 9 — Configurando ACL Abuse (fin.garcia → sql_svc)..." -ForegroundColor Yellow
+Write-Host "[*] BLOQUE 10 — Configurando ACL Abuse (fin.garcia → sql_svc)..." -ForegroundColor Yellow
 
 try {
     $finGarciaSID = (Get-ADUser "fin.garcia").SID
@@ -348,10 +408,10 @@ try {
 }
 
 # ─────────────────────────────────────────────────────────────
-# BLOQUE 10 — Verificación final del escenario
+# BLOQUE 11 — Verificación final del escenario
 # ─────────────────────────────────────────────────────────────
 Write-Host ""
-Write-Host "[*] BLOQUE 10 — Verificación del escenario..." -ForegroundColor Yellow
+Write-Host "[*] BLOQUE 11 — Verificación del escenario..." -ForegroundColor Yellow
 
 # AS-REP Roasting
 $asrep = Get-ADUser "ceo.martinez" -Properties DoesNotRequirePreAuth
