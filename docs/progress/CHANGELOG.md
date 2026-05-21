@@ -5,6 +5,40 @@
 
 ---
 
+## [2026-05-21] — Roadmap v2.0 + Lab-01 Fases 11-13 completas + Tradecraft docs
+
+### ADD
+- `DESIGN.md` — Roadmap v2.0: filosofía, adversary emulation, crown jewels, coverage matrix CRTO (~98%)
+- `Phase-02-Post-Exploitation/Lab-07-Shadow-Vault/` — LAPS, DPAPI, Shadow Credentials (nuevo)
+- `Phase-03-Red-Team-Operations/Lab-09-First-Contact/` — Initial Access real: spraying, phishing (nuevo)
+- `Phase-04-Enterprise-Simulation/Lab-14-Azure-Breach/` — Azure AD/Entra ID hybrid attacks (nuevo)
+- `Lab-01-Ghost-Forest/docs/delegation.md` — Unconstrained + Constrained Delegation completo
+- `Lab-01-Ghost-Forest/docs/gpo_abuse.md` — GPO Abuse con XML, SYSVOL, SIGMA
+- `Lab-01-Ghost-Forest/docs/acl_abuse.md` — GenericWrite → Targeted Kerberoasting → DA
+- `Lab-01-Ghost-Forest/docs/bloodhound.md` — Metodología BloodHound CE, python vs SharpHound
+- `Lab-01-Ghost-Forest/docs/tradecraft.md` — Teoría profunda: Kerberos, Delegation, ACL, BloodHound, OPSEC
+- `Lab-02-Silent-Bridge/docs/tradecraft.md` — Segmentación, CVE-2019-12840, Ligolo-ng, Git history
+- `Lab-03-Dark-Gate/docs/tradecraft.md` — PKI/ADCS, PKINIT, ESC1/ESC4/ESC8, persistencia certs
+- `tooling/arsenal_setup.sh` — SharpHound v2.5.9 via ZIP (fix: binario corrupto)
+- `setup/provisioning/Setup-Lab01-GhostForest-v2.1.ps1` — OU IT, WinRM grupos, C:\Temp
+
+### UPDATE
+- `Lab-01-Ghost-Forest/docs/post_exploitation.md` — Fases 11-13 añadidas
+- `Lab-01-Ghost-Forest/docs/lessons_learned.md` — +6 lecciones (L-14 a L-19)
+- `Lab-01-Ghost-Forest/README.md` — Fases 11-13 en attack path, MITRE, credenciales
+- `Lab-01-Ghost-Forest/OPERATION_GHOST_FOREST.md` — Fases 11-13 → ✅
+- `docs/MITRE_MAPPING.md` — +8 técnicas Fases 11-13, adversarios v2.0
+- `docs/LAB_INFRASTRUCTURE.md` — IPs corregidas (WKSTN-01: .8, Kali: .9), Finance2024!
+- `docs/PROGRESS.md` — sesiones 11-13, +6 técnicas dominadas, 3/15 labs
+- `README.md` — Roadmap v2.0 con 15 labs, links correctos, badge CRTO
+
+### REFACTOR
+- Numeración global labs: 15 labs con numeración secuencial sin duplicados
+  Phase-03: Lab-08→09→10→11 | Phase-04: Lab-12→13→14→15
+- `docs/OPSEC_NOTES.md` — añadidas secciones BloodHound, Delegation, GPO, ACL Abuse
+
+---
+
 ## [2026-05-17] — Lab-03 DARK GATE completado + Arsenal Kali
 
 ### ADD

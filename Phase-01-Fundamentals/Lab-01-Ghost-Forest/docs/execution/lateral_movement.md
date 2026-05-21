@@ -25,11 +25,11 @@ Con `backup_svc` como Domain Admin sobre `atackcorp.local`, APT29 procede a move
 ```bash
 # Port discovery
 nmap -p- --min-rate 5000 10.0.2.8 \
-  -oA ~/Red-Team-Labs/Phase-01-Fundamentals/Lab-01-Attacktive-Directory/nmap/wkstn01
+  -oA ~/Red-Team-Labs/Phase-01-Fundamentals/Lab-01-Ghost-Forest/nmap/wkstn01
 
 # Service version detection
 nmap -sC -sV -p 135,5040,5985 10.0.2.8 \
-  -oA ~/Red-Team-Labs/Phase-01-Fundamentals/Lab-01-Attacktive-Directory/nmap/wkstn01
+  -oA ~/Red-Team-Labs/Phase-01-Fundamentals/Lab-01-Ghost-Forest/nmap/wkstn01
 ```
 
 **Puertos identificados:**

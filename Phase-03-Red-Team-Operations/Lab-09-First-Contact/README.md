@@ -1,4 +1,4 @@
-# 🔴 Lab-08: First Contact
+# 🔴 Lab-09: First Contact
 
 ![Status](https://img.shields.io/badge/Status-Pending-lightgrey)
 ![Phase](https://img.shields.io/badge/Phase-03-blue)

@@ -1,5 +1,5 @@
 # Lessons Learned — Operación SILENT BRIDGE
-## Lab-02: Wreath — APT41 Emulation
+## Lab-02: Silent Bridge — APT41 Emulation
 **Operación:** SILENT BRIDGE | **Adversario:** APT41 | **Framework:** MITRE ATT&CK v14  
 **Operador:** Adrián Camacho | **Fecha:** 13-15/05/2026
 
@@ -43,7 +43,7 @@
 
 ## Comparativa Lab-01 vs Lab-02
 
-| Aspecto | Lab-01 (APT29 — AD) | Lab-02 (APT41 — Wreath) |
+| Aspecto | Lab-01 (APT29 — AD) | Lab-02 (APT41 — Silent Bridge) |
 |---------|--------------------|-----------------------|
 | **Vector inicial** | Kerberos sin autenticación | Web RCE (CVE-2019-12840) |
 | **Weaponización** | Herramientas estándar (Impacket) | Exploit Python construido manualmente |

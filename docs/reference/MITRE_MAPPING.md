@@ -13,9 +13,9 @@
 | **Phase-01** | Lab-01 | APT29 / Cozy Bear | Rusia (SVR) | Espionaje, persistencia | Kerberos abuse, LOLBins, C2 encubierto |
 | **Phase-01** | Lab-02 | APT41 / Double Dragon | China (MSS) | Espionaje + económica | Web RCE, pivotaje agresivo, implantes multicapa |
 | **Phase-01** | Lab-03 | APT29 / Cozy Bear | Rusia (SVR) | Espionaje, persistencia | ADCS Abuse, certificate persistence, NTLM relay |
-| **Phase-02** | Iron Forest, Silver Chain, Black Policy |  APT28 / Fancy Bear | Rusia (GRU) | Espionaje, sabotaje | ACL Abuse, DCSync, Delegation, GPO Abuse |
-| **Phase-03** | Ghost Signal, Dark Current, Deep Holo | Lazarus Group | Corea del Norte (RGB) | Espionaje + financiera | EDR Evasion, AMSI Bypass, C2 avanzado |
-| **Phase-04** | Red Dante, Deep Water, Operation Zephyr | APT10 / Stone Panda | China (MSS) | Espionaje, supply chain | Forest Trusts, exfiltración masiva, Pro Labs |
+| **Phase-02** | IRON FOREST, SILVER CHAIN, BLACK POLICY, SHADOW VAULT | APT28 / Fancy Bear | Rusia (GRU) | Espionaje, sabotaje | ACL Abuse, DCSync, Delegation, GPO Abuse |
+| **Phase-03** | GHOST SIGNAL, FIRST CONTACT, DARK CURRENT, DEEP HOLO | Lazarus Group | Corea del Norte (RGB) | Espionaje + financiera | EDR Evasion, AMSI Bypass, C2 avanzado |
+| **Phase-04** | RED DANTE, DEEP WATER, AZURE BREACH, OPERATION ZEPHYR | APT10 / Stone Panda | China (MSS) | Espionaje, supply chain | Forest Trusts, exfiltración masiva, Pro Labs |
 
 > **Referencia:** [MITRE ATT&CK Groups](https://attack.mitre.org/groups/)
 
@@ -28,8 +28,8 @@
 | **APT29** (Lab-01, Lab-03) | Maestría en Kerberos abuse, ADCS y Living-off-the-Land — el perfil canónico para entornos AD |
 | **APT41** (Lab-02) | Especialización en explotación web + pivotaje de red — encaja con el vector Webmin y Ligolo-ng |
 | **APT28** (Lab-04/05/06) | ACL Abuse, DCSync, Delegation y GPO Abuse son TTPs documentadas en campañas de Fancy Bear |
-| **Lazarus** (Lab-07/08/09) | Grupo de referencia para evasión de EDR, obfuscación y C2 avanzado |
-| **APT10** (Lab-10/11/12) | Campañas de supply chain y compromiso de infraestructuras complejas con Forest Trusts |
+| **Lazarus** (Lab-08/09/10/11) | Grupo de referencia para evasión de EDR, obfuscación y C2 avanzado |
+| **APT10** (Lab-12/13/14/15) | Campañas de supply chain y compromiso de infraestructuras complejas con Forest Trusts |
 
 ---
 
@@ -63,6 +63,14 @@
 | Credential Access | OS Credential Dumping | DCSync | T1003.006 | Impacket secretsdump | ✅ |
 | Persistence | Steal/Forge Kerberos Tickets | Golden Ticket | T1558.001 | Impacket ticketer | 🔄 |
 | Privilege Escalation | Access Token Manipulation | Token Impersonation | T1134.001 | PrintSpoofer | 🔄 |
+| Credential Access | Steal/Forge Kerberos Tickets | Unconstrained Delegation | T1558.001 | Rubeus + PetitPotam | ✅ |
+| Credential Access | Forced Authentication | — | T1187 | PetitPotam | ✅ |
+| Credential Access | Steal/Forge Kerberos Tickets | Constrained Delegation (S4U2Proxy) | T1558.001 | impacket getST | ✅ |
+| Discovery | Permission Groups Discovery | — | T1069.002 | BloodHound CE | ✅ |
+| Privilege Escalation | Group Policy Modification | — | T1484.001 | PowerShell + SYSVOL | ✅ |
+| Execution | Scheduled Task/Job | Scheduled Task | T1053.005 | GPO Immediate Task | ✅ |
+| Privilege Escalation | File/Directory Permissions Modification | — | T1222 | dacledit + bloodyAD | ✅ |
+| Credential Access | Steal/Forge Kerberos Tickets | Targeted Kerberoasting | T1558.003 | bloodyAD + GetUserSPNs | ✅ |
 
 ---
 

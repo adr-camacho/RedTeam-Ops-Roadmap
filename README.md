@@ -6,6 +6,8 @@
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-red)](./docs/MITRE_MAPPING.md)
 [![Labs](https://img.shields.io/badge/Labs-3%2F15%20Completados-green)](./docs/PROGRESS.md)
 [![Design](https://img.shields.io/badge/Roadmap-v2.0-blue)](./DESIGN.md)
+[![CRTO Coverage](https://img.shields.io/badge/CRTO%20Coverage-60%25%20actual%20%7C%2098%25%20objetivo-orange)](./docs/DESIGN.md#9-cobertura-crto--coverage-matrix)
+[![Tradecraft](https://img.shields.io/badge/Tradecraft-3%20docs-purple)](./Phase-01-Fundamentals/)
 
 Repositorio de operaciones Red Team con enfoque en **entornos reales de Active Directory**. Documenta el proceso de aprendizaje progresivo desde fundamentos hasta simulación de infraestructura corporativa compleja, emulando adversarios reales mediante frameworks C2 modernos y open source.
 
@@ -182,6 +184,8 @@ Lab-XX/
 | [LAB_INFRASTRUCTURE.md](./docs/LAB_INFRASTRUCTURE.md) | Entorno VirtualBox + scripts de aprovisionamiento |
 | [WRITEUP_TEMPLATE.md](./docs/WRITEUP_TEMPLATE.md) | Plantilla estándar para writeups |
 | [DESIGN.md](./DESIGN.md) | Roadmap v2.0 — principios de diseño, coverage matrix, crown jewels |
+| [TOOL_INDEX.md](./docs/TOOL_INDEX.md) | Índice de herramientas por lab — referencia rápida |
+| [OPSEC_NOTES.md](./docs/OPSEC_NOTES.md) | Principios OPSEC transversales actualizados |
 
 ---
 
