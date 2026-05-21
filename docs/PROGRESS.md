@@ -10,11 +10,11 @@
 | Métrica | Valor |
 |---------|-------|
 | Fecha de inicio | 09/05/2026 |
-| Última actualización | 17/05/2026 |
-| Labs completados | 3 / 12 |
+| Última actualización | 20/05/2026 |
+| Labs completados | 3 / 14 |
 | Labs en progreso | 0 / 12 |
-| Horas totales invertidas | ~60h |
-| Fase actual | Phase-01: Fundamentals |
+| Horas totales invertidas | ~75h |
+| Fase actual | Phase-02: AD Avanzado (preparación) |
 
 ---
 
@@ -24,7 +24,7 @@
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
-| Lab-01: Ghost Forest | ✅ Completado | 09/05/2026 | 13/05/2026 | ~26h | ✅ Completo |
+| Lab-01: Ghost Forest | ✅ Completado | 09/05/2026 | 20/05/2026 | ~40h | ✅ Completo |
 | Lab-02: Silent Bridge | ✅ Completado | 13/05/2026 | 15/05/2026 | ~18h | ✅ Completo |
 | Lab-03: Dark Gate | ✅ Completado | 16/05/2026 | 17/05/2026 | ~16h | ✅ Completo |
 
@@ -163,6 +163,12 @@
 | NTLM Coercion (PetitPotam) | T1187 | Lab-03 | ✅ Dominada |
 | Golden Ticket | T1558.001 | Lab-01 | 🔄 Parcial (PAC Validation) |
 | Token Impersonation | T1134.001 | Lab-01 | 🔄 Parcial (WinRM) |
+| Unconstrained Delegation | T1558.001 | Lab-01 | ✅ Dominada |
+| Constrained Delegation (S4U2Proxy) | T1558.001 | Lab-01 | ✅ Dominada |
+| GPO Abuse (SYSVOL) | T1484.001 | Lab-01 | ✅ Dominada |
+| Targeted Kerberoasting (GenericWrite) | T1558.003 | Lab-01 | ✅ Dominada |
+| BloodHound CE metodología | T1087.002 | Lab-01 | ✅ Dominada |
+| PetitPotam NTLM coerción | T1187 | Lab-01 | ✅ Dominada |
 
 ---
 
@@ -170,13 +176,39 @@
 
 | Lab | Pendiente | Prioridad |
 |-----|----------|-----------|
-| Lab-01 | Fase 11: Unconstrained + Constrained Delegation | Alta |
-| Lab-01 | Fase 12: GPO Abuse (helpdesk.ruiz → IT-Baseline) | Alta |
-| Lab-01 | Fase 13: ACL Abuse completo (fin.garcia → sql_svc) | Alta |
+| Lab-04 | IRON FOREST — WriteDACL, ForceChangePassword, credential hunting | Alta |
+| Lab-07 | SHADOW VAULT (nuevo) — LAPS, DPAPI, Shadow Credentials | Alta |
+| Lab-09 | FIRST CONTACT (nuevo) — Initial Access real sin credenciales | Alta |
+| Lab-13 | AZURE BREACH (nuevo) — Azure AD/Entra ID hybrid attacks | Alta |
 | Lab-02 | Segundo pivote (tercer segmento de red) | Media |
-| Lab-02 | Evasión Defender real (Lab-07) | Media |
-| Lab-02 | Setup-Lab02-SilentBridge.sh (bash — PROD + GIT setup Ubuntu) | Media |
+| Lab-02 | Setup-Lab02-SilentBridge.sh (bash — PROD + GIT setup Ubuntu) | Baja |
 
 ---
 
 *⚡ Leyenda: ✅ Completado | 🔄 Parcial | ⏳ Pendiente*
+---
+
+### Semana 5 — 18/05/2026 al 20/05/2026
+
+#### 📌 18/05/2026 — Sesión 11: Lab-01 Fase 11 — Delegation Abuse
+- Unconstrained Delegation (sql_svc): Rubeus monitor → TGT DC-01$ capturado automáticamente
+- PetitPotam coerción → TGT fresco post-coerción ✅
+- Constrained Delegation (iis_svc): S4U2Self + S4U2Proxy → TGS como Administrador → MSSQLSvc/dc01:1433 ✅
+- BloodHound CE v9.1.0 configurado: bloodhound-python recolección (OPSEC) + SharpHound v2.5.9
+- Kali: Adaptador 3 NAT Internet permanente configurado via NetworkManager
+- **Horas:** ~6h
+
+#### 📌 19/05/2026 — Sesión 12: Lab-01 Fase 11 BloodHound + Fases 12-13
+- BloodHound CE: attack paths analizados — backup_svc (1 salto), fin.garcia (GenericWrite path)
+- bloodhound-python vs SharpHound: diferencia en coverage ACLs/GPOs documentada
+- Fase 12: GPO Abuse — helpdesk.ruiz → ScheduledTasks.xml en SYSVOL → Admin local WKSTN-01 ✅
+- Fase 13: ACL Abuse — fin.garcia GenericWrite → bloodyAD SPN → GetUserSPNs → SQLService2024! ✅
+- **Horas:** ~5h
+
+#### 📌 20/05/2026 — Sesión 13: Documentación Lab-01 + Roadmap v2.0
+- 4 docs nuevos generados: delegation.md, gpo_abuse.md, acl_abuse.md, bloodhound.md
+- lessons_learned.md actualizado (+6 lecciones L-14 a L-19)
+- Setup-Lab01-GhostForest-v2.1.ps1: OU IT, WinRM, C:\Temp, SPN corregido
+- arsenal_setup.sh: SharpHound descarga via ZIP con verificación
+- DESIGN.md generado: Roadmap v2.0 con 14 labs, crown jewels, coverage matrix 80%
+- **Horas:** ~4h

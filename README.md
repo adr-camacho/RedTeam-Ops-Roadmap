@@ -4,7 +4,8 @@
 [![Domain](https://img.shields.io/badge/Domain-Active%20Directory%20%7C%20Red%20Team-red)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap)
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-red)](./docs/MITRE_MAPPING.md)
-[![Labs](https://img.shields.io/badge/Labs-3%2F12%20Completados-green)](./docs/PROGRESS.md)
+[![Labs](https://img.shields.io/badge/Labs-3%2F15%20Completados-green)](./docs/PROGRESS.md)
+[![Design](https://img.shields.io/badge/Roadmap-v2.0-blue)](./DESIGN.md)
 
 Repositorio de operaciones Red Team con enfoque en **entornos reales de Active Directory**. Documenta el proceso de aprendizaje progresivo desde fundamentos hasta simulación de infraestructura corporativa compleja, emulando adversarios reales mediante frameworks C2 modernos y open source.
 
@@ -71,13 +72,15 @@ Entornos propios desplegados en **VirtualBox** — control total sobre vectores 
 
 ---
 
-## 🗺️ Roadmap
+## 🗺️ Roadmap v2.0
 
-### 🟢 Phase-01 — Fundamentos y Pivotaje
+> 📐 Diseño completo, principios pedagógicos y coverage matrix: [DESIGN.md](./DESIGN.md)
+
+### 🟢 Phase-01 — Fundamentos AD
 
 | # | Operación | Adversario | Técnicas | Estado |
 |---|-----------|-----------|---------|--------|
-| 01 | [GHOST FOREST](./Phase-01-Fundamentals/Lab-01-Ghost-Forest/) | APT29 | AS-REP Roasting, Kerberoasting, DCSync, Pass-the-Hash, C2 Sliver | ✅ Completado |
+| 01 | [GHOST FOREST](./Phase-01-Fundamentals/Lab-01-Ghost-Forest/) | APT29 | AS-REP Roasting, Kerberoasting, Delegation, GPO/ACL Abuse, BloodHound, C2 | ✅ Completado |
 | 02 | [SILENT BRIDGE](./Phase-01-Fundamentals/Lab-02-Silent-Bridge/) | APT41 | CVE-2019-12840, Ligolo-ng, Git history, relay C2 | ✅ Completado |
 | 03 | [DARK GATE](./Phase-01-Fundamentals/Lab-03-Dark-Gate/) | APT29 | ADCS ESC1/ESC4/ESC8, Certipy, cert persistence | ✅ Completado |
 
@@ -85,38 +88,39 @@ Entornos propios desplegados en **VirtualBox** — control total sobre vectores 
 
 | # | Operación | Adversario | Técnicas | Estado |
 |---|-----------|-----------|---------|--------|
-| 04 | [IRON FOREST](./Phase-02-Post-Exploitation/Lab-04-Iron-Forest/) | APT28 | ACL Abuse, DCSync, Forest Trusts | ⏳ Pendiente |
-| 05 | [SILVER CHAIN](./Phase-02-Post-Exploitation/Lab-05-Silver-Chain/) | APT28 | Unconstrained + Constrained + RBCD | ⏳ Pendiente |
-| 06 | [BLACK POLICY](./Phase-02-Post-Exploitation/Lab-06-Black-Policy/) | APT28 | GPO Abuse, SID History, Trust Exploitation | ⏳ Pendiente |
+| 04 | [IRON FOREST](./Phase-02-Post-Exploitation/Lab-04-Iron-Forest/) | APT28 | WriteDACL, ForceChangePassword, Overpass-the-Hash, credential hunting | ⏳ Pendiente |
+| 05 | [SILVER CHAIN](./Phase-02-Post-Exploitation/Lab-05-Silver-Chain/) | APT28 | RBCD, Shadow Credentials, Silver Ticket, Diamond Ticket | ⏳ Pendiente |
+| 06 | [BLACK POLICY](./Phase-02-Post-Exploitation/Lab-06-Black-Policy/) | APT28 | SID History, ExtraSids, Cross-Forest Trust | ⏳ Pendiente |
+| 07 | [SHADOW VAULT](./Phase-02-Post-Exploitation/Lab-07-Shadow-Vault/) | APT28 | LAPS abuse, DPAPI, Shadow Credentials, LSASS alternativo | ⏳ Pendiente |
 
-### 🔴 Phase-03 — Red Team & Evasión
-
-| # | Operación | Adversario | Técnicas | Estado |
-|---|-----------|-----------|---------|--------|
-| 07 | [GHOST SIGNAL](./Phase-03-Red-Team-Operations/Lab-07-Ghost-Signals/) | Lazarus | AMSI bypass, process injection, syscalls directas | ⏳ Pendiente |
-| 08 | [DARK CURRENT](./Phase-03-Red-Team-Operations/Lab-08-Dark-Current/) | Lazarus | C2 avanzado, sleep obfuscation, BOFs | ⏳ Pendiente |
-| 09 | [DEEP HOLO](./Phase-03-Red-Team-Operations/Lab-09-Deep-Holo/) | Lazarus | Simulación corporativa multicapa, pivoting avanzado | ⏳ Pendiente |
-
-### 🏴 Phase-04 — Simulación Real
+### 🔴 Phase-03 — Red Team Operations
 
 | # | Operación | Adversario | Técnicas | Estado |
 |---|-----------|-----------|---------|--------|
-| 10 | [RED DANTE](./Phase-04-Enterprise-Simulation/Lab-10-Red-Dante/) | APT10 | Red masiva mixta, persistencia, exfiltración | ⏳ Pendiente |
-| 11 | [DEEP WATER](./Phase-04-Enterprise-Simulation/Lab-11-Deep-Water/) | APT10 | Forest Trusts avanzados, CRTO preparation | ⏳ Pendiente |
-| 12 | [OPERATION ZEPHYR](./Phase-04-Enterprise-Simulation/Lab-12-Operation-Zephyr/) | APT10 | AD completo — repaso total | ⏳ Pendiente |
+| 08 | [GHOST SIGNAL](./Phase-03-Red-Team-Operations/Lab-08-Ghost-Signals/) | Lazarus | AMSI bypass, process injection, direct syscalls, PE evasion | ⏳ Pendiente |
+| 09 | [FIRST CONTACT](./Phase-03-Red-Team-Operations/Lab-09-First-Contact/) | Lazarus | Password spraying, phishing HTML smuggling, VBA macros | ⏳ Pendiente |
+| 10 | [DARK CURRENT](./Phase-03-Red-Team-Operations/Lab-10-Dark-Current/) | Lazarus | Havoc C2, sleep obfuscation, BOFs, ETW patching | ⏳ Pendiente |
+| 11 | [DEEP HOLO](./Phase-03-Red-Team-Operations/Lab-11-Deep-Holo/) | Lazarus | C2 infraestructura, redirectors, domain fronting | ⏳ Pendiente |
+
+### 🏴 Phase-04 — Enterprise Simulation
+
+| # | Operación | Adversario | Técnicas | Estado |
+|---|-----------|-----------|---------|--------|
+| 12 | [RED DANTE](./Phase-04-Enterprise-Simulation/Lab-12-Red-Dante/) | APT10 | Red masiva heterogénea, persistencia, exfiltración | ⏳ Pendiente |
+| 13 | [DEEP WATER](./Phase-04-Enterprise-Simulation/Lab-13-Deep-Water/) | APT10 | Forest Trusts avanzados, CRTO preparation | ⏳ Pendiente |
+| 14 | [AZURE BREACH](./Phase-04-Enterprise-Simulation/Lab-14-Azure-Breach/) | APT10 | Azure AD/Entra ID, PRT theft, hybrid attacks | ⏳ Pendiente |
+| 15 | [OPERATION ZEPHYR](./Phase-04-Enterprise-Simulation/Lab-15-Operation-Zephyr/) | APT10 | Forest Trusts, CRTO exam preparation | ⏳ Pendiente |
 
 ---
 
-## 📋 Pendientes por lab
+## 📋 Próximos pasos
 
-### Lab-01 — Fases adicionales (revisión futura)
-- Fase 11: Unconstrained + Constrained Delegation (sql_svc / iis_svc configurados)
-- Fase 12: GPO Abuse (helpdesk.ruiz → IT-Baseline)
-- Fase 13: ACL Abuse completo (fin.garcia → GenericWrite → sql_svc)
+- **Lab-04 IRON FOREST** — WriteDACL, ForceChangePassword, credential hunting
+- **Lab-07 SHADOW VAULT** (nuevo) — LAPS, DPAPI, Shadow Credentials
+- **Lab-09 FIRST CONTACT** (nuevo) — Initial Access real sin credenciales previas
+- **Lab-13 AZURE BREACH** (nuevo) — Azure AD/Entra ID hybrid attacks
 
-### Lab-02 — Mejoras (revisión futura)
-- Segundo pivote (tercer segmento de red)
-- Evasión de Defender real sin desactivar Tamper Protection
+> 📐 Ver [DESIGN.md](./DESIGN.md) para el diseño completo del Roadmap v2.0
 
 ---
 
@@ -143,6 +147,8 @@ Red-Team_Labs/
 │   ├── Lab-02-Silent-Bridge/           ✅ SILENT BRIDGE (APT41)
 │   └── Lab-03-Dark-Gate/               ✅ DARK GATE (APT29)
 ├── Phase-02-Post-Exploitation/
+├── Phase-02-Post-Exploitation/
+│   ├── Lab-04 a Lab-07-Shadow-Vault
 ├── Phase-03-Red-Team-Operations/
 ├── Phase-04-Enterprise-Simulation/
 └── setup/                          ← aprovisionamiento del dominio (DC-01)
@@ -175,6 +181,7 @@ Lab-XX/
 | [OPSEC_NOTES.md](./docs/OPSEC_NOTES.md) | Notas de OPSEC transversales |
 | [LAB_INFRASTRUCTURE.md](./docs/LAB_INFRASTRUCTURE.md) | Entorno VirtualBox + scripts de aprovisionamiento |
 | [WRITEUP_TEMPLATE.md](./docs/WRITEUP_TEMPLATE.md) | Plantilla estándar para writeups |
+| [DESIGN.md](./DESIGN.md) | Roadmap v2.0 — principios de diseño, coverage matrix, crown jewels |
 
 ---
 
