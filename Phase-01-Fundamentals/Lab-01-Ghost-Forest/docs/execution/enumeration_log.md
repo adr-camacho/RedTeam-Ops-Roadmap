@@ -9,7 +9,7 @@
 ## 1.1 — Network Service Discovery
 **Técnica MITRE:** T1046 — Network Service Discovery  
 **Herramienta:** Nmap 7.99  
-> 📸 Captura: ![fase1-01](../screenshots/FASE-1-Reconnaissance/fase1-01-nmap-port-discovery.png)
+> 📸 Captura: ![fase1-01](../../screenshots/FASE-1-Reconnaissance/fase1-01-nmap-port-discovery.png)
 
 ### Fase 1 — Port Discovery (All Ports)
 
@@ -47,7 +47,7 @@ nmap -p- --min-rate 5000 -oA nmap/ports 10.0.2.10
 ---
 
 ### Fase 2 — Service Version Detection
-> 📸 Captura: ![fase1-02](../screenshots/FASE-1-Reconnaissance/fase1-02-nmap-service-version.png)
+> 📸 Captura: ![fase1-02](../../screenshots/FASE-1-Reconnaissance/fase1-02-nmap-service-version.png)
 
 ```bash
 nmap -sC -sV -p 53,80,88,135,139,389,445,464,593,636,3268,3269,5985,9389 \
@@ -74,7 +74,7 @@ nmap -sC -sV -p 53,80,88,135,139,389,445,464,593,636,3268,3269,5985,9389 \
 **Herramientas:** smbclient, CrackMapExec
 
 ### Null Session (smbclient)
-> 📸 Captura: ![fase1-03](../screenshots/FASE-1-Reconnaissance/fase1-03-smb-null-session.png)
+> 📸 Captura: ![fase1-03](../../screenshots/FASE-1-Reconnaissance/fase1-03-smb-null-session.png)
 
 ```bash
 smbclient -L //10.0.2.10 -N
@@ -92,7 +92,7 @@ Unable to connect with SMB1 -- no workgroup available
 **Conclusión:** Sesión anónima posible pero sin acceso a shares. Vector SMB descartado sin credenciales.
 
 ### Guest Session (CrackMapExec)
-> 📸 Captura: ![fase1-04](../screenshots/FASE-1-Reconnaissance/fase1-04-smb-guest-denied.png)
+> 📸 Captura: ![fase1-04](../../screenshots/FASE-1-Reconnaissance/fase1-04-smb-guest-denied.png)
 
 ```bash
 crackmapexec smb 10.0.2.10 --shares -u '' -p ''
@@ -117,7 +117,7 @@ crackmapexec smb 10.0.2.10 --shares -u '' -p ''
 ## 1.3 — LDAP Enumeration
 **Técnica MITRE:** T1087.002 — Account Discovery: Domain Account  
 **Herramienta:** ldapsearch  
-> 📸 Captura: ![fase1-05](../screenshots/FASE-1-Reconnaissance/fase1-05-ldap-anonymous-denied.png)
+> 📸 Captura: ![fase1-05](../../screenshots/FASE-1-Reconnaissance/fase1-05-ldap-anonymous-denied.png)
 
 ```bash
 ldapsearch -x -H ldap://10.0.2.10 -b "DC=atackcorp,DC=local" \

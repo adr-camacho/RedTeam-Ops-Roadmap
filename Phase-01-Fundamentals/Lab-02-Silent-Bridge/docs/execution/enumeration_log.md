@@ -108,7 +108,7 @@ INFORMACIÓN OBTENIDA:
 
 ### 4.1 — Host Discovery
 **Técnica MITRE:** T1046  
-> 📸 Captura: ![fase4-01](../screenshots/FASE-4-Internal-Enum/fase4-01-internal-host-discovery.png)
+> 📸 Captura: ![fase4-01](../../screenshots/FASE-4-Internal-Enum/fase4-01-internal-host-discovery.png)
 
 ```bash
 nmap -sn --unprivileged 10.0.3.0/24
@@ -124,7 +124,7 @@ nmap -sn --unprivileged 10.0.3.0/24
 
 ### 4.2 — Service Discovery — GIT
 **Técnica MITRE:** T1046  
-> 📸 Captura: ![fase4-02](../screenshots/FASE-4-Internal-Enum/fase4-02-nmap-git-server.png)
+> 📸 Captura: ![fase4-02](../../screenshots/FASE-4-Internal-Enum/fase4-02-nmap-git-server.png)
 
 ```bash
 nmap -sT -sV -p 22,80,443,3000,8080,9418 10.0.3.150 -oA nmap/git_detailed
@@ -139,7 +139,7 @@ nmap -sT -sV -p 22,80,443,3000,8080,9418 10.0.3.150 -oA nmap/git_detailed
 
 ### 4.3 — Service Discovery — PC-01 Windows
 **Técnica MITRE:** T1046  
-> 📸 Captura: ![fase4-03](../screenshots/FASE-4-Internal-Enum/fase4-03-nmap-pc-windows.png)
+> 📸 Captura: ![fase4-03](../../screenshots/FASE-4-Internal-Enum/fase4-03-nmap-pc-windows.png)
 
 ```bash
 nmap -sT -p 135,445,3389,5985 10.0.3.7 -sV
@@ -155,7 +155,7 @@ nmap -sT -p 135,445,3389,5985 10.0.3.7 -sV
 
 ### 4.4 — Repositorio Git
 **Técnica MITRE:** T1083  
-> 📸 Captura: ![fase4-04](../screenshots/FASE-4-Internal-Enum/fase4-04-git-repositories.png)
+> 📸 Captura: ![fase4-04](../../screenshots/FASE-4-Internal-Enum/fase4-04-git-repositories.png)
 
 ```bash
 git clone git://10.0.3.150/wreath-web /tmp/repo_wreath
@@ -172,7 +172,7 @@ git log --oneline --all
 
 ### 4.5 — Credential Discovery
 **Técnica MITRE:** T1552.001  
-> 📸 Captura: ![fase4-05](../screenshots/FASE-4-Internal-Enum/fase4-05-credentials-found.png)
+> 📸 Captura: ![fase4-05](../../screenshots/FASE-4-Internal-Enum/fase4-05-credentials-found.png)
 
 ```bash
 git show 992ecff

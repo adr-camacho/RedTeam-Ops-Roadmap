@@ -35,7 +35,7 @@ Microsoft.GroupPolicy.GPTrustee  GpoEditDeleteModifySecurity
 Microsoft.GroupPolicy.GPTrustee  GpoRead
 ```
 
-> 📸 Captura: ![fase12-01](../sceenshots/FASE-12-GPO-Abuse/fase12-01-gpo-permissions.png)
+> 📸 Captura: ![fase12-01](../../sceenshots/FASE-12-GPO-Abuse/fase12-01-gpo-permissions.png)
 
 **`GpoEditDeleteModifySecurity`** equivale a FullControl sobre la GPO — permite editar configuraciones, tareas programadas, scripts de inicio/apagado y modificar los permisos de la propia GPO.
 
@@ -143,7 +143,7 @@ Write-Host "[+] Path: $xmlPath"
 [+] Path: \\DC-01\SYSVOL\atackcorp.local\Policies\{163a5b0f...}\Machine\Preferences\ScheduledTasks
 ```
 
-> 📸 Captura: ![fase12-02](../sceenshots/FASE-12-GPO-Abuse/fase12-02-gpo-task-added.png)
+> 📸 Captura: ![fase12-02](../../sceenshots/FASE-12-GPO-Abuse/fase12-02-gpo-task-added.png)
 
 **Clave técnica:** Al escribir directamente en SYSVOL se bypassa la consola de administración de GPOs (GPMC). El KDC no valida el contenido del XML — solo verifica que el writer tenga permisos sobre la GPO.
 
@@ -174,7 +174,7 @@ ATACKCORP\Admins. del dominio
 ATACKCORP\helpdesk.ruiz          ← ✅ Añadido por la GPO
 ```
 
-> 📸 Captura: ![fase12-03](../sceenshots/FASE-12-GPO-Abuse/fase12-03-gpo-system-rce.png)
+> 📸 Captura: ![fase12-03](../../sceenshots/FASE-12-GPO-Abuse/fase12-03-gpo-system-rce.png)
 
 ---
 
@@ -185,7 +185,7 @@ evil-winrm -i 10.0.2.8 -u helpdesk.ruiz -p 'Helpdesk2024!'
 # *Evil-WinRM* PS C:\Users\helpdesk.ruiz\Documents>
 ```
 
-> 📸 Captura: ![fase12-04](../sceenshots/FASE-12-GPO-Abuse/fase12-04-helpdesk-shell-wkstn01.png)
+> 📸 Captura: ![fase12-04](../../sceenshots/FASE-12-GPO-Abuse/fase12-04-helpdesk-shell-wkstn01.png)
 
 **Resultado:** helpdesk.ruiz tiene ahora shell como administrador local en WKSTN-01 — acceso que no tenía antes del GPO Abuse.
 

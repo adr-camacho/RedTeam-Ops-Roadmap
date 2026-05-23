@@ -14,8 +14,8 @@
 ---
 
 ### 1.1 — ADCS Enumeration completa
-> 📸 Captura: ![fase1-01](../screenshots/FASE-1-Reconnaissance/fase1-01-certipy-find-esc8.png)  
-> 📸 Captura: ![fase1-02](../screenshots/FASE-1-Reconnaissance/fase1-02-certipy-find-esc1.png)
+> 📸 Captura: ![fase1-01](../../screenshots/FASE-1-Reconnaissance/fase1-01-certipy-find-esc8.png)  
+> 📸 Captura: ![fase1-02](../../screenshots/FASE-1-Reconnaissance/fase1-02-certipy-find-esc1.png)
 
 ```bash
 certipy-ad find \

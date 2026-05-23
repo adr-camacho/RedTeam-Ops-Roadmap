@@ -96,7 +96,7 @@ INFO: Done in 00M 01S
 INFO: Compressing output into 20260519144206_bloodhound.zip
 ```
 
-> 📸 Captura: ![fase11-09](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-09-bloodhound-collection.png)
+> 📸 Captura: ![fase11-09](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-09-bloodhound-collection.png)
 
 ---
 
@@ -131,7 +131,7 @@ INFO: Enumeration finished in 00:00:10.5
 INFO: SharpHound Enumeration Completed!
 ```
 
-> 📸 Captura: ![fase11-14](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-14-sharphound-collection.png)
+> 📸 Captura: ![fase11-14](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-14-sharphound-collection.png)
 
 ### Descarga del ZIP
 
@@ -166,7 +166,7 @@ Pathfinding:
 - **Admin Count: TRUE** — grupo privilegiado
 - **Members: 2** — `backup_svc` y `Administrador`
 
-> 📸 Captura: ![fase11-10](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-10-bloodhound-da-group.png)
+> 📸 Captura: ![fase11-10](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-10-bloodhound-da-group.png)
 
 ### 6.2 backup_svc → Domain Admin (1 salto)
 
@@ -183,7 +183,7 @@ BACKUP_SVC → MemberOf → ADMINS. DEL DOMINIO
 
 **Impacto:** Path directo de 1 salto. Si backup_svc está comprometida (contraseña crackeada via AS-REP Roasting en Fase 2), es DA inmediato.
 
-> 📸 Captura: ![fase11-11](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-11-bloodhound-backup-svc-da-path.png)
+> 📸 Captura: ![fase11-11](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-11-bloodhound-backup-svc-da-path.png)
 
 ### 6.3 fin.garcia → sql_svc → Domain Admin (Fase 13)
 
@@ -200,7 +200,7 @@ fin.garcia → GenericWrite → sql_svc → CoerceTGT → ATACKCORP.LOCAL → Co
 
 **Impacto:** BloodHound visualiza en segundos el attack path que justifica la Fase 13 completa. La relación `GenericWrite` sobre sql_svc, combinada con la propiedad `CoerceTGT` (Unconstrained Delegation), forma un path automático hacia DA.
 
-> 📸 Captura: ![fase11-12](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-12-bloodhound-fin-garcia-acl-path.png)
+> 📸 Captura: ![fase11-12](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-12-bloodhound-fin-garcia-acl-path.png)
 
 ### 6.4 helpdesk.ruiz → Domain Admin (Múltiples paths)
 
@@ -214,7 +214,7 @@ helpdesk.ruiz → MemberOf → USUARIOS DEL DOMINIO
 
 BloodHound CE con SharpHound revela paths via **ADCS ESC1/ESC3** y ACLs directas sobre el grupo DA que bloodhound-python no captura.
 
-> 📸 Captura: ![fase11-15](../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-15-bloodhound-helpdesk-paths.png)
+> 📸 Captura: ![fase11-15](../../screenshots/FASE-11-Unconstrained-Constrained-Delegation/fase11-15-bloodhound-helpdesk-paths.png)
 
 ---
 
