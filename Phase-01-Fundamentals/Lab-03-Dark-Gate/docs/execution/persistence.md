@@ -21,7 +21,7 @@ La persistencia via certificado es la técnica de persistencia más silenciosa e
 ---
 
 ### 6.1 — Verificar persistencia del certificado
-**Captura:** ![fase6-01](../screenshots/FASE-6-Persistence-via-Certificado/fase6-01-cert-persistence.png)
+> 📸 Captura: ![fase6-01](../screenshots/FASE-6-Persistence-via-Certificado/fase6-01-cert-persistence.png)
 
 ```bash
 certipy-ad auth \
@@ -42,7 +42,7 @@ Certificado válido — TGT y hash obtenidos. ✅
 ---
 
 ### 6.2 — Rotar contraseña del Administrador
-**Captura:** ![fase6-02](../screenshots/FASE-6-Persistence-via-Certificado/fase6-02-password-rotation.png)
+> 📸 Captura: ![fase6-02](../screenshots/FASE-6-Persistence-via-Certificado/fase6-02-password-rotation.png)
 
 ```powershell
 # En Evil-WinRM — simular rotación de contraseña defensiva
@@ -53,7 +53,7 @@ net user Administrador "NuevaPassword2026!"
 ---
 
 ### 6.3 — Certificado sigue válido post-rotación
-**Captura:** ![fase6-03](../screenshots/FASE-6-Persistence-via-Certificado/fase6-03-cert-persistence-post-rotation.png)
+> 📸 Captura: ![fase6-03](../screenshots/FASE-6-Persistence-via-Certificado/fase6-03-cert-persistence-post-rotation.png)
 
 ```bash
 certipy-ad auth \
@@ -81,7 +81,7 @@ certipy-ad auth \
 ---
 
 ### 6.4 — Prueba de objetivo final
-**Captura:** ![fase6-04](../screenshots/FASE-6-Persistence-via-Certificado/fase6-04-objective-proof.png)
+> 📸 Captura: ![fase6-04](../screenshots/FASE-6-Persistence-via-Certificado/fase6-04-objective-proof.png)
 
 ```bash
 evil-winrm -i 10.0.2.10 \

@@ -16,7 +16,8 @@ APT29 utiliza token impersonation para obtener SYSTEM cuando necesita acceso a r
 
 ## 8.1 — Enumeración de privilegios
 **Técnica MITRE:** T1057 — Process Discovery  
-**Capturas:** ![fase8-01](../screenshots/FASE-8-Privilege-Escalation/fase8-01-getprivs.png) ![fase8-02](../screenshots/FASE-8-Privilege-Escalation/fase8-02-getprivs-seimpersonate.png)
+> 📸 Captura: ![fase8-01](../screenshots/FASE-8-Privilege-Escalation/fase8-01-getprivs.png) 
+> 📸 Captura: ![fase8-02](../screenshots/FASE-8-Privilege-Escalation/fase8-02-getprivs-seimpersonate.png)
 
 Desde la consola Sliver con el beacon activo:
 
@@ -48,7 +49,7 @@ SeCreateGlobalPrivilege         Crear objetos globales               Enabled, En
 **Técnica MITRE:** T1562.001 — Impair Defenses: Disable or Modify Tools
 
 ### 8.2.1 — Desactivación de Tamper Protection (GUI)
-**Captura:** ![fase8-04](../screenshots/FASE-8-Privilege-Escalation/fase8-04-tamper-protection-disabled.png)
+> 📸 Captura: ![fase8-04](../screenshots/FASE-8-Privilege-Escalation/fase8-04-tamper-protection-disabled.png)
 
 Windows 11 con Tamper Protection activa bloquea cualquier modificación de Defender via PowerShell o registro. Se requiere desactivación manual desde la GUI:
 
@@ -59,7 +60,7 @@ UAC: ATACKCORP\backup_svc / Backup2024!
 ```
 
 ### 8.2.2 — Desactivación de Windows Defender
-**Captura:** ![fase8-05](../screenshots/FASE-8-Privilege-Escalation/fase8-05-defender-disabled.png)
+> 📸 Captura: ![fase8-05](../screenshots/FASE-8-Privilege-Escalation/fase8-05-defender-disabled.png)
 
 ```powershell
 Set-MpPreference -DisableRealtimeMonitoring $true
@@ -72,7 +73,7 @@ Get-MpPreference | Select DisableRealtimeMonitoring, DisableScriptScanning
 ```
 
 ### 8.2.3 — Exclusiones de carpeta (AMSI bypass parcial)
-**Captura:** ![fase8-03](../screenshots/FASE-8-Privilege-Escalation/fase8-03-defender-exclusions.png)
+> 📸 Captura: ![fase8-03](../screenshots/FASE-8-Privilege-Escalation/fase8-03-defender-exclusions.png)
 
 ```powershell
 Add-MpPreference -ExclusionPath "C:\Users\backup_svc\Documents"

