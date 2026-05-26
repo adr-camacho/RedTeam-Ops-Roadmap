@@ -1,195 +1,248 @@
-# 🚩 Red Team Ops Roadmap
+<div align="center">
 
-[![Status](https://img.shields.io/badge/Status-In%20Progress-orange)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap)
-[![Domain](https://img.shields.io/badge/Domain-Active%20Directory%20%7C%20Red%20Team-red)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap)
-[![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap)
-[![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-red)](./docs/MITRE_MAPPING.md)
-[![Labs](https://img.shields.io/badge/Labs-3%2F15%20Completados-green)](./docs/PROGRESS.md)
-[![Design](https://img.shields.io/badge/Roadmap-v2.0-blue)](./DESIGN.md)
-[![CRTO Coverage](https://img.shields.io/badge/CRTO%20Coverage-60%25%20actual%20%7C%2098%25%20objetivo-orange)](./docs/DESIGN.md#9-cobertura-crto--coverage-matrix)
-[![Tradecraft](https://img.shields.io/badge/Tradecraft-3%20docs-purple)](./Phase-01-Fundamentals/)
+```
+██████╗ ███████╗██████╗     ████████╗███████╗ █████╗ ███╗   ███╗
+██╔══██╗██╔════╝██╔══██╗    ╚══██╔══╝██╔════╝██╔══██╗████╗ ████║
+██████╔╝█████╗  ██║  ██║       ██║   █████╗  ███████║██╔████╔██║
+██╔══██╗██╔══╝  ██║  ██║       ██║   ██╔══╝  ██╔══██║██║╚██╔╝██║
+██║  ██║███████╗██████╔╝       ██║   ███████╗██║  ██║██║ ╚═╝ ██║
+╚═╝  ╚═╝╚══════╝╚═════╝        ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
+```
 
-Repositorio de operaciones Red Team con enfoque en **entornos reales de Active Directory**. Documenta el proceso de aprendizaje progresivo desde fundamentos hasta simulación de infraestructura corporativa compleja, emulando adversarios reales mediante frameworks C2 modernos y open source.
+# 🎯 RedTeam Ops Roadmap
 
-El objetivo no es ejecutar herramientas mecánicamente — es **entender cada técnica a nivel de protocolo**, construir exploits desde cero cuando las herramientas fallan, y documentar tanto la perspectiva ofensiva como la defensiva en cada operación.
+**Entorno de laboratorio progresivo para operaciones ofensivas reales**  
+*De fundamentos a Advanced Persistent Threat — Aprende haciendo, no leyendo*
 
----
+[![Stars](https://img.shields.io/github/stars/adr-camacho/RedTeam-Ops-Roadmap?style=for-the-badge&color=red&labelColor=1a1a1a)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap/stargazers)
+[![Forks](https://img.shields.io/github/forks/adr-camacho/RedTeam-Ops-Roadmap?style=for-the-badge&color=orange&labelColor=1a1a1a)](https://github.com/adr-camacho/RedTeam-Ops-Roadmap/network)
+[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge&labelColor=1a1a1a)](LICENSE)
+[![Labs](https://img.shields.io/badge/LABS-7%20activos-brightgreen?style=for-the-badge&labelColor=1a1a1a)]()
+[![Status](https://img.shields.io/badge/status-EN%20DESARROLLO%20ACTIVO-red?style=for-the-badge&labelColor=1a1a1a)]()
 
-## 🎯 Enfoque
-
-**Red Team puro** — emulación de adversarios reales (APT29, APT41, APT28, Lazarus, APT10) con técnicas aplicables en engagements profesionales 2024-2026.
-
-- Exploits construidos manualmente cuando los frameworks fallan
-- C2 con Sliver (open source, equivalente a Cobalt Strike)
-- Documentación de vulnerabilidades bloqueadas (comportamiento real en entornos modernos)
-- Perspectiva Blue Team en cada lab (detección, Event IDs, reglas SIGMA)
+</div>
 
 ---
 
-## 🏗️ Infraestructura
+## 📌 ¿Qué es esto?
 
-Entornos propios desplegados en **VirtualBox** — control total sobre vectores y configuración.
+Un roadmap **práctico y progresivo** de Red Team Operations construido sobre entornos virtualizados reales. No teoría. No CTFs simplificados. Operaciones reales contra infraestructura AD, evasión de EDR, movimiento lateral y simulación de APT.
 
-### Red NAT — LabRedTeam (10.0.2.0/24)
-
-| Host | SO | IP | Rol |
-|------|----|----|-----|
-| DC-01 | Windows Server 2022 | `10.0.2.10` | Domain Controller + ADCS |
-| WKSTN-01 | Windows 11 Enterprise | `10.0.2.8` | Workstation corporativa |
-| PROD | Ubuntu 22.04 LTS | `10.0.2.200` | Servidor producción (Webmin) |
-| Kali | Kali Linux 2026.1 | `10.0.2.9` | Máquina operadora (compartida) |
-
-### Red NAT — LabInternal (10.0.3.0/24)
-
-| Host | SO | IP | Rol |
-|------|----|----|-----|
-| PROD | Ubuntu 22.04 LTS | `10.0.3.200` | Pivote hacia red interna |
-| GIT | Ubuntu 22.04 LTS | `10.0.3.150` | Servidor Git interno |
-| PC-01 | Windows 11 Enterprise | `10.0.3.7` | Endpoint Windows interno |
-
-- **Dominio:** `atackcorp.local`
-- **CA:** `AtackCorp-CA` (ADCS — ESC1/ESC4/ESC8 configurados)
-- **Kali compartida** entre todos los labs — arsenal instalado una vez
-
-> 📄 Infraestructura completa: [LAB_INFRASTRUCTURE.md](./docs/LAB_INFRASTRUCTURE.md)
+Cada fase amplía la anterior. Cada lab tiene un objetivo de ataque claro, documentación de TTPs y lecciones aprendidas.
 
 ---
 
-## 🛠️ Arsenal
+## 🗺️ Mapa de fases
+
+```
+PHASE-01 ──────────────────────────────────────────────── FUNDAMENTALS
+│  Lab-01  Active Directory Basics & Initial Compromise
+│  Lab-02  Lateral Movement & Pivoting  
+│  Lab-03  [En desarrollo]
+│
+PHASE-02 ──────────────────────────────────────────────── INTERMEDIATE OPS  
+│  Lab-04  [Próximamente]
+│  Lab-05  [Próximamente]
+│
+PHASE-03 ──────────────────────────────────────────────── ADVANCED / APT SIM
+│  Lab-06  [Próximamente]
+│  Lab-07  Lazarus Group — Evasión de Defender / Syscalls directas
+│
+PHASE-04 ──────────────────────────────────────────────── RED TEAM OPS
+         [En diseño]
+```
+
+---
+
+## 🔬 Labs activos
+
+### ☠️ Lab-01 — Operation Ghost Forest
+> **Escenario:** Compromiso inicial de un entorno Active Directory corporativo
+
+| Parámetro | Detalle |
+|-----------|---------|
+| 🎯 Objetivo | Domain Admin desde posición de usuario estándar |
+| 🏗️ Infraestructura | DC Windows Server 2022 + 2 workstations |
+| 🔗 Cadena de ataque | Enum → Kerberoasting → Delegation Abuse → DCSync |
+| 📋 TTPs cubiertos | T1558.003, T1134.001, T1484, T1003.006 |
+| ✅ Estado | **COMPLETADO** (Fases 1–13) |
+
+**Técnicas cubiertas:**
+- `AS-REP Roasting` / `Kerberoasting`
+- `Unconstrained & Constrained Delegation`
+- `ACL Abuse` (WriteDACL, GenericAll, GenericWrite)
+- `GPO Abuse` para persistencia
+- `BloodHound` para análisis de paths de ataque
+- `DCSync` y volcado de credenciales
+
+---
+
+### 🔀 Lab-02 — Pivoting & Lateral Movement
+> **Escenario:** Expansión de acceso a través de múltiples segmentos de red
+
+| Parámetro | Detalle |
+|-----------|---------|
+| 🎯 Objetivo | Comprometer tercer segmento de red aislado |
+| 🏗️ Infraestructura | 3 subnets segmentadas + firewall interno |
+| 🔗 Cadena de ataque | Foothold → Pivote 1 → Pivote 2 → Crown Jewels |
+| 📋 TTPs cubiertos | T1090, T1021, T1550 |
+| 🔧 Estado | **EN MEJORA** (segundo pivote + evasión Defender) |
+
+---
+
+### 🕵️ Lab-07 — Lazarus Group TTPs (Phase-03)
+> **Escenario:** Simulación de APT con evasión avanzada de EDR
+
+| Parámetro | Detalle |
+|-----------|---------|
+| 🎯 Objetivo | Operar en entorno real sin desactivar Tamper Protection |
+| 🛡️ Defensa activa | Windows Defender con Tamper Protection ON |
+| 🔗 Técnicas | AMSI Bypass en memoria, Direct Syscalls, Process Injection |
+| 📋 TTPs cubiertos | T1562.001, T1055, T1134, T1059.001 |
+| 🔧 Estado | **EN DESARROLLO** |
+
+---
+
+## 🏗️ Arquitectura de laboratorio
+
+```
+                    ┌─────────────────────────────────┐
+                    │      HOST (Hypervisor)           │
+                    │   VMware / VirtualBox / Hyper-V  │
+                    └──────────────┬──────────────────┘
+                                   │
+              ┌────────────────────┼────────────────────┐
+              │                    │                    │
+     ┌────────▼──────┐   ┌─────────▼─────┐   ┌────────▼──────┐
+     │  SEGMENTO A   │   │  SEGMENTO B   │   │  SEGMENTO C   │
+     │  10.10.10.0/24│   │ 10.10.20.0/24 │   │ 10.10.30.0/24 │
+     │               │   │               │   │               │
+     │  DC-01        │   │  SRV-01       │   │  SRV-DB       │
+     │  WKSTN-01     │   │  WKSTN-02     │   │  (Crown Jewel)│
+     │  WKSTN-02     │   │               │   │               │
+     └───────────────┘   └───────────────┘   └───────────────┘
+              │
+     ┌────────▼──────┐
+     │   ATTACKER    │
+     │  Kali Linux   │
+     │  + Arsenal    │
+     └───────────────┘
+```
+
+---
+
+## ⚙️ Requisitos
+
+```bash
+# Hardware mínimo
+RAM:  16 GB  (recomendado 32 GB para Phase-03)
+CPU:  8 cores con soporte de virtualización (VT-x / AMD-V)
+Disk: 200 GB libres (SSD recomendado)
+
+# Software
+Hypervisor:  VMware Workstation Pro / VirtualBox 7+
+Attacker OS: Kali Linux 2024.x
+Target OS:   Windows Server 2022 + Windows 10/11
+```
+
+---
+
+## 🚀 Inicio rápido
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/adr-camacho/RedTeam-Ops-Roadmap.git
+cd RedTeam-Ops-Roadmap
+
+# 2. Revisar la fase que te interesa
+cd Phase-01-Fundamentals/Lab-01
+
+# 3. Desplegar el lab (PowerShell como Administrador en el DC)
+.\Setup-Lab01-GhostForest-v2.ps1
+
+# 4. Configurar el arsenal en Kali
+chmod +x arsenal_setup.sh && ./arsenal_setup.sh
+
+# 5. Leer el README del lab y comenzar
+cat README.md
+```
+
+---
+
+## 🛠️ Arsenal incluido
 
 | Categoría | Herramientas |
 |-----------|-------------|
-| **C2** | Sliver v1.7.3, Havoc C2 (Phase-03) |
-| **ADCS Abuse** | Certipy v5.0.4 |
-| **Enumeración AD** | BloodHound, PowerView, enum4linux-ng |
-| **Kerberos** | Impacket, Kerbrute, Rubeus |
-| **Pivoting** | Ligolo-ng v0.7.5 |
-| **Acceso remoto** | Evil-WinRM, NetExec |
-| **Coerción NTLM** | PetitPotam, Coercer, PrinterBug |
-| **Post-Explotación** | WinPEAS, LinPEAS, PrivescCheck |
-| **Cracking** | Hashcat, John the Ripper |
-| **Escaneo** | Nmap, Gobuster, Feroxbuster |
-
-> 📄 Arsenal completo + setup: [tooling/arsenal_setup.sh](./tooling/arsenal_setup.sh) | [ARSENAL.md](./docs/ARSENAL.md)
+| **C2 Framework** | Cobalt Strike, Metasploit, Sliver |
+| **Reconocimiento AD** | BloodHound (SharpHound v2.5.9), PowerView, ADRecon |
+| **Credential Access** | Mimikatz, Rubeus, CrackMapExec, Impacket |
+| **Evasión** | AMSI bypass en memoria, Direct Syscalls, PE stomping |
+| **Pivoting** | Ligolo-ng, Chisel, SSHuttle |
+| **Post-explotación** | SharpCollection, PrivescCheck, WinPEAS |
 
 ---
 
-## 🗺️ Roadmap v2.0
-
-> 📐 Diseño completo, principios pedagógicos y coverage matrix: [DESIGN.md](./DESIGN.md)
-
-### 🟢 Phase-01 — Fundamentos AD
-
-| # | Operación | Adversario | Técnicas | Estado |
-|---|-----------|-----------|---------|--------|
-| 01 | [GHOST FOREST](./Phase-01-Fundamentals/Lab-01-Ghost-Forest/) | APT29 | AS-REP Roasting, Kerberoasting, Delegation, GPO/ACL Abuse, BloodHound, C2 | ✅ Completado |
-| 02 | [SILENT BRIDGE](./Phase-01-Fundamentals/Lab-02-Silent-Bridge/) | APT41 | CVE-2019-12840, Ligolo-ng, Git history, relay C2 | ✅ Completado |
-| 03 | [DARK GATE](./Phase-01-Fundamentals/Lab-03-Dark-Gate/) | APT29 | ADCS ESC1/ESC4/ESC8, Certipy, cert persistence | ✅ Completado |
-
-### 🟡 Phase-02 — AD Avanzado
-
-| # | Operación | Adversario | Técnicas | Estado |
-|---|-----------|-----------|---------|--------|
-| 04 | [IRON FOREST](./Phase-02-Post-Exploitation/Lab-04-Iron-Forest/) | APT28 | WriteDACL, ForceChangePassword, Overpass-the-Hash, credential hunting | ⏳ Pendiente |
-| 05 | [SILVER CHAIN](./Phase-02-Post-Exploitation/Lab-05-Silver-Chain/) | APT28 | RBCD, Shadow Credentials, Silver Ticket, Diamond Ticket | ⏳ Pendiente |
-| 06 | [BLACK POLICY](./Phase-02-Post-Exploitation/Lab-06-Black-Policy/) | APT28 | SID History, ExtraSids, Cross-Forest Trust | ⏳ Pendiente |
-| 07 | [SHADOW VAULT](./Phase-02-Post-Exploitation/Lab-07-Shadow-Vault/) | APT28 | LAPS abuse, DPAPI, Shadow Credentials, LSASS alternativo | ⏳ Pendiente |
-
-### 🔴 Phase-03 — Red Team Operations
-
-| # | Operación | Adversario | Técnicas | Estado |
-|---|-----------|-----------|---------|--------|
-| 08 | [GHOST SIGNAL](./Phase-03-Red-Team-Operations/Lab-08-Ghost-Signals/) | Lazarus | AMSI bypass, process injection, direct syscalls, PE evasion | ⏳ Pendiente |
-| 09 | [FIRST CONTACT](./Phase-03-Red-Team-Operations/Lab-09-First-Contact/) | Lazarus | Password spraying, phishing HTML smuggling, VBA macros | ⏳ Pendiente |
-| 10 | [DARK CURRENT](./Phase-03-Red-Team-Operations/Lab-10-Dark-Current/) | Lazarus | Havoc C2, sleep obfuscation, BOFs, ETW patching | ⏳ Pendiente |
-| 11 | [DEEP HOLO](./Phase-03-Red-Team-Operations/Lab-11-Deep-Holo/) | Lazarus | C2 infraestructura, redirectors, domain fronting | ⏳ Pendiente |
-
-### 🏴 Phase-04 — Enterprise Simulation
-
-| # | Operación | Adversario | Técnicas | Estado |
-|---|-----------|-----------|---------|--------|
-| 12 | [RED DANTE](./Phase-04-Enterprise-Simulation/Lab-12-Red-Dante/) | APT10 | Red masiva heterogénea, persistencia, exfiltración | ⏳ Pendiente |
-| 13 | [DEEP WATER](./Phase-04-Enterprise-Simulation/Lab-13-Deep-Water/) | APT10 | Forest Trusts avanzados, CRTO preparation | ⏳ Pendiente |
-| 14 | [AZURE BREACH](./Phase-04-Enterprise-Simulation/Lab-14-Azure-Breach/) | APT10 | Azure AD/Entra ID, PRT theft, hybrid attacks | ⏳ Pendiente |
-| 15 | [OPERATION ZEPHYR](./Phase-04-Enterprise-Simulation/Lab-15-Operation-Zephyr/) | APT10 | Forest Trusts, CRTO exam preparation | ⏳ Pendiente |
-
----
-
-## 📋 Próximos pasos
-
-- **Lab-04 IRON FOREST** — WriteDACL, ForceChangePassword, credential hunting
-- **Lab-07 SHADOW VAULT** (nuevo) — LAPS, DPAPI, Shadow Credentials
-- **Lab-09 FIRST CONTACT** (nuevo) — Initial Access real sin credenciales previas
-- **Lab-13 AZURE BREACH** (nuevo) — Azure AD/Entra ID hybrid attacks
-
-> 📐 Ver [DESIGN.md](./DESIGN.md) para el diseño completo del Roadmap v2.0
-
----
-
-## 📂 Estructura del repositorio
+## 📚 Documentación por lab
 
 ```
-Red-Team_Labs/
-├── tooling/                        ← utilidades del operador (Kali)
-│   ├── arsenal_setup.sh            ← instala todo el arsenal en Kali
-│   ├── lab_start.sh                ← arranca entorno de un lab
-│   ├── lab_stop.sh                 ← limpia entre labs
-│   └── kali_network_check.sh       ← diagnóstico de red
-├── docs/                           ← documentación global
-│   ├── ARSENAL.md
-│   ├── CHANGELOG.md
-│   ├── DETECTION_RULES.md
-│   ├── LAB_INFRASTRUCTURE.md
-│   ├── MITRE_MAPPING.md
-│   ├── OPSEC_NOTES.md
-│   ├── PROGRESS.md
-│   └── WRITEUP_TEMPLATE.md
-├── Phase-01-Fundamentals/
-│   ├── Lab-01-Ghost-Forest/            ✅ GHOST FOREST (APT29)
-│   ├── Lab-02-Silent-Bridge/           ✅ SILENT BRIDGE (APT41)
-│   └── Lab-03-Dark-Gate/               ✅ DARK GATE (APT29)
-├── Phase-02-Post-Exploitation/
-├── Phase-02-Post-Exploitation/
-│   ├── Lab-04 a Lab-07-Shadow-Vault
-├── Phase-03-Red-Team-Operations/
-├── Phase-04-Enterprise-Simulation/
-└── setup/                          ← aprovisionamiento del dominio (DC-01)
-    └── provisioning/               ← PowerShell scripts para DC-01
-```
-
-Cada lab sigue la estructura:
-```
-Lab-XX/
-├── OPERATION_NAME.md       ← plan de operación + adversario
-├── README.md               ← índice + attack path + estado
-├── docs/                   ← writeups por fase
-├── screenshots/            ← evidencias organizadas por fase
-├── setup/                  ← scripts de aprovisionamiento
-├── loot/                   ← hashes y credenciales obtenidas
-└── nmap/                   ← outputs de escaneo
+Phase-01-Fundamentals/
+├── Lab-01/
+│   ├── README.md                    # Guía completa del lab
+│   ├── OPERATION_GHOST_FOREST.md    # Narrative del ataque
+│   ├── docs/
+│   │   ├── delegation.md            # Técnicas de delegación
+│   │   ├── gpo_abuse.md             # Abuso de GPOs
+│   │   ├── acl_abuse.md             # Escalada por ACLs
+│   │   └── bloodhound.md            # Uso de BloodHound
+│   ├── lessons_learned.md           # Qué salió mal y qué funcionó
+│   └── scripts/
+│       ├── Setup-Lab01-GhostForest-v2.ps1
+│       └── arsenal_setup.sh
+└── Lab-02/
+    └── README.md
 ```
 
 ---
 
-## 📊 Documentación global
+## 📖 MITRE ATT&CK Coverage
 
-| Documento | Descripción |
-|-----------|-------------|
-| [PROGRESS.md](./docs/PROGRESS.md) | Diario de sesiones, horas y técnicas dominadas |
-| [MITRE_MAPPING.md](./docs/MITRE_MAPPING.md) | Mapeo completo de TTPs por adversario y lab |
-| [ARSENAL.md](./docs/ARSENAL.md) | Arsenal de herramientas con referencia por lab |
-| [CHANGELOG.md](./docs/CHANGELOG.md) | Registro de cambios del repositorio |
-| [DETECTION_RULES.md](./docs/DETECTION_RULES.md) | Event IDs y reglas SIGMA consolidadas |
-| [OPSEC_NOTES.md](./docs/OPSEC_NOTES.md) | Notas de OPSEC transversales |
-| [LAB_INFRASTRUCTURE.md](./docs/LAB_INFRASTRUCTURE.md) | Entorno VirtualBox + scripts de aprovisionamiento |
-| [WRITEUP_TEMPLATE.md](./docs/WRITEUP_TEMPLATE.md) | Plantilla estándar para writeups |
-| [DESIGN.md](./DESIGN.md) | Roadmap v2.0 — principios de diseño, coverage matrix, crown jewels |
-| [TOOL_INDEX.md](./docs/TOOL_INDEX.md) | Índice de herramientas por lab — referencia rápida |
-| [OPSEC_NOTES.md](./docs/OPSEC_NOTES.md) | Principios OPSEC transversales actualizados |
+| Táctica | Técnicas cubiertas |
+|---------|-------------------|
+| **Reconnaissance** | T1592, T1590 |
+| **Initial Access** | T1078, T1566 |
+| **Execution** | T1059.001, T1059.003 |
+| **Persistence** | T1484.001, T1547 |
+| **Privilege Escalation** | T1134.001, T1134.003 |
+| **Defense Evasion** | T1562.001, T1055, T1070 |
+| **Credential Access** | T1558.003, T1003.006, T1003.001 |
+| **Lateral Movement** | T1021.002, T1550.002 |
+| **Collection** | T1039, T1074 |
+| **Command & Control** | T1090, T1071 |
 
 ---
 
-## 📫 Contacto
+## ⚠️ Disclaimer
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Adrián%20Camacho-0077B5?logo=linkedin)](https://www.linkedin.com/in/adrian-camacho-mora/)
-[![TryHackMe](https://img.shields.io/badge/TryHackMe-sapodos-212C42?logo=tryhackme)](https://tryhackme.com/p/sapodos)
+> Este repositorio es **únicamente para fines educativos y de investigación en entornos controlados**.  
+> Todo el contenido está diseñado para practicar en laboratorios virtuales propios.  
+> El uso de estas técnicas en sistemas sin autorización explícita es **ilegal**.  
+> El autor no se responsabiliza del uso indebido de este material.
+
+---
+
+## 📬 Contacto
+
+<div align="center">
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-adr--camacho-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/adr-camacho)
+[![GitHub](https://img.shields.io/badge/GitHub-adr--camacho-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/adr-camacho)
+
+*Si esto te es útil, dale una ⭐ — ayuda a que más gente lo encuentre*
+
+</div>
+
+---
+
+<div align="center">
+<sub>Built with 🔴 for the red team community · Not for skids · RTFM</sub>
+</div>
