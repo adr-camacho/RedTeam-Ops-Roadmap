@@ -622,5 +622,68 @@ Write-Host "`n[+] Script 06 completado. WKSTN-01 lista."
 
 ---
 
-*Última actualización: Mayo 2026 — Adrián Camacho*  
-*⚠️ Entorno únicamente para fines educativos y de laboratorio.*
+---
+
+## 🔴 Lab-04 — IRON FOREST | APT28 (Fancy Bear)
+
+> Comparte el entorno base de Lab-01/03 (DC-01 + WKSTN-01 + Kali).  
+> Requiere ejecutar `CrownJewels-Lab04-IronForest.ps1` en DC-01 antes de iniciar el lab.
+
+### Setup requerido
+
+```powershell
+# En DC-01 como Administrador
+.\Phase-02-Post-Exploitation\Lab-04-Iron-Forest\setup\CrownJewels-Lab04-IronForest.ps1
+```
+
+### Artefactos creados por CrownJewels
+
+| Artefacto | Ruta | Propósito |
+|---|---|---|
+| `backup_database.ps1` | `C:\CorporateData\IT\Scripts\` | Credenciales sql_svc + backup_svc en claro |
+| `deploy_webapp.ps1` | `C:\CorporateData\IT\Scripts\` | Credenciales iis_svc + webapp_db en claro |
+| `ConsoleHost_history.txt` | `C:\Users\Administrador.DC-01\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\` | Contraseña DA + Finance2024! en claro |
+| `Q1_2026_Confidential.txt` | `C:\CorporateData\Finance\Reports\` | Datos financieros (objetivo) |
+| Share `IT-Scripts` | `\\DC-01\IT-Scripts` | ReadAccess: Usuarios del dominio |
+| ACE WriteDACL | AD objeto dominio | fin.garcia → WriteDACL → DC=atackcorp,DC=local |
+
+### Credenciales relevantes Lab-04
+
+| Usuario | Contraseña | Origen | Relevancia |
+|---|---|---|---|
+| `fin.garcia` | `Finance2024!` | PS history del Administrador | **WriteDACL → DCSync path** |
+| `backup_svc` | `Backup2024!` | backup_database.ps1 | Acceso C$ para PS history |
+| `sa` (SQL) | `SQLsa2026!` | backup_database.ps1 | SQL lateral movement |
+| `iis_svc` | `IISService2024!` | deploy_webapp.ps1 | Cuenta servicio IIS |
+| `webapp_db` | `WebappDB2024!` | deploy_webapp.ps1 | Conexión string DB |
+| `Administrador` | `NuevaPassword2026!` | PS history | Domain Admin directo |
+
+### Loot capturado
+
+```
+loot/
+├── dcsync_hashes.txt     — Todos los hashes NTLM del dominio (13 entradas)
+└── ntlmv2_backup_svc.txt — NTLMv2 de backup_svc capturado via WPAD poisoning
+```
+
+### Herramientas específicas Lab-04
+
+| Herramienta | Ruta en Kali | Uso |
+|---|---|---|
+| dnstool.py | `/opt/redteam/krbrelayx/dnstool.py` | ADIDNS registro WPAD |
+| SharpHound.exe | `/opt/redteam/windows/SharpHound.exe` | Recolección BloodHound CE |
+| BloodHound CE | `~/tools/ad/bloodhound-ce/` | `sudo docker compose up -d` |
+
+### Crown Jewels obtenidos
+
+| # | Objetivo | Resultado |
+|---|---|---|
+| 1 | Credenciales en scripts IT | ✅ 4 credenciales en claro |
+| 2 | Historial PS Administrador | ✅ `Finance2024!` + `NuevaPassword2026!` |
+| 3 | DCSync rights via WriteDACL | ✅ fin.garcia → DS-Replication |
+| 4 | Hash NTLM Administrador | ✅ `bc3abc2e0673a58e9e559d415b56d69d` |
+| 5 | Hash NTLM krbtgt | ✅ `d5237a2e43cb315c90679e2a5dae34ad` |
+| 6 | NTLMv2 backup_svc via WPAD | ✅ Capturado con Responder |
+| 7 | Beacon Sliver en DC-01 | ✅ `iron_forest_dc01` — ATACKCORP\Administrador |
+
+*Última actualización: Mayo 2026 — Lab-04 IRON FOREST añadido — Adrián Camacho*

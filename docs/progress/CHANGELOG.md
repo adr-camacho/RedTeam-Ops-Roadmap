@@ -3,6 +3,50 @@
 > Registro de cambios estructurales del repositorio.
 > Tipos: `ADD` | `UPDATE` | `FIX` | `REFACTOR` | `DOCS`
 
+## [2026-05-29] — Lab-04 IRON FOREST completado — Fases 04-08
+
+### ADD
+- `Lab-04/docs/execution/writedacl_abuse.md` — dacledit write/read, verificación ACEs, SIGMA
+- `Lab-04/docs/execution/dcsync.md` — secretsdump via fin.garcia (no-DA), crown jewels
+- `Lab-04/docs/execution/adidns_abuse.md` — dnstool WPAD, DNS Block List, Responder NTLMv2
+- `Lab-04/docs/execution/c2_sliver.md` — beacon iron_forest_dc01 en DC-01 como DA
+- `Lab-04/docs/execution/cleanup_opsec.md` — DCSync rights eliminados, WPAD tombstoned
+- `Lab-04/docs/analysis/mitigations.md` — detección y hardening por técnica
+- `Lab-04/loot/dcsync_hashes.txt` — hashes NTLM completos del dominio
+- `Lab-04/loot/ntlmv2_backup_svc.txt` — NTLMv2 capturado via WPAD poisoning
+- `Lab-04/screenshots/FASE-04 a FASE-08` — evidencia visual completa
+
+### UPDATE
+- `Lab-04/OPERATION_IRON_FOREST.md` — estado COMPLETADO, 8/8 fases
+- `Lab-04/README.md` — badge Status→Completado, fases y crown jewels actualizados
+- `Lab-04/docs/analysis/lessons_learned.md` — 13 lecciones (L-07 a L-13 añadidas)
+- `docs/PROGRESS.md` — sesiones 14-15, +7 técnicas dominadas, 4/15 labs
+- `docs/MITRE_MAPPING.md` — Lab-04 técnicas actualizadas a ✅
+- `docs/reference/LAB_INFRASTRUCTURE.md` — sección Lab-04 añadida
+- `docs/reference/ARSENAL.md` — BloodHound CE Docker, krb5-user, dnstool.py
+- `docs/operations/OPSEC_NOTES.md` — secciones WriteDACL/ADIDNS/Responder/Sliver
+
+### FIX
+- `Lab-04/screenshots/FASE-07` — screenshots movidas desde FASE-06 a carpeta correcta
+- `Lab-04/screenshots/FASE-01 a FASE-03` — reorganización nomenclatura
+
+---
+
+## [2026-05-28] — Lab-04 IRON FOREST iniciado — Fases 01-03 + infraestructura Kali
+
+### ADD
+- `Lab-04/docs/execution/enumeration_log.md` — BloodHound CE setup, SharpHound 358 objetos
+- `Lab-04/docs/execution/credential_hunting.md` — share IT-Scripts, 6 credenciales
+- `Lab-04/docs/execution/lateral_movement.md` — Overpass-the-Hash, TGT fin.garcia
+- `Lab-04/docs/analysis/lessons_learned.md` — 6 lecciones iniciales (L-01 a L-06)
+- `Lab-04/setup/CrownJewels-Lab04-IronForest.ps1` — ejecutado en DC-01
+- `~/tools/ad/bloodhound-ce/docker-compose.yml` — BloodHound CE con Neo4j 4.4
+
+### UPDATE
+- Kali RAM: 4GB → 8GB | DC-01 RAM: 2GB → 4GB | WKSTN-01 RAM: 2GB → 3GB
+- `tooling/arsenal_setup.sh` — SharpHound v2.5.9 ruta correcta `/opt/redteam/windows/`
+- `docs/PROGRESS.md` — sesión 14 añadida
+
 ---
 
 ## [2026-05-21] — Roadmap v2.0 + Lab-01 Fases 11-13 completas + Tradecraft docs

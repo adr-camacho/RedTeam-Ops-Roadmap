@@ -10,11 +10,11 @@
 | Métrica | Valor |
 |---------|-------|
 | Fecha de inicio | 09/05/2026 |
-| Última actualización | 20/05/2026 |
-| Labs completados | 3 / 14 |
-| Labs en progreso | 0 / 12 |
-| Horas totales invertidas | ~75h |
-| Fase actual | Phase-02: AD Avanzado (preparación) |
+| Última actualización | 29/05/2026 |
+| Labs completados | 4 / 15 |
+| Labs en progreso | 0 / 15 |
+| Horas totales invertidas | ~95h |
+| Fase actual | Phase-02: AD Avanzado (Lab-04 completado) |
 
 ---
 
@@ -32,25 +32,28 @@
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
-| Lab-04: Iron Forest | ⏳ Pendiente | — | — | — | — |
+| Lab-04: Iron Forest | ✅ Completado | 28/05/2026 | 29/05/2026 | ~20h | ✅ Completo |
 | Lab-05: Silver Chain | ⏳ Pendiente | — | — | — | — |
 | Lab-06: Black Policy | ⏳ Pendiente | — | — | — | — |
+| Lab-07: Shadow Vault | ⏳ Pendiente | — | — | — | — |
 
 ### 🔴 Phase-03 — Red Team & Evasión
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
-| Lab-07: Ghost Signal (Lazarus) | ⏳ Pendiente | — | — | — | — |
-| Lab-08: Dark Current (Lazarus) | ⏳ Pendiente | — | — | — | — |
-| Lab-09: Deep Holo (Lazarus) | ⏳ Pendiente | — | — | — | — |
+| Lab-08: Ghost Signal (Lazarus) | ⏳ Pendiente | — | — | — | — |
+| Lab-09: First Contact (Lazarus) | ⏳ Pendiente | — | — | — | — |
+| Lab-10: Dark Current (Lazarus) | ⏳ Pendiente | — | — | — | — |
+| Lab-11: Deep Holo (Lazarus) | ⏳ Pendiente | — | — | — | — |
 
 ### 🏴 Phase-04 — Simulación Real
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
-| Lab-10: Red Dante (APT10) | ⏳ Pendiente | — | — | — | — |
-| Lab-11: Deep Water (APT10) | ⏳ Pendiente | — | — | — | — |
-| Lab-12: Operation Zephyr (APT10) | ⏳ Pendiente | — | — | — | — |
+| Lab-12: Red Dante (APT10) | ⏳ Pendiente | — | — | — | — |
+| Lab-13: Deep Water (APT10) | ⏳ Pendiente | — | — | — | — |
+| Lab-14: Azure Breach (APT10) | ⏳ Pendiente | — | — | — | — |
+| Lab-15: Operation Zephyr (APT10) | ⏳ Pendiente | — | — | — | — |
 
 ---
 
@@ -169,6 +172,13 @@
 | Targeted Kerberoasting (GenericWrite) | T1558.003 | Lab-01 | ✅ Dominada |
 | BloodHound CE metodología | T1087.002 | Lab-01 | ✅ Dominada |
 | PetitPotam NTLM coerción | T1187 | Lab-01 | ✅ Dominada |
+| WriteDACL Abuse → DCSync | T1222 + T1003.006 | Lab-04 | ✅ Dominada |
+| Credential Hunting — Files/PS History | T1552.001 | Lab-04 | ✅ Dominada |
+| Overpass-the-Hash (impacket-getTGT) | T1550.003 | Lab-04 | ✅ Dominada |
+| ADIDNS Abuse — WPAD Poisoning | T1557.001 | Lab-04 | ✅ Dominada |
+| NTLMv2 Capture (Responder) | T1557.001 | Lab-04 | ✅ Dominada |
+| C2 HTTP Beacon (Sliver) | T1071.001 | Lab-04 | ✅ Dominada |
+| OPSEC Cleanup (dacledit remove + dnstool) | T1070 | Lab-04 | ✅ Dominada |
 
 ---
 
@@ -176,10 +186,17 @@
 
 | Lab | Pendiente | Prioridad |
 |-----|----------|-----------|
-| Lab-04 | IRON FOREST — WriteDACL, ForceChangePassword, credential hunting | Alta |
-| Lab-07 | SHADOW VAULT (nuevo) — LAPS, DPAPI, Shadow Credentials | Alta |
-| Lab-09 | FIRST CONTACT (nuevo) — Initial Access real sin credenciales | Alta |
-| Lab-13 | AZURE BREACH (nuevo) — Azure AD/Entra ID hybrid attacks | Alta |
+| Lab-05 | SILVER CHAIN — RBCD, Silver Ticket, Diamond Ticket | Alta |
+| Lab-06 | BLACK POLICY — SID History, Cross-Forest Trust, GPO abuse avanzado | Alta |
+| Lab-07 | SHADOW VAULT — LAPS, DPAPI, Shadow Credentials | Alta |
+| Lab-08 | GHOST SIGNAL — AMSI bypass, Process injection, syscalls directas | Alta |
+| Lab-09 | FIRST CONTACT — Initial Access real sin credenciales | Alta |
+| Lab-10 | DARK CURRENT — Havoc C2, BOFs, sleep obfuscation | Media |
+| Lab-11 | DEEP HOLO — Simulación multicapa, EDR evasion real | Media |
+| Lab-12 | RED DANTE — Red masiva mixta, persistencia multicapa, exfiltración | Media |
+| Lab-13 | DEEP WATER — Forest Trusts avanzados, preparación CRTO | Media |
+| Lab-14 | AZURE BREACH — Azure AD/Entra ID hybrid attacks | Alta |
+| Lab-15 | OPERATION ZEPHYR — Supply chain, simulación final CRTO | Media |
 | Lab-02 | Segundo pivote (tercer segmento de red) | Media |
 | Lab-02 | Setup-Lab02-SilentBridge.sh (bash — PROD + GIT setup Ubuntu) | Baja |
 
@@ -212,3 +229,30 @@
 - arsenal_setup.sh: SharpHound descarga via ZIP con verificación
 - DESIGN.md generado: Roadmap v2.0 con 14 labs, crown jewels, coverage matrix 80%
 - **Horas:** ~4h
+
+---
+
+### Semana 6 — 28/05/2026 al 29/05/2026
+
+#### 📌 28/05/2026 — Sesión 14: Lab-04 IRON FOREST — Fases 01-03
+- BloodHound CE instalado via Docker en `~/tools/ad/bloodhound-ce/` (Neo4j 4.4 + APOC)
+- Docker + docker compose v2.27.0 instalados en Kali
+- RAM VMs optimizada: Kali 8GB, DC-01 4GB, WKSTN-01 3GB
+- SharpHound v2.5.9 descargado y ejecutado desde WKSTN-01 — 358 objetos recolectados
+- BloodHound CE confirma: `fin.garcia → WriteDACL → ATACKCORP.LOCAL`
+- Fase 02: share `\\DC-01\IT-Scripts` — 4 credenciales en claro + historial PS Administrador
+- 6 credenciales totales incluyendo `fin.garcia:Finance2024!` y `Administrador:NuevaPassword2026!`
+- Fase 03: TGT Kerberos fin.garcia via impacket-getTGT — válido 10h
+- krb5-user instalado para klist
+- **Horas:** ~8h
+
+#### 📌 29/05/2026 — Sesión 15: Lab-04 IRON FOREST — Fases 04-08
+- Fase 04: WriteDACL → dacledit write DCSync rights (ACE[15]+ACE[19] confirmados)
+- Fase 05: DCSync con fin.garcia (no-DA) → hash Administrador + krbtgt + todos los usuarios
+- Fase 06: ADIDNS — `wpad.atackcorp.local → 10.0.2.9`, DNS Block List desactivado, Responder NTLMv2 capturado
+- Fase 07: Sliver beacon `iron_forest_dc01` en DC-01 como ATACKCORP\Administrador
+- Fase 08: Cleanup OPSEC — DCSync rights eliminados, WPAD tombstoned, beacon borrado del disco
+- Documentación completa: 8 docs de ejecución + lessons_learned (13 lecciones) + OPERATION_IRON_FOREST.md
+- **Horas:** ~12h
+
+**Total Lab-0

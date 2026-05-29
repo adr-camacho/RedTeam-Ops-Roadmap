@@ -27,7 +27,7 @@
 |-----------|---------------------|
 | **APT29** (Lab-01, Lab-03) | Maestría en Kerberos abuse, ADCS y Living-off-the-Land — el perfil canónico para entornos AD |
 | **APT41** (Lab-02) | Especialización en explotación web + pivotaje de red — encaja con el vector Webmin y Ligolo-ng |
-| **APT28** (Lab-04/05/06) | ACL Abuse, DCSync, Delegation y GPO Abuse son TTPs documentadas en campañas de Fancy Bear |
+| **APT28** (Lab-04/05/06/07) | ACL Abuse, DCSync, Delegation y GPO Abuse son TTPs documentadas en campañas de Fancy Bear |
 | **Lazarus** (Lab-08/09/10/11) | Grupo de referencia para evasión de EDR, obfuscación y C2 avanzado |
 | **APT10** (Lab-12/13/14/15) | Campañas de supply chain y compromiso de infraestructuras complejas con Forest Trusts |
 
@@ -127,19 +127,34 @@
 
 ---
 
-### 🟡 Phase-02 — AD Avanzado (Labs 04-06) | Adversario: APT28 (Fancy Bear)
+### 🟡 Phase-02 — AD Avanzado (Labs 04-07) | Adversario: APT28 (Fancy Bear)
+
+#### Lab-04 — Iron Forest | ✅ Completado
+
+| Táctica | Técnica | Sub-técnica | ID | Herramienta | Estado |
+|---------|---------|-------------|-----|-------------|--------|
+| Discovery | Account Discovery | Domain Account | T1087.002 | BloodHound CE + SharpHound | ✅ |
+| Collection | Data from Network Shared Drive | — | T1039 | smbclient | ✅ |
+| Credential Access | Unsecured Credentials | Credentials in Files | T1552.001 | smbclient + cat | ✅ |
+| Credential Access | Unsecured Credentials | Bash/PS History | T1552.003 | smbclient C$ | ✅ |
+| Lateral Movement | Use Alternate Auth Material | Overpass-the-Hash | T1550.003 | impacket-getTGT | ✅ |
+| Privilege Escalation | File/Dir Permissions Modification | — | T1222 | impacket-dacledit | ✅ |
+| Credential Access | OS Credential Dumping | DCSync | T1003.006 | impacket-secretsdump | ✅ |
+| Credential Access | Adversary-in-the-Middle | LLMNR/NBT-NS Poisoning | T1557.001 | Responder + dnstool | ✅ |
+| Command & Control | Application Layer Protocol | Web Protocols | T1071.001 | Sliver HTTP beacon | ✅ |
+| Defense Evasion | Indicator Removal | — | T1070 | dacledit remove + dnstool | ✅ |
+
+
+#### Labs 05-07 — Pendientes
 
 | Táctica | Técnica | Sub-técnica | ID | Lab | Herramienta | Estado |
 |---------|---------|-------------|-----|-----|-------------|--------|
-| Credential Access | OS Credential Dumping | LSASS Memory | T1003.001 | Lab-04 | Mimikatz | ⏳ |
-| Credential Access | OS Credential Dumping | DCSync | T1003.006 | Lab-04 | secretsdump | ⏳ |
-| Persistence | Account Manipulation | — | T1098 | Lab-04 | PowerView | ⏳ |
-| Lateral Movement | Use Alternate Auth Material | Pass the Hash | T1550.002 | Lab-04 | CrackMapExec | ⏳ |
-| Credential Access | Steal/Forge Kerberos Tickets | Golden Ticket | T1558.001 | Lab-04 | ticketer | ⏳ |
-| Privilege Escalation | Domain Policy Modification | Group Policy | T1484.001 | Lab-04/06 | — | ⏳ |
 | Credential Access | Steal/Forge Kerberos Tickets | Unconstrained Delegation | T1558.001 | Lab-05 | Rubeus | ⏳ |
 | Credential Access | Steal/Forge Kerberos Tickets | Constrained Delegation | T1558.001 | Lab-05 | Rubeus S4U | ⏳ |
+| Privilege Escalation | Domain Policy Modification | Group Policy | T1484.001 | Lab-06 | — | ⏳ |
 | Privilege Escalation | Domain Policy Modification | Domain Trust Modification | T1484.002 | Lab-06 | — | ⏳ |
+| Credential Access | OS Credential Dumping | LSASS Memory | T1003.001 | Lab-07 | nanodump | ⏳ |
+| Credential Access | Unsecured Credentials | DPAPI | T1555 | Lab-07 | SharpDPAPI | ⏳ |
 
 ---
 
@@ -175,12 +190,12 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Total de técnicas únicas** | 49 |
+| **Total de técnicas únicas** | 59 |
 | **Sub-técnicas mapeadas** | 29 |
 | **Tácticas MITRE cubiertas** | 11 / 14 |
 | **Adversarios emulados** | 5 (APT29, APT41, APT28, Lazarus, APT10) |
-| **Labs completados** | 3 / 12 |
-| **Técnicas ejecutadas** | 36 / 49 |
+| **Labs completados** | 4 / 15 |
+| **Técnicas ejecutadas** | 46 / 59 |
 
 ### Tácticas cubiertas
 
@@ -216,4 +231,4 @@
 
 ---
 
-*Última actualización: Mayo 2026 — Lab-03 DARK GATE (APT29 ADCS) añadido — Adrián Camacho*
+*Última actualización: Mayo 2026 — Lab-04 IRON FOREST (APT28 WriteDACL/DCSync) añadido — Adrián Camacho*
