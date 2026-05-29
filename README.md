@@ -1,12 +1,17 @@
 <div align="center">
 
 ```
-██████╗ ███████╗██████╗     ████████╗███████╗ █████╗ ███╗   ███╗
-██╔══██╗██╔════╝██╔══██╗    ╚══██╔══╝██╔════╝██╔══██╗████╗ ████║
-██████╔╝█████╗  ██║  ██║       ██║   █████╗  ███████║██╔████╔██║
-██╔══██╗██╔══╝  ██║  ██║       ██║   ██╔══╝  ██╔══██║██║╚██╔╝██║
-██║  ██║███████╗██████╔╝       ██║   ███████╗██║  ██║██║ ╚═╝ ██║
-╚═╝  ╚═╝╚══════╝╚═════╝        ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
+ ██████╗ ███████╗██████╗     ████████╗███████╗ █████╗ ███╗   ███╗
+ ██╔══██╗██╔════╝██╔══██╗    ╚══██╔══╝██╔════╝██╔══██╗████╗ ████║
+ ██████╔╝█████╗  ██║  ██║       ██║   █████╗  ███████║██╔████╔██║
+ ██╔══██╗██╔══╝  ██║  ██║       ██║   ██╔══╝  ██╔══██║██║╚██╔╝██║
+ ██║  ██║███████╗██████╔╝       ██║   ███████╗██║  ██║██║ ╚═╝ ██║
+ ╚═╝  ╚═╝╚══════╝╚═════╝        ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
+```
+
+```
+  [ Active Directory Adversary Emulation — APT29 · APT41 · APT28 · Lazarus · APT10 ]
+  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 4/15 Labs Completed ]
 ```
 
 [![Estado](https://img.shields.io/badge/Estado-En%20Progreso-orange?style=for-the-badge)](.)
@@ -245,49 +250,63 @@ Red-Team_Labs/
 │
 ├── README.md
 │
-├── docs/                                    ← Documentación global
-│   ├── design/DESIGN.md
-│   ├── detection/DETECTION_RULES.md
+├── docs/
+│   ├── design/
+│   │   └── DESIGN.md                        # Filosofía, adversary emulation, roadmap v2.0
+│   ├── detection/
+│   │   └── DETECTION_RULES.md               # Reglas SIGMA y Event IDs por técnica
 │   ├── operations/
-│   │   ├── ENGAGEMENT_CHECKLIST.md
-│   │   ├── METHODOLOGY.md
-│   │   ├── OPSEC_NOTES.md
-│   │   └── THREAT_MODEL.md
+│   │   ├── ENGAGEMENT_CHECKLIST.md          # Checklist pre/durante/post operación
+│   │   ├── METHODOLOGY.md                   # Proceso operacional estándar
+│   │   ├── OPSEC_NOTES.md                   # 17 secciones de OPSEC operacional
+│   │   ├── THREAT_MODEL.md                  # Modelo de amenaza del entorno
+│   │   └── WRITEUP_TEMPLATE.md              # Plantilla para nuevos labs
 │   ├── progress/
 │   │   ├── PROGRESS.md                      # Diario de sesiones + 35 técnicas dominadas
-│   │   └── CHANGELOG.md
+│   │   └── CHANGELOG.md                     # Historial de cambios del repo
 │   └── reference/
 │       ├── ARSENAL.md                        # Arsenal completo con rutas y versiones
-│       ├── LAB_INFRASTRUCTURE.md
-│       ├── MITRE_MAPPING.md
-│       └── TOOL_INDEX.md
+│       ├── LAB_INFRASTRUCTURE.md            # Infraestructura detallada de cada lab
+│       ├── MITRE_MAPPING.md                 # Mapping MITRE ATT&CK v14 por lab
+│       └── TOOL_INDEX.md                    # Índice de herramientas con versiones
 │
-├── setup/provisioning/                      ← Scripts de aprovisionamiento del dominio
+├── setup/
+│   ├── provisioning/                        # Scripts PowerShell de aprovisionamiento AD
+│   │   ├── 01_ad_promotion.ps1
+│   │   ├── 02_users_ous.ps1
+│   │   ├── 03_acls_delegations.ps1
+│   │   ├── 04_iis_smb_gpo.ps1
+│   │   ├── 05_mssql.ps1
+│   │   └── 06_wkstn01.ps1
+│   └── screenshots/                         # Evidencia del setup del entorno
 │
-├── tooling/                                 ← Scripts de setup del arsenal Kali
+├── tooling/                                 # Scripts de setup del arsenal Kali
+│   ├── arsenal_setup.sh
+│   ├── lab_start.sh
+│   └── lab_stop.sh
 │
 ├── Phase-01-Fundamentals/
-│   ├── Lab-01-Ghost-Forest/    ✅ 13 fases · 40h
-│   ├── Lab-02-Silent-Bridge/   ✅ 7 fases · 18h
-│   └── Lab-03-Dark-Gate/       ✅ 6 fases · 16h
+│   ├── Lab-01-Ghost-Forest/    ✅ 13 fases · ~40h · APT29
+│   ├── Lab-02-Silent-Bridge/   ✅ 7 fases  · ~18h · APT41
+│   └── Lab-03-Dark-Gate/       ✅ 6 fases  · ~16h · APT29
 │
 ├── Phase-02-Post-Exploitation/
-│   ├── Lab-04-Iron-Forest/     ✅ 8 fases · 20h
-│   ├── Lab-05-Silver-Chain/    ⏳
-│   ├── Lab-06-Black-Policy/    ⏳
-│   └── Lab-07-Shadow-Vault/    ⏳
+│   ├── Lab-04-Iron-Forest/     ✅ 8 fases  · ~20h · APT28
+│   ├── Lab-05-Silver-Chain/    ⏳ Pendiente · APT28
+│   ├── Lab-06-Black-Policy/    ⏳ Pendiente · APT28
+│   └── Lab-07-Shadow-Vault/    ⏳ Pendiente · APT28
 │
 ├── Phase-03-Red-Team-Operations/
-│   ├── Lab-08-Ghost-Signals/   ⏳
-│   ├── Lab-09-First-Contact/   ⏳
-│   ├── Lab-10-Dark-Current/    ⏳
-│   └── Lab-11-Deep-Holo/       ⏳
+│   ├── Lab-08-Ghost-Signals/   ⏳ Pendiente · Lazarus
+│   ├── Lab-09-First-Contact/   ⏳ Pendiente · Lazarus
+│   ├── Lab-10-Dark-Current/    ⏳ Pendiente · Lazarus
+│   └── Lab-11-Deep-Holo/       ⏳ Pendiente · Lazarus
 │
 └── Phase-04-Enterprise-Simulation/
-    ├── Lab-12-Red-Dante/        ⏳
-    ├── Lab-13-Deep-Water/       ⏳
-    ├── Lab-14-Azure-Breach/     ⏳
-    └── Lab-15-Operation-Zephyr/ ⏳
+    ├── Lab-12-Red-Dante/        ⏳ Pendiente · APT10
+    ├── Lab-13-Deep-Water/       ⏳ Pendiente · APT10
+    ├── Lab-14-Azure-Breach/     ⏳ Pendiente · APT10
+    └── Lab-15-Operation-Zephyr/ ⏳ Pendiente · APT10
 ```
 
 **Cada lab completado contiene:**
