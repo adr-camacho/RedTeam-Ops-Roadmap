@@ -1,0 +1,4 @@
+# Nmap 7.99 scan initiated Sat May 30 11:44:09 2026 as: /usr/lib/nmap/nmap --privileged -p- --min-rate 5000 -oA Phase-01-Fundamentals/Lab-01-Ghost-Forest/nmap/wkstn01_ports 10.0.2.8
+Host: 10.0.2.8 ()	Status: Up
+Host: 10.0.2.8 ()	Ports: 135/open/tcp//msrpc///, 5040/open/tcp/////, 5985/open/tcp//wsman///	Ignored State: filtered (65532)
+# Nmap done at Sat May 30 11:44:40 2026 -- 1 IP address (1 host up) scanned in 30.92 seconds

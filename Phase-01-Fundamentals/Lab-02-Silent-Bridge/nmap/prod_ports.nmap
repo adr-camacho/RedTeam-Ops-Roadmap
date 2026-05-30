@@ -1,0 +1,9 @@
+# Nmap 7.99 scan initiated Sat May 30 12:00:55 2026 as: /usr/lib/nmap/nmap --privileged -p- --min-rate 5000 -oA Phase-01-Fundamentals/Lab-02-Silent-Bridge/nmap/prod_ports 10.0.3.200
+Nmap scan report for 10.0.3.200
+Host is up (4.9s latency).
+Not shown: 41199 filtered tcp ports (no-response), 24334 closed tcp ports (reset)
+PORT      STATE SERVICE
+22/tcp    open  ssh
+10000/tcp open  snet-sensor-mgmt
+
+# Nmap done at Sat May 30 12:02:57 2026 -- 1 IP address (1 host up) scanned in 121.89 seconds

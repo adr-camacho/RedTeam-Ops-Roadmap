@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.99 scan initiated Sat May 30 12:23:19 2026 as: /usr/lib/nmap/nmap -&#45;privileged -sV -p 22,10000 -Pn -&#45;min-rate 2000 -oA Phase-01-Fundamentals/Lab-02-Silent-Bridge/nmap/prod_detailed 10.0.3.200 -->
+<nmaprun scanner="nmap" args="/usr/lib/nmap/nmap -&#45;privileged -sV -p 22,10000 -Pn -&#45;min-rate 2000 -oA Phase-01-Fundamentals/Lab-02-Silent-Bridge/nmap/prod_detailed 10.0.3.200" start="1780136599" startstr="Sat May 30 12:23:19 2026" version="7.99" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="2" services="22,10000"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1780136603" endtime="1780136639"><status state="up" reason="user-set" reason_ttl="0"/>
+<address addr="10.0.3.200" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" product="OpenSSH" version="8.9p1 Ubuntu 3ubuntu0.10" extrainfo="Ubuntu Linux; protocol 2.0" ostype="Linux" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:8.9p1</cpe><cpe>cpe:/o:linux:linux_kernel</cpe></service></port>
+<port protocol="tcp" portid="10000"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="MiniServ" version="1.890" extrainfo="Webmin httpd" method="probed" conf="10"/></port>
+</ports>
+<times srtt="28602" rttvar="23096" to="120986"/>
+</host>
+<runstats><finished time="1780136639" timestr="Sat May 30 12:23:59 2026" summary="Nmap done at Sat May 30 12:23:59 2026; 1 IP address (1 host up) scanned in 40.36 seconds" elapsed="40.36" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>
