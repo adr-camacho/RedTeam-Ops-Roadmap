@@ -18,6 +18,7 @@
 8. [Privilege Escalation](#8-privilege-escalation)
 9. [Persistence](#9-persistence)
 10. [Defense Evasion](#10-defense-evasion)
+11.  [ACL Abuse & Delegation](#11-acl-abuse--delegation)
 
 ---
 
@@ -792,6 +793,235 @@ tags:
 
 ---
 
+## 11. ACL Abuse & Delegation
+
+### T1222 — WriteDACL Abuse → DCSync (Lab-04)
+
+**Event IDs relevantes:**
+| ID | Fuente | Descripción |
+|----|--------|-------------|
+| **4670** | Security (DC) | Permissions on an object were changed |
+| **4662** | Security (DC) | Operation performed on AD object — ACE modificada |
+
+**Regla SIGMA:**
+```yaml
+title: WriteDACL Abuse - DCSync Rights Added
+id: writedacl-dcsync-01
+status: experimental
+description: Detects addition of DCSync replication rights to non-DC account via dacledit
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4662
+        Properties|contains:
+            - '1131f6aa-9c07-11d1-f79f-00c04fc2dcd2'
+            - '1131f6ab-9c07-11d1-f79f-00c04fc2dcd2'
+        AccessMask: '0x40000'
+    filter:
+        SubjectUserName|endswith: '$'
+    condition: selection and not filter
+falsepositives:
+    - Azure AD Connect legítimo
+    - Administradores configurando replicación
+level: critical
+tags:
+    - attack.privilege_escalation
+    - attack.t1222
+```
+
+---
+
+### T1558.001 — RBCD Abuse (Lab-05)
+
+**Event IDs relevantes:**
+| ID | Fuente | Descripción |
+|----|--------|-------------|
+| **4741** | Security (DC) | Computer account created — ATTACKER$ via MAQ |
+| **4742** | Security (DC) | Computer account changed — msDS-AllowedToActOnBehalfOfOtherIdentity modificado |
+| **4769** | Security (DC) | S4U2Self + S4U2Proxy — TGS requests anómalos |
+
+**Regla SIGMA — cuenta de máquina creada por usuario no-admin:**
+```yaml
+title: RBCD Abuse - Machine Account Created by Non-Admin User
+id: rbcd-machine-account-01
+status: experimental
+description: Detects potential RBCD abuse via MachineAccountQuota — machine account created by standard user
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4741
+    filter:
+        SubjectUserName|endswith: '$'
+    condition: selection and not filter
+falsepositives:
+    - Administradores creando cuentas de máquina legítimas
+level: high
+tags:
+    - attack.persistence
+    - attack.t1136.002
+```
+
+**Regla SIGMA — msDS-AllowedToActOnBehalfOfOtherIdentity modificado:**
+```yaml
+title: RBCD - msDS-AllowedToActOnBehalfOfOtherIdentity Modified
+id: rbcd-attribute-01
+status: experimental
+description: Detects modification of msDS-AllowedToActOnBehalfOfOtherIdentity attribute — RBCD setup
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4742
+        AttributeLDAPDisplayName: 'msDS-AllowedToActOnBehalfOfOtherIdentity'
+    condition: selection
+falsepositives:
+    - Configuración legítima de RBCD por administradores
+level: high
+tags:
+    - attack.privilege_escalation
+    - attack.t1558.001
+```
+
+**Mitigación:** Reducir `MachineAccountQuota` a 0. Monitorizar cambios en `msDS-AllowedToActOnBehalfOfOtherIdentity`.
+
+---
+
+### T1556 — Shadow Credentials (Lab-05)
+
+**Event IDs relevantes:**
+| ID | Fuente | Descripción |
+|----|--------|-------------|
+| **4662** | Security (DC) | WriteProperty sobre msDS-KeyCredentialLink (GUID: 5b47d60f-...) |
+| **4768** | Security (DC) | PKINIT TGT request — campo Certificate Info presente |
+
+**Regla SIGMA:**
+```yaml
+title: Shadow Credentials - msDS-KeyCredentialLink Modified
+id: shadow-credentials-01
+status: experimental
+description: Detects modification of msDS-KeyCredentialLink attribute — Shadow Credentials attack
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4662
+        Properties|contains: '5b47d60f-6090-40b2-9f37-2a4de88f3063'
+        AccessMask: '0x40'
+    condition: selection
+falsepositives:
+    - Windows Hello for Business configuración legítima
+    - Azure AD Certificate-based auth setup
+level: high
+tags:
+    - attack.credential_access
+    - attack.t1556
+```
+
+**Mitigación:** Restringir WriteProperty sobre msDS-KeyCredentialLink. Monitorizar autenticación PKINIT en cuentas de servicio.
+
+---
+
+### T1558.002 — Silver Ticket (Lab-05)
+
+**Event IDs relevantes:**
+| ID | Fuente | Descripción |
+|----|--------|-------------|
+| N/A | DC Security | Silver Ticket **NO contacta al KDC** — ausencia de Event 4768 antes de 4769 |
+| **4624** | Security (servicio) | Logon en el servicio destino sin TGT previo observable |
+
+> ⚠️ **Dificultad de detección:** El Silver Ticket es el ticket más difícil de detectar porque no requiere contactar al KDC. La detección requiere correlación de eventos o soluciones PAM avanzadas.
+
+**Indicadores:**
+- Event 4769 (TGS) sin Event 4768 (TGT) previo en la misma fuente
+- Ticket con lifetime anómalo (Silver Tickets forjados suelen tener 10 años)
+- Acceso a servicio desde host sin autenticación previa al dominio
+
+**Regla SIGMA:**
+```yaml
+title: Silver Ticket - Kerberos Service Ticket Without Prior TGT
+id: silver-ticket-01
+status: experimental
+description: Detects potential Silver Ticket via Kerberos service access without TGT
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4769
+        TicketEncryptionType: '0x17'
+    condition: selection
+falsepositives:
+    - Sistemas legacy con RC4
+level: medium
+tags:
+    - attack.credential_access
+    - attack.t1558.002
+```
+
+**Mitigación:** Rotar contraseñas de cuentas de servicio regularmente. Usar MSA/gMSA para rotación automática. Implementar Microsoft Defender for Identity.
+
+---
+
+### T1558.001 — Diamond Ticket (Lab-05)
+
+**Event IDs relevantes:**
+| ID | Fuente | Descripción |
+|----|--------|-------------|
+| **4768** | Security (DC) | TGT request con Certificate Authentication — PKINIT |
+| **4769** | Security (DC) | TGS request — PAC anómalo si Defender for Identity está activo |
+
+> ⚠️ **Dificultad de detección:** El Diamond Ticket es casi indistinguible de autenticación legítima — el TGT es real y válido. Solo Microsoft Defender for Identity puede detectar inconsistencias en el PAC.
+
+**Indicadores:**
+- Event 4768 con PKINIT desde host que normalmente no usa certificados
+- Microsoft Defender for Identity: alerta "Suspected Golden Ticket usage"
+- PAC con grupos que no coinciden con la cuenta real (requiere correlación avanzada)
+
+**Mitigación:** Implementar Microsoft Defender for Identity. Rotar krbtgt dos veces para invalidar tickets existentes tras incidente.
+
+---
+
+## 📊 Resumen de Event IDs — Labs 03-05
+
+### Lab-03 — Dark Gate (APT29)
+
+| TTP | Event ID | Fuente | Prioridad |
+|-----|----------|--------|-----------|
+| ADCS Enum (Certipy) | 4662 (object read) | DC Security | 🟡 Media |
+| ESC1 — SAN Abuse | 4887 (cert issued) | CA Security | 🔴 Alta |
+| ESC4 — Template Write | 4899 (template modified) | CA Security | 🔴 Crítica |
+| ESC8 — NTLM Relay | 4624 (Type 3, NTLM→HTTP) | DC Security | 🔴 Alta |
+| Certificate Persistence | 4768 (PKINIT post-rotation) | DC Security | 🔴 Alta |
+
+### Lab-04 — Iron Forest (APT28)
+
+| TTP | Event ID | Fuente | Prioridad |
+|-----|----------|--------|-----------|
+| WriteDACL → DCSync | 4662 (ACE replicación) | DC Security | 🔴 Crítica |
+| DCSync | 4662 (GUID replicación) | DC Security | 🔴 Crítica |
+| ADIDNS — WPAD | DNS debug logs | DNS Server | 🔴 Alta |
+| Responder NTLMv2 | 4776 (NTLM auth) | DC Security | 🟡 Media |
+
+### Lab-05 — Silver Chain (APT28)
+
+| TTP | Event ID | Fuente | Prioridad |
+|-----|----------|--------|-----------|
+| RBCD — MAQ | 4741 (computer created) | DC Security | 🔴 Alta |
+| RBCD — Attribute | 4742 (msDS-AllowedToAct...) | DC Security | 🔴 Alta |
+| Shadow Credentials | 4662 (msDS-KeyCredLink) | DC Security | 🔴 Alta |
+| PKINIT auth | 4768 (cert info) | DC Security | 🟡 Media |
+| Silver Ticket | Ausencia 4768 antes 4769 | DC Security | 🔴 Alta |
+| Diamond Ticket | Defender for Identity | MDA | 🔴 Alta |
+| Machine Account | 4741 (non-admin subject) | DC Security | 🔴 Alta |
+
+---
+
 ## 🔗 Referencias
 
 - [MITRE ATT&CK Detection — por técnica](https://attack.mitre.org/techniques/enterprise/)
@@ -803,4 +1033,4 @@ tags:
 
 ---
 
-*Última actualización: Mayo 2026 — Labs 01-02 cubiertos — Adrián Camacho*
+*Última actualización: Mayo 2026 — Labs 03-05 añadidos (ADCS, WriteDACL, RBCD, Shadow Creds, Silver/Diamond Ticket) — Adrián Camacho*

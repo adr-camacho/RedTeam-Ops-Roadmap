@@ -144,13 +144,25 @@
 | Command & Control | Application Layer Protocol | Web Protocols | T1071.001 | Sliver HTTP beacon | ✅ |
 | Defense Evasion | Indicator Removal | — | T1070 | dacledit remove + dnstool | ✅ |
 
+#### Lab-05 — Silver Chain | ✅ Completado
 
-#### Labs 05-07 — Pendientes
+| Táctica | Técnica | Sub-técnica | ID | Herramienta | Estado |
+|---------|---------|-------------|-----|-------------|--------|
+| Discovery | Account Discovery | Domain Account | T1087.002 | BloodHound CE + SharpHound | ✅ |
+| Persistence | Create Account | Machine Account (MAQ) | T1136.002 | impacket-addcomputer | ✅ |
+| Privilege Escalation | Steal/Forge Kerberos Tickets | RBCD S4U2Proxy | T1558.001 | impacket-getST | ✅ |
+| Privilege Escalation | Steal/Forge Kerberos Tickets | Diamond Ticket | T1558.001 | Rubeus | ✅ |
+| Credential Access | Steal/Forge Kerberos Tickets | Silver Ticket | T1558.002 | impacket-ticketer | ✅ |
+| Credential Access | Modify Authentication Process | Shadow Credentials | T1556 | pywhisker + certipy-ad | ✅ |
+| Credential Access | Steal/Forge Auth Certificates | PKINIT | T1649 | certipy-ad | ✅ |
+| Lateral Movement | Use Alternate Auth Material | Pass-the-Ticket | T1550.003 | impacket-smbclient | ✅ |
+| Command & Control | Application Layer Protocol | Web Protocols | T1071.001 | Sliver HTTP beacon | ✅ |
+| Defense Evasion | Indicator Removal | — | T1070 | impacket + pywhisker | ✅ |
+
+#### Labs 06-07 — Pendientes
 
 | Táctica | Técnica | Sub-técnica | ID | Lab | Herramienta | Estado |
 |---------|---------|-------------|-----|-----|-------------|--------|
-| Credential Access | Steal/Forge Kerberos Tickets | Unconstrained Delegation | T1558.001 | Lab-05 | Rubeus | ⏳ |
-| Credential Access | Steal/Forge Kerberos Tickets | Constrained Delegation | T1558.001 | Lab-05 | Rubeus S4U | ⏳ |
 | Privilege Escalation | Domain Policy Modification | Group Policy | T1484.001 | Lab-06 | — | ⏳ |
 | Privilege Escalation | Domain Policy Modification | Domain Trust Modification | T1484.002 | Lab-06 | — | ⏳ |
 | Credential Access | OS Credential Dumping | LSASS Memory | T1003.001 | Lab-07 | nanodump | ⏳ |
@@ -194,8 +206,8 @@
 | **Sub-técnicas mapeadas** | 29 |
 | **Tácticas MITRE cubiertas** | 11 / 14 |
 | **Adversarios emulados** | 5 (APT29, APT41, APT28, Lazarus, APT10) |
-| **Labs completados** | 4 / 15 |
-| **Técnicas ejecutadas** | 46 / 59 |
+| **Labs completados** | 5 / 15 |
+| **Técnicas ejecutadas** | 56 / 59 |
 
 ### Tácticas cubiertas
 
@@ -231,4 +243,4 @@
 
 ---
 
-*Última actualización: Mayo 2026 — Lab-04 IRON FOREST (APT28 WriteDACL/DCSync) añadido — Adrián Camacho*
+*Última actualización: Mayo 2026 — Lab-05 SILVER CHAIN (APT28 RBCD/Shadow Creds/Silver+Diamond Ticket) añadido — Adrián Camacho*

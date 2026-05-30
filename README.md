@@ -11,12 +11,12 @@
 
 ```
   [ Active Directory Adversary Emulation — APT29 · APT41 · APT28 · Lazarus · APT10 ]
-  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 35 TTPs Dominated ]
+  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 5/15 Labs · 45 TTPs ]
 ```
 
 [![Estado](https://img.shields.io/badge/Estado-En%20Progreso-orange?style=for-the-badge)](.)
-[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-35-brightgreen?style=for-the-badge)](.)
-[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E95h-purple?style=for-the-badge)](.)
+[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-45-brightgreen?style=for-the-badge)](.)
+[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E115h-purple?style=for-the-badge)](.)
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-black?style=for-the-badge)](https://attack.mitre.org)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet?style=for-the-badge)](.)
 [![Licencia](https://img.shields.io/badge/Uso-Educativo-green?style=for-the-badge)](.)
@@ -117,7 +117,7 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 | # | Operación | Adversario | Estado | Técnicas principales |
 |---|---|---|---|---|
 | Lab-04 | 🔴 **IRON FOREST** | APT28 (Fancy Bear) | ✅ Completado ~20h | WriteDACL→DCSync, Credential Hunting, ADIDNS Poisoning, Overpass-the-Hash |
-| Lab-05 | ⛓️ **SILVER CHAIN** | APT28 (Fancy Bear) | ⏳ Pendiente | RBCD, Silver Ticket, Diamond Ticket, S4U2Proxy avanzado |
+| Lab-05 | ⛓️ **SILVER CHAIN** | APT28 (Fancy Bear) | ✅ Completado ~20h | RBCD, Shadow Credentials, Silver Ticket, Diamond Ticket |
 | Lab-06 | 📋 **BLACK POLICY** | APT28 (Fancy Bear) | ⏳ Pendiente | SID History, Cross-Forest Trust, GPO abuse avanzado |
 | Lab-07 | 🔒 **SHADOW VAULT** | APT28 (Fancy Bear) | ⏳ Pendiente | LAPS, DPAPI, Shadow Credentials, LSASS dump sin Mimikatz |
 
@@ -243,6 +243,40 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 
 ---
 
+### ✅ Lab-05 — SILVER CHAIN | APT28 (Fancy Bear)
+
+**6 fases completadas · ~20 horas · Documentación completa**
+
+<details>
+<summary>Ver todas las fases y TTPs</summary>
+
+| Fase | Nombre | Técnica | MITRE ID | Herramienta |
+|---|---|---|---|---|
+| 01 | Reconnaissance | BloodHound CE + SharpHound v2.5.9 | T1087.002 | BloodHound CE, SharpHound |
+| 02 | RBCD Abuse | MachineAccountQuota + S4U2Self/S4U2Proxy | T1558.001 | impacket-addcomputer, getST |
+| 03 | Shadow Credentials | msDS-KeyCredentialLink → PKINIT → hash | T1556, T1649 | pywhisker, certipy-ad |
+| 04 | Silver Ticket | NTLM hash iis_svc → TGS MSSQLSvc forjado | T1558.002 | impacket-ticketer |
+| 05 | Diamond Ticket | krbtgt AES256 → TGT real + PAC modificado | T1558.001 | Rubeus |
+| 06 | C2 + Cleanup | Beacon WKSTN-01 + OPSEC cleanup | T1071.001, T1070 | Sliver, impacket, pywhisker |
+
+**Crown Jewels:** TGS Administrador@WKSTN-01 · iis_svc NTLM `b329981877f0ca1243192863f356a2f9` · Silver Ticket MSSQLSvc · Diamond Ticket bypass PAC Validation  
+**Lecciones clave:** pywhisker rompe impacket (reinstalar 0.13.1) · Diamond Ticket requiere AES256 · kirbi→ccache para usar desde Linux
+
+</details>
+
+---
+
+## 🔜 Próximo objetivo
+
+**Lab-06 — BLACK POLICY · APT28 (Fancy Bear)**
+
+| Campo | Detalle |
+|---|---|
+| Técnicas | SID History, Cross-Forest Trust, GPO abuse avanzado, Domain Trust attacks |
+| Crown Jewels | Acceso cross-domain via SID History injection |
+
+---
+
 ## 📂 Estructura del Repositorio
 
 ```
@@ -292,7 +326,7 @@ Red-Team_Labs/
 │
 ├── Phase-02-Post-Exploitation/
 │   ├── Lab-04-Iron-Forest/     ✅ 8 fases  · ~20h · APT28
-│   ├── Lab-05-Silver-Chain/    ⏳ Pendiente · APT28
+│   ├── Lab-05-Silver-Chain/    ✅ 6 fases  · ~20h · APT28
 │   ├── Lab-06-Black-Policy/    ⏳ Pendiente · APT28
 │   └── Lab-07-Shadow-Vault/    ⏳ Pendiente · APT28
 │
@@ -434,7 +468,7 @@ bash tooling/arsenal_setup.sh
 
 ## 📊 MITRE ATT&CK Coverage
 
-**Técnicas dominadas: 35 · Parciales: 2 · En roadmap: 24+**
+**Técnicas dominadas: 45 · Parciales: 2 · En roadmap: 24+**
 
 | Táctica | Técnica | ID | Lab | Estado |
 |---|---|---|---|---|
@@ -456,6 +490,10 @@ bash tooling/arsenal_setup.sh
 | Lateral Movement | Pass-the-Hash | T1550.002 | Lab-01/03 | ✅ |
 | C&C | Sliver HTTP/mTLS | T1071.001, T1573.002 | Lab-01/02/03/04 | ✅ |
 | C&C | Protocol Tunneling Ligolo-ng | T1572 | Lab-02 | ✅ |
+| Privilege Escalation | RBCD S4U2Proxy | T1558.001 | Lab-05 | ✅ |
+| Credential Access | Shadow Credentials | T1556 | Lab-05 | ✅ |
+| Credential Access | Silver Ticket | T1558.002 | Lab-05 | ✅ |
+| Credential Access | Diamond Ticket | T1558.001 | Lab-05 | ✅ |
 
 ---
 
@@ -470,19 +508,8 @@ bash tooling/arsenal_setup.sh
 | `docs/reference/ARSENAL.md` | Arsenal completo con rutas y versiones |
 | `docs/reference/LAB_INFRASTRUCTURE.md` | Infraestructura detallada de cada lab |
 | `docs/reference/MITRE_MAPPING.md` | Mapping MITRE ATT&CK v14 completo |
-| `docs/progress/PROGRESS.md` | Diario de sesiones + 35 técnicas dominadas |
+| `docs/progress/PROGRESS.md` | Diario de sesiones + 45 técnicas dominadas |
 | `docs/progress/CHANGELOG.md` | Historial completo de cambios |
-
----
-
-## 🔜 Próximo objetivo
-
-**Lab-05 — SILVER CHAIN · APT28 (Fancy Bear)**
-
-| Campo | Detalle |
-|---|---|
-| Técnicas | RBCD, Silver Ticket, Diamond Ticket, S4U2Proxy avanzado |
-| Crown Jewels | Acceso a servicio via Silver Ticket sin ser DA |
 
 ---
 

@@ -686,4 +686,66 @@ loot/
 | 6 | NTLMv2 backup_svc via WPAD | ✅ Capturado con Responder |
 | 7 | Beacon Sliver en DC-01 | ✅ `iron_forest_dc01` — ATACKCORP\Administrador |
 
-*Última actualización: Mayo 2026 — Lab-04 IRON FOREST añadido — Adrián Camacho*
+---
+
+## 🔴 Lab-05 — SILVER CHAIN | APT28 (Fancy Bear)
+
+> Comparte el entorno base de Lab-01/03/04 (DC-01 + WKSTN-01 + Kali).  
+> Requiere ejecutar `Setup-Lab05-SilverChain.ps1` en DC-01 antes de iniciar el lab.
+
+### Setup requerido
+
+```powershell
+# En DC-01 como Administrador — subir via Evil-WinRM desde Kali
+# upload /home/kali/RedTeam-Repo/Phase-02-Post-Exploitation/Lab-05-Silver-Chain/setup/Setup-Lab05-SilverChain.ps1
+.\Setup-Lab05-SilverChain.ps1
+```
+
+### Cambios específicos del entorno
+
+| Componente | Cambio | Propósito |
+|------------|--------|-----------|
+| `helpdesk.ruiz` → `WKSTN-01$` | GenericWrite añadido | RBCD abuse path |
+| `fin.garcia` → `iis_svc` | WriteProperty msDS-KeyCredentialLink | Shadow Credentials path |
+| DC-01 | SQL Server Express 2022 instalado | Silver Ticket target (MSSQLSvc/1433) |
+| DC-01 | Share `SQL-Confidential` creado | Crown Jewel objetivo |
+| MachineAccountQuota | = 10 (verificado) | Crear ATTACKER$ para RBCD |
+
+### Credenciales relevantes Lab-05
+
+| Usuario | Contraseña | Hash NTLM | Relevancia |
+|---------|-----------|-----------|------------|
+| `helpdesk.ruiz` | `Helpdesk2024!` | — | Credencial inicial — RBCD path |
+| `fin.garcia` | `Finance2024!` | — | Shadow Credentials path |
+| `iis_svc` | `IisService123` | `b329981877f0ca1243192863f356a2f9` | Target Shadow Credentials |
+| `ATTACKER$` | `Attacker2026!` | — | Cuenta máquina RBCD (eliminada post-lab) |
+| `Administrador` | `NuevaPassword2026!` | `bc3abc2e0673a58e9e559d415b56d69d` | DA |
+| `krbtgt` | — | `d5237a2e43cb315c90679e2a5dae34ad` | Diamond Ticket — AES256: `2f123c9bb0d3fadaa6b09592d0a5be11c2d0768cc7f566d8939a5d021e517aa6` |
+
+### Loot capturado
+
+```
+loot/
+├── lab05_hashes.txt      — iis_svc NTLM hash
+└── lab05_sharphound.zip  — BloodHound collection (354 objetos)
+```
+
+### Crown Jewels obtenidos
+
+| # | Objetivo | Técnica | Resultado |
+|---|----------|---------|-----------|
+| 1 | Acceso C$ WKSTN-01 como Administrador | RBCD S4U2Proxy | ✅ TGS Kerberos sin credenciales en claro |
+| 2 | Hash NTLM iis_svc | Shadow Credentials PKINIT | ✅ `b329981877f0ca1243192863f356a2f9` |
+| 3 | Acceso MSSQLSvc/DC-01:1433 | Silver Ticket | ✅ Forjado localmente sin KDC |
+| 4 | Acceso C$ DC-01 | Diamond Ticket | ✅ TGT real + PAC modificado — bypass PAC Validation |
+| 5 | Beacon WKSTN-01 | Sliver HTTP | ✅ LIGHT_CARTLOAD — ATACKCORP\Administrador |
+
+### Notas técnicas
+
+- **pywhisker conflicto:** Instala impacket 0.12.0 → reinstalar 0.13.1 antes de ticketer
+- **SQL Server:** Descargado en Kali (266MB) y subido via Evil-WinRM — no pre-instalado
+- **Diamond Ticket:** Requiere AES256 del krbtgt — NTLM no suficiente para Rubeus diamond
+- **kirbi→ccache:** Rubeus genera .kirbi — convertir con `impacket-ticketConverter`
+- **Evil-WinRM + Kerberos:** Requiere `/etc/hosts` y `/etc/krb5.conf` configurados
+
+*Última actualización: Mayo 2026 — Lab-05 SILVER CHAIN añadido — Adrián Camacho*

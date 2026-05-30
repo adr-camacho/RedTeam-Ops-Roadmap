@@ -143,6 +143,7 @@
   | `lookupsid.py` | Enumeración de SIDs del dominio |
 - **Instalación:** `sudo apt install -y impacket-scripts`
 - **Labs:** Lab-01, Lab-02, Lab-03, Lab-04, Lab-05+
+- **⚠️ Versión requerida:** impacket==0.13.1 — pywhisker instala 0.12.0 que tiene bug con Python 3.13 en `logger.init()`. Reinstalar con `pip install impacket==0.13.1 --break-system-packages`
 
 ---
 
@@ -248,6 +249,29 @@
 
 ---
 
+### pywhisker
+- **Descripción:** Herramienta Python para abuso de Shadow Credentials — modifica el atributo `msDS-KeyCredentialLink` de objetos AD para añadir credenciales de clave pública.
+- **Versión:** 0.1.2
+- **Instalación:** `pip install pywhisker --break-system-packages`
+- **Ruta:** `~/.local/bin/pywhisker`
+- **Uso:**
+```bash
+  # Añadir Shadow Credential
+  pywhisker -d atackcorp.local -u fin.garcia -p 'Finance2024!' \
+    -t iis_svc --action add --dc-ip 10.0.2.10
+
+  # Limpiar (OPSEC)
+  pywhisker -d atackcorp.local -u fin.garcia -p 'Finance2024!' \
+    -t iis_svc --action clear --dc-ip 10.0.2.10
+```
+- **⚠️ Conflicto impacket:** pywhisker instala impacket==0.12.0 que rompe ticketer con Python 3.13. Reinstalar tras usarlo:
+```bash
+  pip install impacket==0.13.1 --break-system-packages -q
+```
+- **Labs:** Lab-05+
+
+---
+
 ### Responder
 - **Descripción:** Herramienta de envenenamiento LLMNR/NBT-NS/MDNS y captura de hashes NTLMv2.
 - **Instalación:** `sudo apt install -y responder`
@@ -261,6 +285,7 @@
   ```
 - **Nota:** Conflicto con BloodHound CE Docker y Sliver en puerto 80 — parar con `sudo pkill responder` + `sudo fuser -k 80/tcp`
 - **Labs:** Lab-04+
+
 
 ---
 
@@ -370,6 +395,13 @@
 | WKSTN-01 | Windows 11 Enterprise Evaluation | `10.0.2.8` | 3GB | Workstation corporativa |
 | Kali | Kali Linux 2026.1 | `10.0.2.9` | 8GB | Máquina atacante |
 
+### SQL Server Express 2022
+- **Instalado en:** DC-01 (10.0.2.10) — Lab-05 (30/05/2026)
+- **Puerto:** 1433 — Instancia: MSSQLSERVER
+- **Service Account:** NT AUTHORITY\SYSTEM
+- **SysAdmin:** ATACKCORP\Admins. del dominio
+- **Uso:** Target Silver Ticket — `MSSQLSvc/DC-01.atackcorp.local:1433`
+
 ### Configuración de red permanente en Kali
 
 ```bash
@@ -406,6 +438,7 @@ sudo nmcli con up LabRedTeam
 | ACL/ADCS | dnstool.py | ✅ Instalado | `/opt/redteam/krbrelayx/dnstool.py` |
 | ACL/ADCS | PetitPotam | ✅ Instalado | `/opt/redteam/PetitPotam.py` |
 | ACL/ADCS | Responder | ✅ Instalado | `responder` |
+| Shadow Creds | pywhisker v0.1.2 | ✅ Instalado | `~/.local/bin/pywhisker` |
 | Cracking | Hashcat | ✅ Instalado | `hashcat` |
 | Cracking | John the Ripper | ✅ Instalado | `john` |
 | Pivoting | Ligolo-ng | ✅ Instalado | `/opt/ligolo/` |
@@ -423,4 +456,4 @@ sudo nmcli con up LabRedTeam
 
 ---
 
-*Última actualización: Mayo 2026 — Lab-04 IRON FOREST — Adrián Camacho*
+*Última actualización: Mayo 2026 — Lab-05 SILVER CHAIN — pywhisker + SQL Server añadidos — Adrián Camacho*

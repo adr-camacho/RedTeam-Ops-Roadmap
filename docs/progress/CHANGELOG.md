@@ -3,6 +3,50 @@
 > Registro de cambios estructurales del repositorio.
 > Tipos: `ADD` | `UPDATE` | `FIX` | `REFACTOR` | `DOCS`
 
+## [2026-05-30] — Lab-05 SILVER CHAIN completado + Mejoras globales
+
+### ADD — Lab-05 SILVER CHAIN
+- `Lab-05-Silver-Chain/docs/execution/enumeration_log.md` — SharpHound 354 objetos, BloodHound CE Cypher queries
+- `Lab-05-Silver-Chain/docs/execution/rbcd_abuse.md` — ATTACKER$, S4U2Self+S4U2Proxy, acceso C$ WKSTN-01
+- `Lab-05-Silver-Chain/docs/execution/shadow_credentials.md` — pywhisker, PKINIT, iis_svc hash
+- `Lab-05-Silver-Chain/docs/execution/silver_ticket.md` — ticketer, MSSQLSvc/DC-01:1433, SQL Server 2022
+- `Lab-05-Silver-Chain/docs/execution/diamond_ticket.md` — Rubeus diamond, kirbi→ccache, bypass PAC Validation
+- `Lab-05-Silver-Chain/docs/execution/c2_sliver.md` — beacon LIGHT_CARTLOAD WKSTN-01
+- `Lab-05-Silver-Chain/docs/execution/cleanup_opsec.md` — ATTACKER$ eliminado, Shadow Creds limpiadas
+- `Lab-05-Silver-Chain/docs/execution/infrastructure_setup.md` — ACLs, MAQ, SQL Server, credenciales
+- `Lab-05-Silver-Chain/docs/analysis/lessons_learned.md` — 10 lecciones (L-01 a L-10)
+- `Lab-05-Silver-Chain/docs/analysis/mitigations.md` — RBCD, Shadow Creds, Silver/Diamond Ticket detección
+- `Lab-05-Silver-Chain/loot/lab05_hashes.txt` — iis_svc NTLM hash
+- `Lab-05-Silver-Chain/loot/lab05_sharphound.zip` — BloodHound collection 354 objetos
+- `Lab-05-Silver-Chain/nmap/` — escaneos DC-01 + WKSTN-01 (compartidos con Lab-01)
+- Screenshots FASE-01 a FASE-06: 14 capturas
+
+### UPDATE — Lab-05
+- `Lab-05-Silver-Chain/OPERATION_SILVER_CHAIN.md` — actualizado con resultados reales de operación
+- `Lab-05-Silver-Chain/README.md` — estado ✅ completado, 6 fases, crown jewels obtenidos
+
+### ADD — Mejoras globales portfolio
+- `README.md` — badge Labs→TTPs Dominadas (35→45), diagrama Mermaid kill chain
+- `Labs 06-15/README.md` — Design Phase notice, numeración y adversarios correctos
+- `tooling/arsenal_setup.sh` — reescrito completamente (era PS script incorrecto)
+
+### FIX
+- `tooling/arsenal_setup.sh` — contenido era PS script de provisioning AD (incorrecto)
+- `Lab-03/screenshots/FASE-04` — renombrada sin espacio en nombre de carpeta
+- `Lab-05/docs/` — docs vacíos del template eliminados
+- `loot/` Labs 01-03 — archivos reales añadidos (dcsync_hashes, sam_hashes, cert_hash)
+- `nmap/` Labs 01-04 — escaneos reales regenerados (eran placeholders de 9 bytes)
+- `.gitignore` — ligolo-ng.history y ligolo-selfcerts/ añadidos
+
+### UPDATE — Docs globales
+- `PROGRESS.md` — Lab-05 completado, semana 7, 45 TTPs dominadas, ~115h
+- `CHANGELOG.md` — entradas 30/05 añadidas
+- `MITRE_MAPPING.md` — Lab-05 técnicas ✅ (RBCD, Shadow Creds, Silver/Diamond Ticket)
+- `ARSENAL.md` — pywhisker, SQL Server Express 2022, impacket 0.13.1 nota
+- `LAB_INFRASTRUCTURE.md` — sección Lab-05 añadida
+
+---
+
 ## [2026-05-29] — Lab-04 IRON FOREST completado — Fases 04-08
 
 ### ADD

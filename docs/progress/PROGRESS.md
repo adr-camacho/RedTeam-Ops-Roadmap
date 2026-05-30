@@ -9,12 +9,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Fecha de inicio | 09/05/2026 |
-| Última actualización | 29/05/2026 |
-| Labs completados | 4 / 15 |
-| Labs en progreso | 0 / 15 |
-| Horas totales invertidas | ~95h |
-| Fase actual | Phase-02: AD Avanzado (Lab-04 completado) |
+| Última actualización | 30/05/2026 |
+| Labs completados | 5 / 15 |
+| Horas totales invertidas | ~115h |
+| Fase actual | Phase-02: AD Avanzado (Lab-05 completado) |
 
 ---
 
@@ -33,7 +31,7 @@
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
 | Lab-04: Iron Forest | ✅ Completado | 28/05/2026 | 29/05/2026 | ~20h | ✅ Completo |
-| Lab-05: Silver Chain | ⏳ Pendiente | — | — | — | — |
+| Lab-05: Silver Chain | ✅ Completado | 30/05/2026 | 30/05/2026 | ~20h | ✅ Completo |
 | Lab-06: Black Policy | ⏳ Pendiente | — | — | — | — |
 | Lab-07: Shadow Vault | ⏳ Pendiente | — | — | — | — |
 
@@ -179,6 +177,16 @@
 | NTLMv2 Capture (Responder) | T1557.001 | Lab-04 | ✅ Dominada |
 | C2 HTTP Beacon (Sliver) | T1071.001 | Lab-04 | ✅ Dominada |
 | OPSEC Cleanup (dacledit remove + dnstool) | T1070 | Lab-04 | ✅ Dominada |
+| RBCD S4U2Self+S4U2Proxy | T1558.001 | Lab-05 | ✅ Dominada |
+| Shadow Credentials (msDS-KeyCredentialLink) | T1556 | Lab-05 | ✅ Dominada |
+| PKINIT Authentication | T1649 | Lab-05 | ✅ Dominada |
+| Silver Ticket | T1558.002 | Lab-05 | ✅ Dominada |
+| Diamond Ticket (bypass PAC Validation) | T1558.001 | Lab-05 | ✅ Dominada |
+| MachineAccountQuota Abuse | T1136.002 | Lab-05 | ✅ Dominada |
+| kirbi→ccache conversion | T1550.003 | Lab-05 | ✅ Dominada |
+| Kerberos Ticket Forging | T1558 | Lab-05 | ✅ Dominada |
+| Indicator Removal (RBCD/Shadow Creds) | T1070 | Lab-05 | ✅ Dominada |
+| Pass-the-Ticket (impacket-smbclient) | T1550.003 | Lab-05 | ✅ Dominada |
 
 ---
 
@@ -186,7 +194,6 @@
 
 | Lab | Pendiente | Prioridad |
 |-----|----------|-----------|
-| Lab-05 | SILVER CHAIN — RBCD, Silver Ticket, Diamond Ticket | Alta |
 | Lab-06 | BLACK POLICY — SID History, Cross-Forest Trust, GPO abuse avanzado | Alta |
 | Lab-07 | SHADOW VAULT — LAPS, DPAPI, Shadow Credentials | Alta |
 | Lab-08 | GHOST SIGNAL — AMSI bypass, Process injection, syscalls directas | Alta |
@@ -200,9 +207,6 @@
 | Lab-02 | Segundo pivote (tercer segmento de red) | Media |
 | Lab-02 | Setup-Lab02-SilentBridge.sh (bash — PROD + GIT setup Ubuntu) | Baja |
 
----
-
-*⚡ Leyenda: ✅ Completado | 🔄 Parcial | ⏳ Pendiente*
 ---
 
 ### Semana 5 — 18/05/2026 al 20/05/2026
@@ -255,4 +259,24 @@
 - Documentación completa: 8 docs de ejecución + lessons_learned (13 lecciones) + OPERATION_IRON_FOREST.md
 - **Horas:** ~12h
 
-**Total Lab-0
+---
+
+### Semana 7 — 30/05/2026
+
+#### 📌 30/05/2026 — Sesión 16: Lab-05 SILVER CHAIN — Fases 01-06 + Documentación completa
+
+- Fase 01: SharpHound v2.5.9 desde WKSTN-01 — 354 objetos · BloodHound CE confirma GenericWrite paths
+- Fase 02: RBCD Abuse — ATTACKER$ via MAQ · S4U2Self+S4U2Proxy → TGS como Administrador@WKSTN-01 ✅
+- Fase 03: Shadow Credentials — pywhisker → msDS-KeyCredentialLink · certipy-ad PKINIT → iis_svc NTLM hash ✅
+- Fase 04: Silver Ticket — hash iis_svc NTLM → TGS MSSQLSvc/DC-01:1433 forjado localmente ✅
+- Fase 05: Diamond Ticket — krbtgt AES256 via DCSync · Rubeus diamond → TGT real + PAC modificado · bypass PAC Validation ✅
+- Fase 06: C2 + Cleanup — beacon LIGHT_CARTLOAD WKSTN-01 · ATTACKER$ eliminado · Shadow Creds limpiadas ✅
+- Problemas resueltos: pywhisker/impacket conflict, Evil-WinRM Kerberos, SQL Server instalado, SharpHound placeholder
+- Documentación completa: 10 docs execution/analysis + OPERATION actualizado + docs globales
+- **Horas:** ~20h
+
+**Total Lab-04:** ~20h
+
+---
+
+*⚡ Leyenda: ✅ Completado | 🔄 Parcial | ⏳ Pendiente*
