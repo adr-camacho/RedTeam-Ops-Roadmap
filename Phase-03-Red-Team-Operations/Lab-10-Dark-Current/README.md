@@ -1,8 +1,10 @@
-# 🔴 Lab-08: Havoc C2
+# 🔴 Lab-10: DARK CURRENT
 
-![Status](https://img.shields.io/badge/Status-Pending-lightgrey)
-![Phase](https://img.shields.io/badge/Phase-003-blue)
+![Status](https://img.shields.io/badge/Status-Design%20Phase-lightgrey)
+![Phase](https://img.shields.io/badge/Phase-0003-blue)
 ![Adversary](https://img.shields.io/badge/Adversary-Lazarus%20Group-darkred)
+
+> ⚠️ **Design Phase** — Lab planificado, pendiente de ejecución. La documentación de ejecución se generará al completar el lab.
 
 ---
 
@@ -12,17 +14,18 @@
 |-------|---------|
 | **Nombre de operación** | DARK CURRENT |
 | **Adversario simulado** | Lazarus Group |
-| **Técnicas principales** | Havoc C2, Sleep Obfuscation, BOFs, OPSEC avanzado |
-| **Estado** | ⏳ Pendiente |
+| **Técnicas principales** | Havoc C2, BOFs, Sleep obfuscation, EDR bypass |
+| **Estado** | ⏳ Design Phase |
+| **Prerequisito** | Labs anteriores completados |
 
 ---
 
 ## 📋 Técnicas planificadas
 
 - Havoc C2
-- Sleep Obfuscation
 - BOFs
-- OPSEC avanzado
+- Sleep obfuscation
+- EDR bypass
 
 ---
 
@@ -32,4 +35,4 @@
 
 ---
 
-*DARK CURRENT — Adrián Camacho*
+*DARK CURRENT — Adrián Camacho | Entorno de laboratorio — Únicamente con fines educativos*

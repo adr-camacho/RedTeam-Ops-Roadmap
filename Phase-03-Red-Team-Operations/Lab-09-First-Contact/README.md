@@ -1,8 +1,10 @@
-# 🔴 Lab-09: First Contact
+# 🔴 Lab-09: FIRST CONTACT
 
-![Status](https://img.shields.io/badge/Status-Pending-lightgrey)
-![Phase](https://img.shields.io/badge/Phase-03-blue)
+![Status](https://img.shields.io/badge/Status-Design%20Phase-lightgrey)
+![Phase](https://img.shields.io/badge/Phase-0003-blue)
 ![Adversary](https://img.shields.io/badge/Adversary-Lazarus%20Group-darkred)
+
+> ⚠️ **Design Phase** — Lab planificado, pendiente de ejecución. La documentación de ejecución se generará al completar el lab.
 
 ---
 
@@ -12,27 +14,18 @@
 |-------|---------|
 | **Nombre de operación** | FIRST CONTACT |
 | **Adversario simulado** | Lazarus Group |
-| **Técnicas principales** | Password spraying, phishing HTML smuggling, VBA macros, Initial Access sin credenciales previas |
-| **Crown Jewels** | Primer foothold en red corporativa atackcorp.local sin credenciales previas |
-| **Estado** | ⏳ Pendiente |
+| **Técnicas principales** | Password spraying, HTML Smuggling, VBA macros, Initial Access real |
+| **Estado** | ⏳ Design Phase |
+| **Prerequisito** | Labs anteriores completados |
 
 ---
 
 ## 📋 Técnicas planificadas
 
-- Password spraying via Kerbrute (sin bloquear cuentas)
-- Phishing — HTML Smuggling con payload ofuscado
-- VBA Macros — documento Office malicioso
-- Remote Template Injection
-- Initial Access Payloads para Sliver/Havoc
-
----
-
-## 🎯 Objetivo
-
-Este lab cubre el gap más importante del roadmap — todos los labs anteriores asumen credenciales ya obtenidas. FIRST CONTACT simula el inicio real de un engagement: acceso desde Internet sin ninguna credencial previa.
-
-**Posición en el roadmap:** Antes de EDR evasion — cronológicamente correcto. Primero consigues el foothold, luego aprendes a mantenerlo sin ser detectado.
+- Password spraying
+- HTML Smuggling
+- VBA macros
+- Initial Access real
 
 ---
 
@@ -42,12 +35,4 @@ Este lab cubre el gap más importante del roadmap — todos los labs anteriores 
 
 ---
 
-## 🔗 CRTO Alignment
-
-Cubre directamente los módulos:
-- External Reconnaissance (DNS, Google Dorks, OSINT)
-- Initial Compromise (Password Spraying, Phishing, VBA, HTML Smuggling)
-
----
-
-*FIRST CONTACT — Adrián Camacho*
+*FIRST CONTACT — Adrián Camacho | Entorno de laboratorio — Únicamente con fines educativos*

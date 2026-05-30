@@ -11,11 +11,11 @@
 
 ```
   [ Active Directory Adversary Emulation — APT29 · APT41 · APT28 · Lazarus · APT10 ]
-  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 4/15 Labs Completed ]
+  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 35 TTPs Dominated ]
 ```
 
 [![Estado](https://img.shields.io/badge/Estado-En%20Progreso-orange?style=for-the-badge)](.)
-[![Labs](https://img.shields.io/badge/Labs%20completados-4%20%2F%2015-blue?style=for-the-badge)](.)
+[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-35-brightgreen?style=for-the-badge)](.)
 [![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E95h-purple?style=for-the-badge)](.)
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-black?style=for-the-badge)](https://attack.mitre.org)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet?style=for-the-badge)](.)
@@ -319,6 +319,26 @@ Red-Team_Labs/
 - `setup/CrownJewels-Lab*.ps1` — Script de verificación de objetivos
 - `screenshots/FASE-XX-Nombre/` — Evidencia visual organizada por fase
 - `loot/` — Hashes, tickets y credenciales capturadas
+
+---
+
+## 🔗 Kill Chain — Operaciones completadas
+
+```mermaid
+graph LR
+    A[🎯 Foothold<br/>AS-REP · Kerberoast<br/>CVE-2019-12840<br/>ESC1/ESC4] --> B[🔀 Pivot<br/>Ligolo-ng<br/>Multi-network]
+    B --> C[🔑 Credential Access<br/>DCSync · SAM dump<br/>Cert Auth · ADIDNS<br/>PS History · SMB shares]
+    C --> D[⬆️ Privilege Escalation<br/>WriteDACL · ACL abuse<br/>GPO abuse · ADCS<br/>Delegation]
+    D --> E[📡 C2<br/>Sliver HTTP/mTLS<br/>Beacons persistentes]
+    E --> F[🧹 Cleanup<br/>OPSEC · Artefactos<br/>eliminados]
+
+    style A fill:#cc0000,color:#fff
+    style B fill:#ff6600,color:#fff
+    style C fill:#cc6600,color:#fff
+    style D fill:#990099,color:#fff
+    style E fill:#006699,color:#fff
+    style F fill:#009933,color:#fff
+```
 
 ---
 
