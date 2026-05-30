@@ -1,110 +1,74 @@
+#!/bin/bash
 # =============================================================
-# SCRIPT 02 — Creación de OUs, usuarios y grupos
-# Ejecutar: PowerShell como Administrador del dominio
-# Máquina: DC-01 (después del reinicio)
+# arsenal_setup.sh — Setup del arsenal ofensivo en Kali Linux
+# Red Team Ops Roadmap — atackcorp.local
+# Autor: Adrián Camacho | Versión: 2.0 | Mayo 2026
 # =============================================================
 
-Import-Module ActiveDirectory
+set -e
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; NC='\033[0m'
+info()    { echo -e "${CYAN}[*]${NC} $1"; }
+success() { echo -e "${GREEN}[+]${NC} $1"; }
+warn()    { echo -e "${YELLOW}[!]${NC} $1"; }
 
-Write-Host "`n[*] Creando estructura de OUs..." -ForegroundColor Cyan
+echo -e "${RED}╔══════════════════════════════════════════════════════╗"
+echo "║       Arsenal Setup — Red Team Ops Roadmap          ║"
+echo -e "╚══════════════════════════════════════════════════════╝${NC}"
 
-# ── Crear estructura de OUs ──────────────────────────────────
-$OUs = @(
-    "OU=Corporativo,DC=atackcorp,DC=local",
-    "OU=Direccion,OU=Corporativo,DC=atackcorp,DC=local",
-    "OU=RRHH,OU=Corporativo,DC=atackcorp,DC=local",
-    "OU=Finanzas,OU=Corporativo,DC=atackcorp,DC=local",
-    "OU=IT,DC=atackcorp,DC=local",
-    "OU=Administradores,OU=IT,DC=atackcorp,DC=local",
-    "OU=Helpdesk,OU=IT,DC=atackcorp,DC=local",
-    "OU=CuentasServicio,DC=atackcorp,DC=local",
-    "OU=Equipos,DC=atackcorp,DC=local"
-)
+sudo mkdir -p /opt/redteam/{windows,linux,scripts,krbrelayx}
+sudo chown -R kali:kali /opt/redteam
+mkdir -p ~/tools/ad/bloodhound-ce ~/tools/c2/sliver
 
-foreach ($ou in $OUs) {
-    $name = ($ou -split ",")[0] -replace "OU=", ""
-    $path = ($ou -split ",", 2)[1]
-    if (-not (Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$ou'" -ErrorAction SilentlyContinue)) {
-        New-ADOrganizationalUnit -Name $name -Path $path
-        Write-Host "[+] OU creada: $name" -ForegroundColor Green
-    } else {
-        Write-Host "[!] OU ya existe: $name" -ForegroundColor Yellow
-    }
-}
+info "Instalando herramientas base..."
+sudo apt update -qq && sudo apt install -y -qq evil-winrm crackmapexec impacket-scripts responder nmap masscan gobuster feroxbuster john hashcat seclists enum4linux-ng krb5-user chisel mingw-w64 nasm python3-pip git curl unzip jq
+success "Herramientas base OK"
 
-Write-Host "`n[*] Creando usuarios corporativos..." -ForegroundColor Cyan
+info "Instalando herramientas Python..."
+pip install --break-system-packages -q bloodhound certipy-ad bloodyad pywhisker
+success "Python tools OK"
 
-# ── Crear usuarios corporativos ──────────────────────────────
-$usuarios = @(
-    @{ Name="Carlos Martinez"; Sam="ceo.martinez"; Pass="Direccion2024!"; OU="OU=Direccion,OU=Corporativo,DC=atackcorp,DC=local"; NoPreAuth=$true },
-    @{ Name="Laura Lopez";     Sam="rrhh.lopez";   Pass="RRHH2024!";      OU="OU=RRHH,OU=Corporativo,DC=atackcorp,DC=local";      NoPreAuth=$false },
-    @{ Name="Fernando Garcia"; Sam="fin.garcia";   Pass="Finance2024!" ;  OU="OU=Finanzas,OU=Corporativo,DC=atackcorp,DC=local";  NoPreAuth=$false },
-    @{ Name="IT Admin";        Sam="it.admin";     Pass="ITAdmin2024!";   OU="OU=Administradores,OU=IT,DC=atackcorp,DC=local";    NoPreAuth=$false },
-    @{ Name="Helpdesk Ruiz";   Sam="helpdesk.ruiz";Pass="Helpdesk2024!";  OU="OU=Helpdesk,OU=IT,DC=atackcorp,DC=local";          NoPreAuth=$false }
-)
+info "SharpHound v2.5.9..."
+if [ ! -f /opt/redteam/windows/SharpHound.exe ] || [ $(stat -c%s /opt/redteam/windows/SharpHound.exe) -lt 1000 ]; then
+    curl -sL https://github.com/BloodHoundAD/SharpHound/releases/download/v2.5.9/SharpHound-v2.5.9.zip -o /tmp/sh.zip
+    unzip -q /tmp/sh.zip -d /tmp/sh/ && sudo cp /tmp/sh/SharpHound.exe /opt/redteam/windows/ && rm -rf /tmp/sh /tmp/sh.zip
+    success "SharpHound v2.5.9 instalado"
+else
+    success "SharpHound ya instalado"
+fi
 
-foreach ($u in $usuarios) {
-    $pass = ConvertTo-SecureString $u.Pass -AsPlainText -Force
-    if (-not (Get-ADUser -Filter "SamAccountName -eq '$($u.Sam)'" -ErrorAction SilentlyContinue)) {
-        New-ADUser `
-            -Name $u.Name `
-            -SamAccountName $u.Sam `
-            -UserPrincipalName "$($u.Sam)@atackcorp.local" `
-            -Path $u.OU `
-            -AccountPassword $pass `
-            -Enabled $true
-        Write-Host "[+] Usuario creado: $($u.Sam)" -ForegroundColor Green
-    } else {
-        Write-Host "[!] Usuario ya existe: $($u.Sam)" -ForegroundColor Yellow
-    }
-    if ($u.NoPreAuth) {
-        Set-ADAccountControl -Identity $u.Sam -DoesNotRequirePreAuth $true
-        Write-Host "[!] AS-REP Roasting habilitado: $($u.Sam)" -ForegroundColor Red
-    }
-}
+info "krbrelayx / dnstool.py..."
+[ ! -f /opt/redteam/krbrelayx/dnstool.py ] && git clone -q https://github.com/dirkjanm/krbrelayx.git /opt/redteam/krbrelayx/ && success "krbrelayx instalado" || success "krbrelayx ya instalado"
 
-Write-Host "`n[*] Creando cuentas de servicio..." -ForegroundColor Cyan
+info "PetitPotam..."
+[ ! -f /opt/redteam/PetitPotam.py ] && curl -sL https://raw.githubusercontent.com/topotam/PetitPotam/main/PetitPotam.py -o /opt/redteam/PetitPotam.py && success "PetitPotam instalado" || success "PetitPotam ya instalado"
 
-# ── Crear cuentas de servicio ────────────────────────────────
-$servicios = @(
-    @{ Sam="sql_svc";    Pass="SqlService123"; SPN="MSSQLSvc/dc01.atackcorp.local:1433"; NoPreAuth=$false },
-    @{ Sam="iis_svc";    Pass="IisService123";  SPN="HTTP/dc01.atackcorp.local";          NoPreAuth=$false },
-    @{ Sam="backup_svc"; Pass="Backup2024!";    SPN=$null;                                NoPreAuth=$true  }
-)
+info "Ligolo-ng v0.7.5..."
+if [ ! -f /opt/ligolo/proxy ]; then
+    mkdir -p /opt/ligolo
+    curl -sL "https://github.com/nicocha30/ligolo-ng/releases/download/v0.7.5/ligolo-ng_proxy_0.7.5_linux_amd64.tar.gz" -o /tmp/lp.tar.gz
+    curl -sL "https://github.com/nicocha30/ligolo-ng/releases/download/v0.7.5/ligolo-ng_agent_0.7.5_linux_amd64.tar.gz" -o /tmp/la.tar.gz
+    tar -xzf /tmp/lp.tar.gz -C /opt/ligolo/ && tar -xzf /tmp/la.tar.gz -C /opt/ligolo/
+    rm -f /tmp/lp.tar.gz /tmp/la.tar.gz
+    success "Ligolo-ng instalado"
+else
+    success "Ligolo-ng ya instalado"
+fi
 
-foreach ($svc in $servicios) {
-    $pass = ConvertTo-SecureString $svc.Pass -AsPlainText -Force
-    if (-not (Get-ADUser -Filter "SamAccountName -eq '$($svc.Sam)'" -ErrorAction SilentlyContinue)) {
-        New-ADUser `
-            -Name $svc.Sam `
-            -SamAccountName $svc.Sam `
-            -UserPrincipalName "$($svc.Sam)@atackcorp.local" `
-            -Path "OU=CuentasServicio,DC=atackcorp,DC=local" `
-            -AccountPassword $pass `
-            -Enabled $true
-        Write-Host "[+] Cuenta de servicio creada: $($svc.Sam)" -ForegroundColor Green
-    } else {
-        Write-Host "[!] Cuenta ya existe: $($svc.Sam)" -ForegroundColor Yellow
-    }
-    if ($svc.SPN) {
-        Set-ADUser -Identity $svc.Sam -ServicePrincipalNames @{Add=$svc.SPN}
-        Write-Host "[!] Kerberoasting habilitado (SPN): $($svc.Sam) -> $($svc.SPN)" -ForegroundColor Red
-    }
-    if ($svc.NoPreAuth) {
-        Set-ADAccountControl -Identity $svc.Sam -DoesNotRequirePreAuth $true
-        Write-Host "[!] AS-REP Roasting habilitado: $($svc.Sam)" -ForegroundColor Red
-    }
-}
+info "Sliver C2..."
+systemctl is-active --quiet sliver 2>/dev/null && success "Sliver activo" || warn "Sliver no activo — instalar: curl https://sliver.sh/install | sudo bash"
 
-# ── it.admin → Account Operators ────────────────────────────
-Add-ADGroupMember -Identity "Opers. de cuentas" -Members "it.admin"
-Write-Host "[!] ACL Abuse: it.admin añadido a Account Operators" -ForegroundColor Red
+info "Rubeus..."
+[ -f /opt/redteam/windows/Rubeus.exe ] && [ $(stat -c%s /opt/redteam/windows/Rubeus.exe) -gt 1000 ] && success "Rubeus OK" || warn "Rubeus pendiente — descargar manualmente en /opt/redteam/windows/Rubeus.exe"
 
-# ── Usuarios de administración remota (WinRM) ────────────────
-$winrmUsers = @("ceo.martinez", "backup_svc", "helpdesk.ruiz")
-foreach ($u in $winrmUsers) {
-    Add-ADGroupMember -Identity "Usuarios de administración remota" -Members $u -ErrorAction SilentlyContinue
-    Write-Host "[+] WinRM habilitado para: $u" -ForegroundColor Green
-}
+[ -f /usr/share/wordlists/rockyou.txt.gz ] && sudo gunzip /usr/share/wordlists/rockyou.txt.gz 2>/dev/null; success "rockyou.txt OK"
 
-Write-Host "`n[+] Script 02 completado." -ForegroundColor Green
+[ -f /usr/local/bin/sliver ] && ln -sf /usr/local/bin/sliver ~/tools/c2/sliver/sliver 2>/dev/null || true
+[ -f /usr/local/bin/sliver-client ] && ln -sf /usr/local/bin/sliver-client ~/tools/c2/sliver/sliver-client 2>/dev/null || true
+
+echo -e "\n${RED}═══════════════════════════════════════════════════════${NC}"
+echo -e "${RED} Arsenal Setup completado${NC}"
+echo -e "${CYAN}  /opt/redteam/windows/SharpHound.exe${NC}"
+echo -e "${CYAN}  /opt/redteam/krbrelayx/dnstool.py${NC}"
+echo -e "${CYAN}  /opt/redteam/PetitPotam.py${NC}"
+echo -e "${CYAN}  /opt/ligolo/proxy + agent${NC}"
+echo -e "${RED}═══════════════════════════════════════════════════════${NC}"
