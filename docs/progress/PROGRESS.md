@@ -9,9 +9,9 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Última actualización | 30/05/2026 |
-| Labs completados | 5 / 15 |
-| Horas totales invertidas | ~115h |
+| Última actualización | 31/05/2026 |
+| Fase actual | Phase-02: AD Avanzado (infraestructura CRTO completa — Lab-06 en curso) |
+| Horas totales invertidas | ~121h |
 | Fase actual | Phase-02: AD Avanzado (Lab-05 completado) |
 
 ---
@@ -278,5 +278,31 @@
 **Total Lab-04:** ~20h
 
 ---
+
+### Semana 8 — 31/05/2026
+
+#### 31/05/2026 — Sesion 17: Infraestructura CRTO completa + Setup Lab-06
+
+**Infraestructura ampliada — 3 forests como el examen CRTO:**
+- DC-02 (10.0.2.11) — corp.local — nuevo forest instalado y configurado
+- DC-03 (10.0.2.13) — child.atackcorp.local — child domain de atackcorp.local
+- DC-04 (10.0.2.14) — ext.local — tercer forest independiente
+- WKSTN-02 (10.0.2.12) — workstation unida a corp.local
+- Forest Trusts BiDirectional: atackcorp ↔ corp ↔ ext
+- SID Filtering deshabilitado en todos los trusts
+- DNS Conditional Forwarders configurados en los 4 DCs
+
+**Scripts generados:**
+- 07_Setup_DC02_Corp.ps1, 08_Setup_DC03_Child.ps1, 09_Setup_DC04_Ext.ps1
+- 10_Setup_Trusts_And_SIDHistory.ps1, 11_Setup_WKSTN02_Corp.ps1
+- 06_wkstn01.ps1 corregido (sin Enable-PSRemoting)
+
+**Problemas resueltos:**
+- Enable-PSRemoting dentro de scripts Evil-WinRM corta la conexion → ejecutar manualmente antes
+- Cuenta Administrador inactiva en Windows 11 → net user Administrador /active:yes
+- WKSTNs perdian trust al dominio tras reinstalacion → rejoinar manualmente
+- Evil-WinRM upload con nombres numerados genera punto extra → usar .\. prefix
+
+**Horas:** ~6h
 
 *⚡ Leyenda: ✅ Completado | 🔄 Parcial | ⏳ Pendiente*

@@ -3,6 +3,43 @@
 > Registro de cambios estructurales del repositorio.
 > Tipos: `ADD` | `UPDATE` | `FIX` | `REFACTOR` | `DOCS`
 
+## [2026-05-31] — Infraestructura CRTO completa + Setup Lab-06
+
+### ADD — Nueva infraestructura (entorno CRTO completo)
+- `DC-02` (10.0.2.11) — corp.local — Forest 2 operativo
+- `DC-03` (10.0.2.13) — child.atackcorp.local — Child Domain operativo
+- `DC-04` (10.0.2.14) — ext.local — Forest 3 operativo
+- `WKSTN-02` (10.0.2.12) — corp.local workstation operativa
+- Forest Trusts: atackcorp.local ↔ corp.local ↔ ext.local (BiDirectional)
+- SID Filtering deshabilitado en todos los trusts (Lab-06 SID History)
+- DNS Conditional Forwarders configurados en todos los DCs
+
+### ADD — Scripts provisioning nuevos
+- `setup/provisioning/07_Setup_DC02_Corp.ps1` — OUs, usuarios, ACLs, Kerberoasting corp.local
+- `setup/provisioning/08_Setup_DC03_Child.ps1` — child domain, SID Filtering off
+- `setup/provisioning/09_Setup_DC04_Ext.ps1` — ext.local, share con credenciales expuestas
+- `setup/provisioning/10_Setup_Trusts_And_SIDHistory.ps1` — SID Filtering deshabilitado, cross.user
+- `setup/provisioning/11_Setup_WKSTN02_Corp.ps1` — WinRM, autologon, C:\Temp
+
+### FIX — Scripts provisioning corregidos
+- `setup/provisioning/06_wkstn01.ps1` — eliminado Enable-PSRemoting (cortaba conexion Evil-WinRM)
+- `setup/provisioning/11_Setup_WKSTN02_Corp.ps1` — eliminado Enable-PSRemoting
+- Ambos scripts incluyen prerequisitos de WinRM en comentario de cabecera
+
+### UPDATE — Docs globales
+- `README.md` — diagrama arquitectura actualizado con 4 DCs + 2 WKSTNs + Forest Trusts
+- `README.md` — tabla hosts actualizada, requisitos hardware actualizados
+- `README.md` — setup automatizado con comentarios por VM
+- `docs/reference/LAB_INFRASTRUCTURE.md` — seccion infraestructura ampliada CRTO completa
+
+### ADD — Lab-06 BLACK POLICY
+- `Phase-02-Post-Exploitation/Lab-06-Black-Policy/screenshots/` — carpetas FASE-01 a FASE-05
+- `Phase-02-Post-Exploitation/Lab-06-Black-Policy/OPERATION_BLACK_POLICY.md`
+- `Phase-02-Post-Exploitation/Lab-06-Black-Policy/docs/theory/tradecraft.md`
+- `Phase-02-Post-Exploitation/Lab-06-Black-Policy/setup/Setup-Lab06-BlackPolicy.ps1`
+
+---
+
 ## [2026-05-30] — Lab-05 SILVER CHAIN completado + Mejoras globales
 
 ### ADD — Lab-05 SILVER CHAIN
