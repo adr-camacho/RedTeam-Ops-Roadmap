@@ -748,4 +748,111 @@ loot/
 - **kirbi→ccache:** Rubeus genera .kirbi — convertir con `impacket-ticketConverter`
 - **Evil-WinRM + Kerberos:** Requiere `/etc/hosts` y `/etc/krb5.conf` configurados
 
-*Última actualización: Mayo 2026 — Lab-05 SILVER CHAIN añadido — Adrián Camacho*
+---
+
+## Infraestructura Ampliada — Entorno CRTO Completo
+
+> Ampliación del entorno para Labs 06-15. Replica la infraestructura del examen CRTO:
+> 3 forests, 4 DCs, 2 workstations, trusts bidireccionales.
+
+### Arquitectura de Forests y Trusts
+
+```
+Forest 1: atackcorp.local
+├── DC-01 (10.0.2.10) — Root Domain Controller
+│   └── Scripts: 01-06 provisioning
+├── DC-03 (10.0.2.13) — child.atackcorp.local
+│   └── Child Domain Controller
+└── WKSTN-01 (10.0.2.8) — Windows 11
+
+Forest 2: corp.local  ←──BiDirectional──→ atackcorp.local
+├── DC-02 (10.0.2.11) — Root Domain Controller
+└── WKSTN-02 (10.0.2.12) — Windows 11
+
+Forest 3: ext.local  ←──BiDirectional──→ atackcorp.local
+└── DC-04 (10.0.2.14) — Root Domain Controller
+
+Kali (10.0.2.9) — Atacante / C2
+```
+
+### Tabla de VMs completa
+
+| Host | IP | OS | RAM | Dominio | Rol |
+|------|----|----|-----|---------|-----|
+| DC-01 | 10.0.2.10 | Windows Server 2022 | 4GB | atackcorp.local | Root DC + ADCS |
+| DC-02 | 10.0.2.11 | Windows Server 2022 | 3GB | corp.local | Root DC Forest 2 |
+| DC-03 | 10.0.2.13 | Windows Server 2022 | 3GB | child.atackcorp.local | Child DC |
+| DC-04 | 10.0.2.14 | Windows Server 2022 | 2GB | ext.local | Root DC Forest 3 |
+| WKSTN-01 | 10.0.2.8 | Windows 11 | 3GB | atackcorp.local | Workstation |
+| WKSTN-02 | 10.0.2.12 | Windows 11 | 3GB | corp.local | Workstation |
+| Kali | 10.0.2.9 | Kali Linux 2026.1 | 8GB | — | Atacante / C2 |
+
+### SIDs de dominio
+
+| Dominio | SID |
+|---------|-----|
+| atackcorp.local | S-1-5-21-768292631-183641691-1245477636 |
+| corp.local | S-1-5-21-750084600-2533406826-1069631424 |
+| child.atackcorp.local | S-1-5-21-1260887138-4140378040-26783321 |
+| ext.local | S-1-5-21-2306744090-1741761158-1874831940 |
+
+### Forest Trusts configurados
+
+| Trust | Tipo | Direccion | SID Filtering |
+|-------|------|-----------|---------------|
+| atackcorp.local ↔ corp.local | Forest | BiDirectional | Deshabilitado |
+| atackcorp.local ↔ ext.local | Forest | BiDirectional | Deshabilitado |
+| atackcorp.local ↔ child.atackcorp.local | ParentChild | BiDirectional | Automatico |
+
+> SID Filtering deshabilitado intencionalmente para habilitar ataques SID History en Lab-06.
+
+### Credenciales por dominio
+
+#### corp.local
+| Usuario | Contrasena | Privilegio | Vector |
+|---------|-----------|------------|--------|
+| Administrador | Admin1234! | Domain Admin | — |
+| john.smith | JohnCorp2024! | Usuario normal | GenericAll sobre corp_svc |
+| sarah.connor | SarahCorp2024! | Usuario normal | — |
+| corp.admin | CorpAdmin2024! | Domain Admin | — |
+| corp_svc | CorpSvc2024! | Cuenta servicio | Kerberoasting (MSSQLSvc/DC-02:1433) |
+
+#### child.atackcorp.local
+| Usuario | Contrasena | Privilegio | Vector |
+|---------|-----------|------------|--------|
+| Administrador | Admin1234! | Domain Admin | — |
+| child.user | ChildUser2024! | Usuario normal | SID History path |
+| child.admin | ChildAdmin2024! | Domain Admin | — |
+| child_svc | ChildSvc2024! | Cuenta servicio | Kerberoasting (HTTP/DC-03) |
+
+#### ext.local
+| Usuario | Contrasena | Privilegio | Vector |
+|---------|-----------|------------|--------|
+| Administrador | Admin1234! | Domain Admin | — |
+| ext.user | ExtUser2024! | Usuario normal | Share con credenciales |
+| ext.admin | ExtAdmin2024! | Domain Admin | — |
+| ext_svc | ExtSvc2024! | Cuenta servicio | Kerberoasting cross-forest |
+
+#### atackcorp.local (nuevos)
+| Usuario | Contrasena | Privilegio | Vector |
+|---------|-----------|------------|--------|
+| cross.user | CrossUser2024! | Usuario normal | Acceso cross-forest |
+
+### Scripts de provisioning nuevos
+
+| Script | VM | Descripcion |
+|--------|-----|-------------|
+| 07_Setup_DC02_Corp.ps1 | DC-02 | OUs, usuarios, ACLs, Kerberoasting corp.local |
+| 08_Setup_DC03_Child.ps1 | DC-03 | OUs, usuarios, SID Filtering off |
+| 09_Setup_DC04_Ext.ps1 | DC-04 | OUs, usuarios, share con credenciales |
+| 10_Setup_Trusts_And_SIDHistory.ps1 | DC-01 | SID Filtering deshabilitado, cross.user |
+| 11_Setup_WKSTN02_Corp.ps1 | WKSTN-02 | WinRM, autologon, C:\Temp |
+
+### Notas tecnicas
+
+- **SID Filtering deshabilitado:** Necesario para Lab-06 SID History injection. En produccion real siempre debe estar habilitado.
+- **WKSTN Administrador local:** Misma contrasena `Admin1234!` en ambas workstations (LAPS no configurado).
+- **DNS Conditional Forwarders:** Configurados en todos los DCs para resolucion cross-forest.
+- **WinRM en WKSTNs:** Puerto 5985 abierto. Cuenta Administrador local activada manualmente.
+
+*Ultima actualizacion: Mayo 2026 — Entorno CRTO completo — Adrian Camacho*

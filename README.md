@@ -49,41 +49,50 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 ## 🏗️ Arquitectura del Entorno
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     RED TEAM LAB — atackcorp.local              │
-│                                                                 │
-│  ┌─────────────────┐        ┌─────────────────┐               │
-│  │     DC-01        │        │    WKSTN-01      │               │
-│  │  10.0.2.10       │◄──────►│   10.0.2.8       │               │
-│  │  Win Srv 2022    │        │   Windows 11     │               │
-│  │  atackcorp.local │        │   4GB RAM        │               │
-│  │  ADCS: AtackCorp │        │                  │               │
-│  └────────┬─────────┘        └────────┬─────────┘               │
-│           │                           │                         │
-│           └──────────────┬────────────┘                         │
-│                          │  10.0.2.0/24  (LabRedTeam NAT)       │
-│                          │                                       │
-│                 ┌────────┴────────┐                             │
-│                 │   Kali Linux     │                             │
-│                 │   10.0.2.9       │ ← Atacante principal        │
-│                 │   8GB RAM        │                             │
-│                 │   Sliver C2      │                             │
-│                 │   Ligolo-ng      │                             │
-│                 │   Arsenal completo│                            │
-│                 └─────────────────┘                             │
-│                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │              Lab-02 — Red interna adicional              │   │
-│  │  PROD (10.0.3.10) · GIT (10.0.3.11) · PC-01 (10.0.3.20)│   │
-│  │              Ligolo-ng tunnel ←── Kali                   │   │
-│  └─────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                    RED TEAM LAB — 10.0.2.0/24 (LabRedTeam NAT)     │
+│                                                                     │
+│  FOREST 1: atackcorp.local                                          │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐             │
+│  │    DC-01      │  │    DC-03      │  │   WKSTN-01   │             │
+│  │  10.0.2.10    │  │  10.0.2.13    │  │  10.0.2.8    │             │
+│  │  Root DC      │  │  child.atack  │  │  Windows 11  │             │
+│  │  ADCS         │  │  corp.local   │  │              │             │
+│  └──────┬────────┘  └──────────────┘  └──────────────┘             │
+│         │ BiDir Trust          BiDir Trust                          │
+│  FOREST 2: corp.local ◄────────────────────────────────            │
+│  ┌──────────────┐  ┌──────────────┐                                │
+│  │    DC-02      │  │   WKSTN-02   │                                │
+│  │  10.0.2.11    │  │  10.0.2.12   │                                │
+│  │  Root DC      │  │  Windows 11  │                                │
+│  └──────────────┘  └──────────────┘                                │
+│         │ BiDir Trust                                               │
+│  FOREST 3: ext.local ◄─────────────────────────────────            │
+│  ┌──────────────┐                                                   │
+│  │    DC-04      │                                                  │
+│  │  10.0.2.14    │                                                  │
+│  │  Root DC      │                                                  │
+│  └──────────────┘                                                   │
+│                                                                     │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │  Kali Linux 10.0.2.9 — Atacante / C2 / Arsenal               │  │
+│  └──────────────────────────────────────────────────────────────┘  │
+│                                                                     │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │  Lab-02 — Red interna 10.0.3.0/24                            │  │
+│  │  PROD (10.0.3.10) · GIT (10.0.3.11) · PC-01 (10.0.3.20)     │  │
+│  └──────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 | Host | IP | OS | RAM | Rol |
 |---|---|---|---|---|
 | DC-01 | 10.0.2.10 | Windows Server 2022 | 4GB | Domain Controller — atackcorp.local + ADCS |
-| WKSTN-01 | 10.0.2.8 | Windows 11 | 3GB | Workstation objetivo |
+| DC-02 | 10.0.2.11 | Windows Server 2022 | 3GB | Domain Controller — corp.local (Forest 2) |
+| DC-03 | 10.0.2.13 | Windows Server 2022 | 3GB | Domain Controller — child.atackcorp.local |
+| DC-04 | 10.0.2.14 | Windows Server 2022 | 2GB | Domain Controller — ext.local (Forest 3) |
+| WKSTN-01 | 10.0.2.8 | Windows 11 | 3GB | Workstation — atackcorp.local |
+| WKSTN-02 | 10.0.2.12 | Windows 11 | 3GB | Workstation — corp.local |
 | Kali | 10.0.2.9 | Kali Linux 2026.1 | 8GB | Atacante / C2 Server |
 | PROD | 10.0.3.10 | Ubuntu 22.04 | — | Servidor web Lab-02 (Webmin 1.890) |
 | GIT | 10.0.3.11 | Ubuntu 22.04 | — | Servidor Git Lab-02 |
@@ -305,13 +314,20 @@ Red-Team_Labs/
 │       └── TOOL_INDEX.md                    # Índice de herramientas con versiones
 │
 ├── setup/
-│   ├── provisioning/                        # Scripts PowerShell de aprovisionamiento AD
+│   ├── provisioning/
+|   |   └── 00_Setup_Lab01-GhostForest-v2.ps1
 │   │   ├── 01_ad_promotion.ps1
 │   │   ├── 02_users_ous.ps1
 │   │   ├── 03_acls_delegations.ps1
 │   │   ├── 04_iis_smb_gpo.ps1
 │   │   ├── 05_mssql.ps1
-│   │   └── 06_wkstn01.ps1
+│   │   ├── 06_wkstn01.ps1
+│   │   ├── 07_Setup_DC02_Corp.ps1
+│   │   ├── 08_Setup_DC03_Child.ps1
+│   │   ├── 09_Setup_DC04_Ext.ps1
+│   │   ├── 10_Setup_Trusts_And_SIDHistory.ps1
+│   │   ├── 11_Setup_WKSTN02_Corp.ps1
+│   │   
 │   └── screenshots/                         # Evidencia del setup del entorno
 │
 ├── tooling/                                 # Scripts de setup del arsenal Kali
@@ -438,23 +454,39 @@ graph LR
 ### Requisitos de hardware
 
 ```
-RAM mínima:    16 GB  (recomendado 32 GB)
-CPU:           4 cores (recomendado 8 — VT-x/AMD-V activo en BIOS)
-Disco:         150 GB libres
+RAM mínima:    32 GB  (entorno CRTO completo — 4 DCs + 2 WKSTNs + Kali)
+CPU:           8 cores (recomendado — VT-x/AMD-V activo en BIOS)
+Disco:         400 GB libres
 Hypervisor:    VirtualBox 7.x
-RAM por VM:    Kali 8GB · DC-01 4GB · WKSTN-01 3GB
+RAM por VM:    Kali 8GB · DC-01 4GB · DC-02/03 3GB · DC-04 2GB · WKSTNs 3GB
 ```
 
 ### Setup automatizado
 
 ```powershell
-# En DC-01 como Administrador
+# DC-01 — atackcorp.local
 .\setup\provisioning\01_ad_promotion.ps1
 .\setup\provisioning\02_users_ous.ps1
 .\setup\provisioning\03_acls_delegations.ps1
 .\setup\provisioning\04_iis_smb_gpo.ps1
 .\setup\provisioning\05_mssql.ps1
-.\Phase-01-Fundamentals\Lab-01-Ghost-Forest\setup\Setup-Lab01-GhostForest-v2.ps1
+.\setup\provisioning\10_Setup_Trusts_And_SIDHistory.ps1  # post Forest Trusts
+
+# WKSTN-01 — atackcorp.local
+.\setup\provisioning\06_wkstn01.ps1
+.\setup\provisioning\00_setup_lab01_ghost_forest_v2.ps1
+
+# DC-02 — corp.local
+.\setup\provisioning\07_Setup_DC02_Corp.ps1
+
+# DC-03 — child.atackcorp.local
+.\setup\provisioning\08_Setup_DC03_Child.ps1
+
+# DC-04 — ext.local
+.\setup\provisioning\09_Setup_DC04_Ext.ps1
+
+# WKSTN-02 — corp.local
+.\setup\provisioning\11_Setup_WKSTN02_Corp.ps1
 ```
 
 ```bash
