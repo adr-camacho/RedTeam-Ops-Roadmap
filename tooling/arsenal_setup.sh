@@ -2,7 +2,11 @@
 # =============================================================
 # arsenal_setup.sh — Setup del arsenal ofensivo en Kali Linux
 # Red Team Ops Roadmap — atackcorp.local
-# Autor: Adrián Camacho | Versión: 2.0 | Mayo 2026
+# Autor: Adrián Camacho | Versión: 2.1 | Junio 2026
+# Changelog v2.1:
+#   - Añadido bloodyad (apt) — manipulación LDAP AD
+#   - Añadido mimikatz.exe en /opt/redteam/windows/
+#   - Añadido DSInternals v4.14 en /opt/redteam/windows/
 # =============================================================
 
 set -e
@@ -20,11 +24,11 @@ sudo chown -R kali:kali /opt/redteam
 mkdir -p ~/tools/ad/bloodhound-ce ~/tools/c2/sliver
 
 info "Instalando herramientas base..."
-sudo apt update -qq && sudo apt install -y -qq evil-winrm crackmapexec impacket-scripts responder nmap masscan gobuster feroxbuster john hashcat seclists enum4linux-ng krb5-user chisel mingw-w64 nasm python3-pip git curl unzip jq
+sudo apt update -qq && sudo apt install -y -qq evil-winrm crackmapexec impacket-scripts responder nmap masscan gobuster feroxbuster john hashcat seclists enum4linux-ng krb5-user chisel mingw-w64 nasm python3-pip git curl unzip jq bloodyad
 success "Herramientas base OK"
 
 info "Instalando herramientas Python..."
-pip install --break-system-packages -q bloodhound certipy-ad bloodyad pywhisker
+pip install --break-system-packages -q bloodhound certipy-ad pywhisker
 success "Python tools OK"
 
 info "SharpHound v2.5.9..."
@@ -34,6 +38,30 @@ if [ ! -f /opt/redteam/windows/SharpHound.exe ] || [ $(stat -c%s /opt/redteam/wi
     success "SharpHound v2.5.9 instalado"
 else
     success "SharpHound ya instalado"
+fi
+
+info "mimikatz (desde Kali built-in)..."
+if [ ! -f /opt/redteam/windows/mimikatz.exe ]; then
+    if [ -f /usr/share/windows-resources/mimikatz/x64/mimikatz.exe ]; then
+        sudo cp /usr/share/windows-resources/mimikatz/x64/mimikatz.exe /opt/redteam/windows/
+        success "mimikatz.exe copiado a /opt/redteam/windows/"
+    else
+        warn "mimikatz no encontrado en /usr/share/windows-resources — instalar kali-tools-windows-resources"
+    fi
+else
+    success "mimikatz.exe ya en /opt/redteam/windows/"
+fi
+
+info "DSInternals v4.14..."
+if [ ! -f /opt/redteam/windows/DSInternals_module.zip ]; then
+    curl -sL https://github.com/MichaelGrafnetter/DSInternals/releases/download/v4.14/DSInternals_v4.14.zip -o /tmp/DSInternals.zip
+    unzip -q /tmp/DSInternals.zip -d /tmp/DSInternals/
+    cd /tmp && zip -r DSInternals_module.zip DSInternals/DSInternals/ && cd -
+    sudo cp /tmp/DSInternals_module.zip /opt/redteam/windows/
+    rm -rf /tmp/DSInternals /tmp/DSInternals.zip /tmp/DSInternals_module.zip
+    success "DSInternals v4.14 instalado en /opt/redteam/windows/"
+else
+    success "DSInternals ya instalado"
 fi
 
 info "krbrelayx / dnstool.py..."
@@ -68,6 +96,8 @@ info "Rubeus..."
 echo -e "\n${RED}═══════════════════════════════════════════════════════${NC}"
 echo -e "${RED} Arsenal Setup completado${NC}"
 echo -e "${CYAN}  /opt/redteam/windows/SharpHound.exe${NC}"
+echo -e "${CYAN}  /opt/redteam/windows/mimikatz.exe${NC}"
+echo -e "${CYAN}  /opt/redteam/windows/DSInternals_module.zip${NC}"
 echo -e "${CYAN}  /opt/redteam/krbrelayx/dnstool.py${NC}"
 echo -e "${CYAN}  /opt/redteam/PetitPotam.py${NC}"
 echo -e "${CYAN}  /opt/ligolo/proxy + agent${NC}"
