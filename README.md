@@ -11,12 +11,12 @@
 
 ```
   [ Active Directory Adversary Emulation — APT29 · APT41 · APT28 · Lazarus · APT10 ]
-  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 5/15 Labs · 45 TTPs ]
+  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 5/15 Labs · 52 TTPs ]
 ```
 
 [![Estado](https://img.shields.io/badge/Estado-En%20Progreso-orange?style=for-the-badge)](.)
-[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-45-brightgreen?style=for-the-badge)](.)
-[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E115h-purple?style=for-the-badge)](.)
+[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-52-brightgreen?style=for-the-badge)](.)
+[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E141h-purple?style=for-the-badge)](.)
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-black?style=for-the-badge)](https://attack.mitre.org)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet?style=for-the-badge)](.)
 [![Licencia](https://img.shields.io/badge/Uso-Educativo-green?style=for-the-badge)](.)
@@ -41,6 +41,7 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 - Los fallos se documentan con la misma profundidad que los éxitos — una técnica bloqueada por PAC Validation o KB5005413 es una lección más valiosa que una que funciona sin fricción
 - El C2 principal es **Sliver** (BishopFox) replicando capacidades de Cobalt Strike en Open Source
 - Cada técnica ofensiva viene acompañada de su detección: Event IDs, reglas SIGMA, hardening
+- La infraestructura replica el entorno del **examen CRTO** — 3 forests, trusts BiDirectional, child domains
 
 > ⚠️ **Entorno 100% controlado.** Todo se ejecuta en laboratorio local con VMs. Uso exclusivamente educativo y de preparación para certificación.
 
@@ -57,16 +58,16 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 │  │    DC-01      │  │    DC-03      │  │   WKSTN-01   │             │
 │  │  10.0.2.10    │  │  10.0.2.13    │  │  10.0.2.8    │             │
 │  │  Root DC      │  │  child.atack  │  │  Windows 11  │             │
-│  │  ADCS         │  │  corp.local   │  │              │             │
+│  │  ADCS         │  │  local        │  │              │             │
 │  └──────┬────────┘  └──────────────┘  └──────────────┘             │
-│         │ BiDir Trust          BiDir Trust                          │
+│         │ BiDir Trust (SID Filtering OFF)                           │
 │  FOREST 2: corp.local ◄────────────────────────────────            │
 │  ┌──────────────┐  ┌──────────────┐                                │
 │  │    DC-02      │  │   WKSTN-02   │                                │
 │  │  10.0.2.11    │  │  10.0.2.12   │                                │
 │  │  Root DC      │  │  Windows 11  │                                │
-│  └──────────────┘  └──────────────┘                                │
-│         │ BiDir Trust                                               │
+│  └──────┬────────┘  └──────────────┘                                │
+│         │ BiDir Trust (SID Filtering OFF)                           │
 │  FOREST 3: ext.local ◄─────────────────────────────────            │
 │  ┌──────────────┐                                                   │
 │  │    DC-04      │                                                  │
@@ -88,11 +89,11 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 | Host | IP | OS | RAM | Rol |
 |---|---|---|---|---|
 | DC-01 | 10.0.2.10 | Windows Server 2022 | 4GB | Domain Controller — atackcorp.local + ADCS |
-| DC-02 | 10.0.2.11 | Windows Server 2022 | 3GB | Domain Controller — corp.local (Forest 2) |
-| DC-03 | 10.0.2.13 | Windows Server 2022 | 3GB | Domain Controller — child.atackcorp.local |
+| DC-02 | 10.0.2.11 | Windows Server 2022 | 2GB | Domain Controller — corp.local (Forest 2) |
+| DC-03 | 10.0.2.13 | Windows Server 2022 | 2GB | Domain Controller — child.atackcorp.local |
 | DC-04 | 10.0.2.14 | Windows Server 2022 | 2GB | Domain Controller — ext.local (Forest 3) |
 | WKSTN-01 | 10.0.2.8 | Windows 11 | 3GB | Workstation — atackcorp.local |
-| WKSTN-02 | 10.0.2.12 | Windows 11 | 3GB | Workstation — corp.local |
+| WKSTN-02 | 10.0.2.12 | Windows 11 | 2GB | Workstation — corp.local |
 | Kali | 10.0.2.9 | Kali Linux 2026.1 | 8GB | Atacante / C2 Server |
 | PROD | 10.0.3.10 | Ubuntu 22.04 | — | Servidor web Lab-02 (Webmin 1.890) |
 | GIT | 10.0.3.11 | Ubuntu 22.04 | — | Servidor Git Lab-02 |
@@ -106,7 +107,7 @@ El roadmap emula **5 grupos APT reales** a través de **4 Fases** y **15 Labs**.
 
 ```
 PHASE-01 ── APT29 + APT41 ──► Fundamentos AD, Kerberos, ADCS, Pivotaje
-PHASE-02 ── APT28          ──► AD Avanzado, WriteDACL, DCSync, Credential Hunting
+PHASE-02 ── APT28          ──► AD Avanzado, Forest Trusts, SID History, GPO Cross-Forest
 PHASE-03 ── Lazarus Group  ──► EDR Evasion, C2 avanzado, Initial Access real
 PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, Azure AD
 ```
@@ -127,7 +128,7 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 |---|---|---|---|---|
 | Lab-04 | 🔴 **IRON FOREST** | APT28 (Fancy Bear) | ✅ Completado ~20h | WriteDACL→DCSync, Credential Hunting, ADIDNS Poisoning, Overpass-the-Hash |
 | Lab-05 | ⛓️ **SILVER CHAIN** | APT28 (Fancy Bear) | ✅ Completado ~20h | RBCD, Shadow Credentials, Silver Ticket, Diamond Ticket |
-| Lab-06 | 📋 **BLACK POLICY** | APT28 (Fancy Bear) | ⏳ Pendiente | SID History, Cross-Forest Trust, GPO abuse avanzado |
+| Lab-06 | 📋 **BLACK POLICY** | APT28 (Fancy Bear) | 🟡 En progreso — Fase 02/05 | SID History ✅, Cross-Forest Trust, GPO Abuse avanzado |
 | Lab-07 | 🔒 **SHADOW VAULT** | APT28 (Fancy Bear) | ⏳ Pendiente | LAPS, DPAPI, Shadow Credentials, LSASS dump sin Mimikatz |
 
 ### 🔴 Phase-03 — Red Team & Evasión de Defensas
@@ -245,8 +246,8 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 | 07 | C2 Establishment | Beacon `iron_forest_dc01` en DC-01 como DA | T1071.001 | Sliver v1.7.3 |
 | 08 | Cleanup OPSEC | DCSync rights eliminados + WPAD tombstoned | T1070 | dacledit + dnstool |
 
-**Crown Jewels:** Hash NTLM Administrador `bc3abc2e...` · Hash krbtgt `d5237a2e...` · NTLMv2 backup_svc  
-**Lecciones clave:** DNS Global Query Block List bloquea WPAD · Responder conflicto puerto 80 con Docker · bloodhound-python no importa en BloodHound CE 5.x
+**Crown Jewels:** Hash NTLM Administrador `bc3abc2e...` · Hash krbtgt · NTLMv2 backup_svc  
+**Lecciones clave:** DNS Global Query Block List bloquea WPAD · Responder conflicto puerto 80 con Docker
 
 </details>
 
@@ -268,21 +269,37 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 | 05 | Diamond Ticket | krbtgt AES256 → TGT real + PAC modificado | T1558.001 | Rubeus |
 | 06 | C2 + Cleanup | Beacon WKSTN-01 + OPSEC cleanup | T1071.001, T1070 | Sliver, impacket, pywhisker |
 
-**Crown Jewels:** TGS Administrador@WKSTN-01 · iis_svc NTLM `b329981877f0ca1243192863f356a2f9` · Silver Ticket MSSQLSvc · Diamond Ticket bypass PAC Validation  
-**Lecciones clave:** pywhisker rompe impacket (reinstalar 0.13.1) · Diamond Ticket requiere AES256 · kirbi→ccache para usar desde Linux
+**Crown Jewels:** TGS Administrador@WKSTN-01 · Silver Ticket MSSQLSvc · Diamond Ticket bypass PAC Validation  
+**Lecciones clave:** pywhisker rompe impacket (reinstalar 0.13.1) · Diamond Ticket requiere AES256
 
 </details>
 
 ---
 
+### 🟡 Lab-06 — BLACK POLICY | APT28 (Fancy Bear)
+
+**Fase 02/05 completada · ~20h acumuladas · En progreso**
+
+| Fase | Nombre | Estado |
+|---|---|---|
+| 01 | Reconnaissance — Multi-Forest | ✅ Cross-forest Kerberoasting · 7 credenciales obtenidas |
+| 02 | SID History Injection | ✅ DSInternals · child.user → DA atackcorp.local · DCSync krbtgt |
+| 03 | Cross-Forest Trust Abuse | ⏳ Pendiente |
+| 04 | GPO Abuse Cross-Forest | ⏳ Pendiente |
+| 05 | C2 + Cleanup | ⏳ Pendiente |
+
+**Loot actual:** `backup_svc:Backup2024!` (DA) · `corp_svc:CorpSvc2024!` · `ext_svc:ExtSvc2024!` · krbtgt NTLM `d5237a2e...`
+
+---
+
 ## 🔜 Próximo objetivo
 
-**Lab-06 — BLACK POLICY · APT28 (Fancy Bear)**
+**Lab-06 — BLACK POLICY · Fase 03 — Cross-Forest Trust Abuse**
 
 | Campo | Detalle |
 |---|---|
-| Técnicas | SID History, Cross-Forest Trust, GPO abuse avanzado, Domain Trust attacks |
-| Crown Jewels | Acceso cross-domain via SID History injection |
+| Técnica | Inter-realm TGT → john.smith GenericAll sobre corp_svc → DA corp.local |
+| Crown Jewels | DA en corp.local + DA en ext.local via Forest Trust Abuse |
 
 ---
 
@@ -295,43 +312,30 @@ Red-Team_Labs/
 │
 ├── docs/
 │   ├── design/
-│   │   └── DESIGN.md                        # Filosofía, adversary emulation, roadmap v2.0
+│   │   └── DESIGN.md                        # Filosofía, adversary emulation, roadmap v2.1
 │   ├── detection/
 │   │   └── DETECTION_RULES.md               # Reglas SIGMA y Event IDs por técnica
 │   ├── operations/
 │   │   ├── ENGAGEMENT_CHECKLIST.md          # Checklist pre/durante/post operación
 │   │   ├── METHODOLOGY.md                   # Proceso operacional estándar
-│   │   ├── OPSEC_NOTES.md                   # 17 secciones de OPSEC operacional
+│   │   ├── OPSEC_NOTES.md                   # OPSEC operacional transversal
 │   │   ├── THREAT_MODEL.md                  # Modelo de amenaza del entorno
 │   │   └── WRITEUP_TEMPLATE.md              # Plantilla para nuevos labs
 │   ├── progress/
-│   │   ├── PROGRESS.md                      # Diario de sesiones + 35 técnicas dominadas
+│   │   ├── PROGRESS.md                      # Diario de sesiones + 52 técnicas dominadas
 │   │   └── CHANGELOG.md                     # Historial de cambios del repo
 │   └── reference/
 │       ├── ARSENAL.md                        # Arsenal completo con rutas y versiones
-│       ├── LAB_INFRASTRUCTURE.md            # Infraestructura detallada de cada lab
+│       ├── LAB_INFRASTRUCTURE.md            # Infraestructura detallada multi-forest
 │       ├── MITRE_MAPPING.md                 # Mapping MITRE ATT&CK v14 por lab
-│       └── TOOL_INDEX.md                    # Índice de herramientas con versiones
+│       └── TOOL_INDEX.md                    # Índice de herramientas por lab
 │
 ├── setup/
-│   ├── provisioning/
-|   |   └── 00_Setup_Lab01-GhostForest-v2.ps1
-│   │   ├── 01_ad_promotion.ps1
-│   │   ├── 02_users_ous.ps1
-│   │   ├── 03_acls_delegations.ps1
-│   │   ├── 04_iis_smb_gpo.ps1
-│   │   ├── 05_mssql.ps1
-│   │   ├── 06_wkstn01.ps1
-│   │   ├── 07_Setup_DC02_Corp.ps1
-│   │   ├── 08_Setup_DC03_Child.ps1
-│   │   ├── 09_Setup_DC04_Ext.ps1
-│   │   ├── 10_Setup_Trusts_And_SIDHistory.ps1
-│   │   ├── 11_Setup_WKSTN02_Corp.ps1
-│   │   
+│   ├── provisioning/                        # Scripts PowerShell por VM (00-11)
 │   └── screenshots/                         # Evidencia del setup del entorno
 │
 ├── tooling/                                 # Scripts de setup del arsenal Kali
-│   ├── arsenal_setup.sh
+│   ├── arsenal_setup.sh                     # Instala todo el arsenal (v2.1)
 │   ├── lab_start.sh
 │   └── lab_stop.sh
 │
@@ -343,7 +347,7 @@ Red-Team_Labs/
 ├── Phase-02-Post-Exploitation/
 │   ├── Lab-04-Iron-Forest/     ✅ 8 fases  · ~20h · APT28
 │   ├── Lab-05-Silver-Chain/    ✅ 6 fases  · ~20h · APT28
-│   ├── Lab-06-Black-Policy/    ⏳ Pendiente · APT28
+│   ├── Lab-06-Black-Policy/    🟡 Fase 02/05 · ~20h · APT28
 │   └── Lab-07-Shadow-Vault/    ⏳ Pendiente · APT28
 │
 ├── Phase-03-Red-Team-Operations/
@@ -359,50 +363,39 @@ Red-Team_Labs/
     └── Lab-15-Operation-Zephyr/ ⏳ Pendiente · APT10
 ```
 
-**Cada lab completado contiene:**
-- `OPERATION_*.md` — Resumen ejecutivo de la operación
-- `docs/theory/tradecraft.md` — Fundamentos teóricos
-- `docs/execution/*.md` — Comandos reales con output y notas OPSEC
-- `docs/analysis/lessons_learned.md` — Qué funcionó, qué falló y por qué
-- `docs/analysis/mitigations.md` — Detección y hardening Blue Team
-- `docs/report/*.pdf` — Reporte ejecutivo en PDF
-- `setup/CrownJewels-Lab*.ps1` — Script de verificación de objetivos
-- `screenshots/FASE-XX-Nombre/` — Evidencia visual organizada por fase
-- `loot/` — Hashes, tickets y credenciales capturadas
-
 ---
 
-## 🔗 Kill Chain — Operaciones completadas
+## 📊 MITRE ATT&CK Coverage
 
-```mermaid
-graph LR
-    A[🎯 Foothold<br/>AS-REP · Kerberoast<br/>CVE-2019-12840<br/>ESC1/ESC4] --> B[🔀 Pivot<br/>Ligolo-ng<br/>Multi-network]
-    B --> C[🔑 Credential Access<br/>DCSync · SAM dump<br/>Cert Auth · ADIDNS<br/>PS History · SMB shares]
-    C --> D[⬆️ Privilege Escalation<br/>WriteDACL · ACL abuse<br/>GPO abuse · ADCS<br/>Delegation]
-    D --> E[📡 C2<br/>Sliver HTTP/mTLS<br/>Beacons persistentes]
-    E --> F[🧹 Cleanup<br/>OPSEC · Artefactos<br/>eliminados]
+**Técnicas dominadas: 52 · Parciales: 2 · En roadmap: 24+**
 
-    style A fill:#cc0000,color:#fff
-    style B fill:#ff6600,color:#fff
-    style C fill:#cc6600,color:#fff
-    style D fill:#990099,color:#fff
-    style E fill:#006699,color:#fff
-    style F fill:#009933,color:#fff
-```
-
----
-
-## 🧠 Metodología
-
-```
-1. ADVERSARY SELECTION  → Seleccionar grupo APT real · Estudiar TTPs documentadas
-2. THEORY               → Fundamentos del protocolo antes de ejecutar
-3. INFRASTRUCTURE       → Setup reproducible con scripts PowerShell
-4. EXECUTION            → Comandos documentados con output real + notas OPSEC
-5. ANALYSIS             → Post-mortem: qué funcionó, qué falló y por qué
-6. BLUE TEAM            → Event IDs · Reglas SIGMA · Hardening
-7. REPORT               → Reporte ejecutivo en PDF + lessons learned
-```
+| Táctica | Técnica | ID | Lab | Estado |
+|---|---|---|---|---|
+| Reconnaissance | Network Service Discovery | T1046 | Lab-01/02/03/06 | ✅ |
+| Reconnaissance | Trust Discovery | T1482 | Lab-06 | ✅ |
+| Initial Access | Exploit Public Application | T1190 | Lab-02 | ✅ |
+| Execution | Windows Remote Management | T1021.006 | Lab-01/02/03/04/06 | ✅ |
+| Persistence | Certificate Persistence | T1649 | Lab-03 | ✅ |
+| Privilege Escalation | GPO Modification | T1484.001 | Lab-01 | ✅ |
+| Privilege Escalation | WriteDACL → DCSync | T1222 | Lab-04 | ✅ |
+| Privilege Escalation | SID History Injection | T1134.005 | Lab-06 | ✅ |
+| Defense Evasion | Impair Defenses | T1562.001 | Lab-01 | ✅ |
+| Defense Evasion | Indicator Removal | T1070 | Lab-04/05 | ✅ |
+| Credential Access | AS-REP Roasting | T1558.004 | Lab-01 | ✅ |
+| Credential Access | Kerberoasting | T1558.003 | Lab-01 | ✅ |
+| Credential Access | Cross-Forest Kerberoasting | T1558.003 | Lab-06 | ✅ |
+| Credential Access | DCSync | T1003.006 | Lab-01/03/04/06 | ✅ |
+| Credential Access | Overpass-the-Hash | T1550.003 | Lab-04 | ✅ |
+| Credential Access | ESC1/ESC4 ADCS | T1649 | Lab-03 | ✅ |
+| Credential Access | Credential Hunting Files | T1552.001 | Lab-02/04/06 | ✅ |
+| Credential Access | ADIDNS/WPAD Poisoning | T1557.001 | Lab-04 | ✅ |
+| Credential Access | RBCD S4U2Proxy | T1558.001 | Lab-05 | ✅ |
+| Credential Access | Shadow Credentials | T1556 | Lab-05 | ✅ |
+| Credential Access | Silver Ticket | T1558.002 | Lab-05 | ✅ |
+| Credential Access | Diamond Ticket | T1558.001 | Lab-05 | ✅ |
+| Lateral Movement | Pass-the-Hash | T1550.002 | Lab-01/03 | ✅ |
+| C&C | Sliver HTTP/mTLS | T1071.001, T1573.002 | Lab-01/02/03/04 | ✅ |
+| C&C | Protocol Tunneling Ligolo-ng | T1572 | Lab-02 | ✅ |
 
 ---
 
@@ -412,7 +405,7 @@ graph LR
 
 | Herramienta | Versión | Labs | Uso |
 |---|---|---|---|
-| **Sliver** (BishopFox) | v1.7.3 | Lab-01/02/03/04 | C2 principal — HTTP/mTLS beacons, post-explotación |
+| **Sliver** (BishopFox) | v1.7.3 | Lab-01/02/03/04/05 | C2 principal — HTTP/mTLS beacons |
 | **Havoc C2** | Latest | Lab-10 | C2 alternativo — BOFs, sleep obfuscation |
 
 ### Active Directory & Kerberos
@@ -420,14 +413,12 @@ graph LR
 | Herramienta | Uso |
 |---|---|
 | **Impacket** | GetNPUsers, GetUserSPNs, secretsdump, getTGT, dacledit |
-| **Rubeus** | Ticket manipulation, S4U2Self/S4U2Proxy |
-| **BloodHound CE** v9.1.0 | Attack paths, ACL analysis — Docker `~/tools/ad/bloodhound-ce/` |
-| **SharpHound** v2.5.9 | Recolección CE-compatible — `/opt/redteam/windows/SharpHound.exe` |
-| **bloodhound-python** | Recolección OPSEC-friendly (sin binarios en objetivo) |
-| **PowerView** | Enumeración AD desde PowerShell — LOLBins |
-| **bloodyAD** | ACL abuse — GenericWrite, WriteDACL |
+| **Rubeus** | Ticket manipulation, S4U2Self/S4U2Proxy, Diamond Ticket |
+| **BloodHound CE** v9.1.0 | Attack paths, ACL analysis |
+| **SharpHound** v2.5.9 | Recolección CE-compatible |
+| **bloodyAD** | ACL abuse — GenericWrite, WriteDACL, sIDHistory |
+| **DSInternals** v4.14 | SID History injection via ntds.dit — `/opt/redteam/windows/` |
 | **Evil-WinRM** | Shell remota WinRM con upload/download |
-| **Kerbrute** | Enumeración de usuarios sin bloqueo de cuentas |
 
 ### ADCS & ACL Abuse
 
@@ -438,14 +429,6 @@ graph LR
 | **dnstool.py** (krbrelayx) | Latest | ADIDNS registro WPAD |
 | **Responder** | v3.2.2 | NTLMv2 capture via WPAD |
 | **PetitPotam** | Latest | NTLM coercion |
-
-### Pivotaje & Red
-
-| Herramienta | Uso |
-|---|---|
-| **Ligolo-ng** v0.7.5 | Tunneling full-duplex — redes segmentadas |
-| **Chisel** | Tunneling HTTP/HTTPS reversible |
-| **Nmap** | Reconocimiento a través de túneles Ligolo |
 
 ---
 
@@ -458,74 +441,45 @@ RAM mínima:    32 GB  (entorno CRTO completo — 4 DCs + 2 WKSTNs + Kali)
 CPU:           8 cores (recomendado — VT-x/AMD-V activo en BIOS)
 Disco:         400 GB libres
 Hypervisor:    VirtualBox 7.x
-RAM por VM:    Kali 8GB · DC-01 4GB · DC-02/03 3GB · DC-04 2GB · WKSTNs 3GB
 ```
 
 ### Setup automatizado
 
 ```powershell
-# DC-01 — atackcorp.local
+# DC-01 — atackcorp.local (Forest Root)
 .\setup\provisioning\01_ad_promotion.ps1
 .\setup\provisioning\02_users_ous.ps1
 .\setup\provisioning\03_acls_delegations.ps1
 .\setup\provisioning\04_iis_smb_gpo.ps1
 .\setup\provisioning\05_mssql.ps1
-.\setup\provisioning\10_Setup_Trusts_And_SIDHistory.ps1  # post Forest Trusts
 
 # WKSTN-01 — atackcorp.local
-.\setup\provisioning\06_wkstn01.ps1
-.\setup\provisioning\00_setup_lab01_ghost_forest_v2.ps1
+.\setup\provisioning\06_wkstn01_fixed.ps1
 
-# DC-02 — corp.local
-.\setup\provisioning\07_Setup_DC02_Corp.ps1
+# DC-02 — corp.local (Forest 2)
+.\setup\provisioning\07_setup_DC02_Corp.ps1
 
 # DC-03 — child.atackcorp.local
-.\setup\provisioning\08_Setup_DC03_Child.ps1
+.\setup\provisioning\08_setup_DC03_Child.ps1       # v1.1 — DNS + ADWS + C:\Temp
 
-# DC-04 — ext.local
-.\setup\provisioning\09_Setup_DC04_Ext.ps1
+# DC-04 — ext.local (Forest 3)
+.\setup\provisioning\09_setup_DC04_Ext.ps1
+
+# DC-01 — Forest Trusts + SID Filtering OFF
+.\setup\provisioning\10_setup_Trusts_And_SIDHistory.ps1
 
 # WKSTN-02 — corp.local
-.\setup\provisioning\11_Setup_WKSTN02_Corp.ps1
+.\setup\provisioning\11_Setup_WKSTN02_Corp_fixed.ps1
 ```
 
 ```bash
 # En Kali Linux
 git clone https://github.com/adr-camacho/RedTeam-Ops-Roadmap.git
 cd RedTeam-Ops-Roadmap
-bash tooling/arsenal_setup.sh
+bash tooling/arsenal_setup.sh    # v2.1 — incluye bloodyad, mimikatz, DSInternals
 ```
 
----
-
-## 📊 MITRE ATT&CK Coverage
-
-**Técnicas dominadas: 45 · Parciales: 2 · En roadmap: 24+**
-
-| Táctica | Técnica | ID | Lab | Estado |
-|---|---|---|---|---|
-| Reconnaissance | Network Service Discovery | T1046 | Lab-01/02/03 | ✅ |
-| Initial Access | Exploit Public Application | T1190 | Lab-02 | ✅ |
-| Execution | Windows Remote Management | T1021.006 | Lab-01/02/03/04 | ✅ |
-| Persistence | Certificate Persistence | T1649 | Lab-03 | ✅ |
-| Privilege Escalation | GPO Modification | T1484.001 | Lab-01 | ✅ |
-| Privilege Escalation | WriteDACL → DCSync | T1222 | Lab-04 | ✅ |
-| Defense Evasion | Impair Defenses | T1562.001 | Lab-01 | ✅ |
-| Defense Evasion | Indicator Removal | T1070 | Lab-04 | ✅ |
-| Credential Access | AS-REP Roasting | T1558.004 | Lab-01 | ✅ |
-| Credential Access | Kerberoasting | T1558.003 | Lab-01 | ✅ |
-| Credential Access | DCSync | T1003.006 | Lab-01/03/04 | ✅ |
-| Credential Access | Overpass-the-Hash | T1550.003 | Lab-04 | ✅ |
-| Credential Access | ESC1/ESC4 ADCS | T1649 | Lab-03 | ✅ |
-| Credential Access | Credential Hunting | T1552.001 | Lab-02/04 | ✅ |
-| Credential Access | ADIDNS/WPAD Poisoning | T1557.001 | Lab-04 | ✅ |
-| Lateral Movement | Pass-the-Hash | T1550.002 | Lab-01/03 | ✅ |
-| C&C | Sliver HTTP/mTLS | T1071.001, T1573.002 | Lab-01/02/03/04 | ✅ |
-| C&C | Protocol Tunneling Ligolo-ng | T1572 | Lab-02 | ✅ |
-| Privilege Escalation | RBCD S4U2Proxy | T1558.001 | Lab-05 | ✅ |
-| Credential Access | Shadow Credentials | T1556 | Lab-05 | ✅ |
-| Credential Access | Silver Ticket | T1558.002 | Lab-05 | ✅ |
-| Credential Access | Diamond Ticket | T1558.001 | Lab-05 | ✅ |
+> 📄 Guía completa de provisioning: [setup/README.md](./setup/README.md)
 
 ---
 
@@ -533,14 +487,14 @@ bash tooling/arsenal_setup.sh
 
 | Documento | Descripción |
 |---|---|
-| `docs/design/DESIGN.md` | Filosofía, adversary emulation, roadmap v2.0 |
+| `docs/design/DESIGN.md` | Filosofía, adversary emulation, roadmap v2.1 |
 | `docs/detection/DETECTION_RULES.md` | Reglas SIGMA y Event IDs por técnica |
 | `docs/operations/ENGAGEMENT_CHECKLIST.md` | Checklist pre/durante/post operación |
-| `docs/operations/OPSEC_NOTES.md` | 17 secciones de OPSEC operacional |
+| `docs/operations/OPSEC_NOTES.md` | OPSEC operacional transversal |
 | `docs/reference/ARSENAL.md` | Arsenal completo con rutas y versiones |
-| `docs/reference/LAB_INFRASTRUCTURE.md` | Infraestructura detallada de cada lab |
+| `docs/reference/LAB_INFRASTRUCTURE.md` | Infraestructura detallada multi-forest |
 | `docs/reference/MITRE_MAPPING.md` | Mapping MITRE ATT&CK v14 completo |
-| `docs/progress/PROGRESS.md` | Diario de sesiones + 45 técnicas dominadas |
+| `docs/progress/PROGRESS.md` | Diario de sesiones + 52 técnicas dominadas |
 | `docs/progress/CHANGELOG.md` | Historial completo de cambios |
 
 ---

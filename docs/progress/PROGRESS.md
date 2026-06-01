@@ -310,6 +310,45 @@
 
 ### Semana 9 — 01/06/2026
 
+
+#### 📌 01/06/2026 — Sesión 19: Lab-06 BLACK POLICY — Fase 03 Cross-Forest Trust Abuse
+
+**Lab-06 Fase 03 — Cross-Forest Trust Abuse:**
+
+**Path A — corp.local via Targeted Kerberoasting:**
+- dacledit confirma john.smith GenericAll (FullControl 0xf01ff) sobre corp_svc ✅
+- bloodyAD set SPN fake/dc02.corp.local en corp_svc via GenericAll ✅
+- Targeted Kerberoasting → hash corp_svc `$krb5tgs$23$*corp_svc$CORP.LOCAL*` capturado ✅
+- John crackea CorpSvc2024! con wordlist corporativa ✅
+- Evil-WinRM DC-02 como corp.admin (DA corp.local) ✅
+- DCSync krbtgt corp.local: NTLM 3e30210f... · AES256 42ebdb6b... ✅
+- OPSEC cleanup: SPN restaurado a MSSQLSvc/DC-02.corp.local:1433 ✅
+
+**Path B — ext.local via Credential Exposure:**
+- Share Ext-Data accesible con ext.user:ExtUser2024! ✅
+- credentials_backup.txt descargado: ext.admin/ExtAdmin2024! + ext_svc/ExtSvc2024! ✅
+- Evil-WinRM DC-04 como ext.admin (DA ext.local) ✅
+- DCSync krbtgt ext.local: NTLM 5c8afa0a... · AES256 90be6556... ✅
+
+**Problemas resueltos:**
+- Share Ext-Data no creado en provisioning — "Everyone" falla en Windows español → usar SID *S-1-1-0
+- corp_svc sin acceso WinRM — comportamiento correcto (cuenta de servicio)
+- impacket-secretsdump falla fuera del directorio del lab — siempre ejecutar desde el lab
+
+**Horas:** ~3h
+
+---
+
+## 🏆 Técnicas Dominadas — Actualizado 01/06/2026
+
+| Técnica | MITRE ID | Lab | Nivel |
+|---------|----------|-----|-------|
+| Targeted Kerberoasting via GenericAll | T1558.003 | Lab-06 | ✅ Dominada |
+| ACL Abuse cross-forest (dacledit) | T1222 | Lab-06 | ✅ Dominada |
+| Forest Trust credential exposure | T1552.001 | Lab-06 | ✅ Dominada |
+| bloodyAD SPN manipulation | T1558.003 | Lab-06 | ✅ Dominada |
+| DCSync multi-forest | T1003.006 | Lab-06 | ✅ Dominada |
+
 #### 📌 01/06/2026 — Sesión 18: Lab-06 BLACK POLICY — Fases 01-02 + Provisioning completo
 
 **Provisioning infraestructura completa:**

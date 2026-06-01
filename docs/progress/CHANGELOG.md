@@ -4,6 +4,33 @@
 > Tipos: `ADD` | `UPDATE` | `FIX` | `REFACTOR` | `DOCS`
 
 
+## [2026-06-01] — Lab-06 BLACK POLICY Fase 03 — Cross-Forest Trust Abuse
+
+### ADD — Lab-06 Fase 03
+- `Lab-06/docs/execution/cross_forest_trust.md` — Cross-Forest Trust Abuse completo
+- `Lab-06/loot/fase03-kerberoast-corpsvc-targeted.txt` — hash corp_svc Targeted Kerberoasting
+- `Lab-06/loot/fase03-dcsync-corp-krbtgt.*` — krbtgt corp.local NTLM + AES256
+- `Lab-06/loot/fase03-dcsync-ext-krbtgt.*` — krbtgt ext.local NTLM + AES256
+- `Lab-06/loot/credentials_backup.txt` — credenciales ext.admin/ext_svc en texto claro
+- `Lab-06/screenshots/FASE-03-Cross-Forest-Trust/` — 9 capturas
+
+### UPDATE — Docs Lab-06
+- `OPERATION_BLACK_POLICY.md` — Fase 03 completada, loot corp.local + ext.local
+- `README.md` — progreso Fase 03/05, Crown Jewels 3/4 completados
+
+### UPDATE — Docs globales
+- `docs/progress/PROGRESS.md` — Sesión 19 añadida
+
+### FIX — Infraestructura
+- `09_setup_DC04_Ext.ps1` pendiente: `New-SmbShare -ReadAccess "Everyone"` falla en Windows español → usar SID `*S-1-1-0`
+
+### DOCS — Lecciones aprendidas Fase 03
+- corp_svc sin WinRM — comportamiento correcto para cuentas de servicio
+- impacket-secretsdump requiere ejecutarse desde directorio con carpeta loot/
+- "Everyone" en New-SmbShare falla en Windows Server en español
+
+---
+
 ## [2026-06-01] — Lab-06 BLACK POLICY Fases 01-02 + Fixes provisioning
 
 ### ADD — Lab-06 ejecución
