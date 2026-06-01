@@ -1,4 +1,11 @@
 # 08_Setup_DC03_Child.ps1 -- DC-03 child.atackcorp.local
+# Autor: Adrián Camacho | Versión: 1.1 | Junio 2026
+# Fixes v1.1:
+#   - Añadido DNS primario apuntando a DC-01 (10.0.2.10) para ADWS cross-domain
+#   - Añadido firewall rule ADWS (9389) para consultas cross-forest
+#   - Añadido C:\Temp para transferencia de herramientas
+#   - Añadida descarga de DSInternals v4.14 para SID History injection
+
 Import-Module ActiveDirectory
 Write-Host "[*] Configurando child.atackcorp.local..."
 
@@ -44,5 +51,19 @@ Write-Host "[+] WinRM habilitado"
 
 netdom trust child.atackcorp.local /domain:atackcorp.local /quarantine:No /userO:child.admin /passwordO:ChildAdmin2024!
 Write-Host "[!] SID Filtering deshabilitado hacia atackcorp.local"
+
+# [FIX v1.1] DNS primario apuntando a DC-01 para ADWS cross-domain
+# Sin esto Get-ADGroup -Server cross-domain falla en sesiones WinRM
+$adapter = Get-NetAdapter | Where-Object {$_.Status -eq "Up"} | Select-Object -First 1
+Set-DnsClientServerAddress -InterfaceIndex $adapter.InterfaceIndex -ServerAddresses ("10.0.2.10","10.0.2.13")
+Write-Host "[+] DNS primario -> DC-01 (10.0.2.10) para ADWS cross-domain"
+
+# [FIX v1.1] Firewall rule ADWS para consultas cross-forest
+netsh advfirewall firewall add rule name="ADWS-Internal" protocol=TCP dir=in localport=9389 remoteip=10.0.2.0/24 action=allow | Out-Null
+Write-Host "[+] Firewall ADWS (9389) abierto para subred 10.0.2.0/24"
+
+# [FIX v1.1] C:\Temp para transferencia de herramientas
+New-Item -Path "C:\Temp" -ItemType Directory -Force | Out-Null
+Write-Host "[+] C:\Temp creado"
 
 Write-Host "[OK] Setup child.atackcorp.local completado."

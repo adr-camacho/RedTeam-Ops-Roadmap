@@ -780,11 +780,11 @@ Kali (10.0.2.9) — Atacante / C2
 | Host | IP | OS | RAM | Dominio | Rol |
 |------|----|----|-----|---------|-----|
 | DC-01 | 10.0.2.10 | Windows Server 2022 | 4GB | atackcorp.local | Root DC + ADCS |
-| DC-02 | 10.0.2.11 | Windows Server 2022 | 3GB | corp.local | Root DC Forest 2 |
-| DC-03 | 10.0.2.13 | Windows Server 2022 | 3GB | child.atackcorp.local | Child DC |
+| DC-02 | 10.0.2.11 | Windows Server 2022 | 2GB | corp.local | Root DC Forest 2 |
+| DC-03 | 10.0.2.13 | Windows Server 2022 | 2GB | child.atackcorp.local | Child DC |
 | DC-04 | 10.0.2.14 | Windows Server 2022 | 2GB | ext.local | Root DC Forest 3 |
 | WKSTN-01 | 10.0.2.8 | Windows 11 | 3GB | atackcorp.local | Workstation |
-| WKSTN-02 | 10.0.2.12 | Windows 11 | 3GB | corp.local | Workstation |
+| WKSTN-02 | 10.0.2.12 | Windows 11 | 2GB | corp.local | Workstation |
 | Kali | 10.0.2.9 | Kali Linux 2026.1 | 8GB | — | Atacante / C2 |
 
 ### SIDs de dominio
@@ -851,8 +851,12 @@ Kali (10.0.2.9) — Atacante / C2
 ### Notas tecnicas
 
 - **SID Filtering deshabilitado:** Necesario para Lab-06 SID History injection. En produccion real siempre debe estar habilitado.
-- **WKSTN Administrador local:** Misma contrasena `Admin1234!` en ambas workstations (LAPS no configurado).
-- **DNS Conditional Forwarders:** Configurados en todos los DCs para resolucion cross-forest.
-- **WinRM en WKSTNs:** Puerto 5985 abierto. Cuenta Administrador local activada manualmente.
+- **WKSTN Administrador local:** `Admin1234!` en WKSTN-01/02. `NuevaPassword2026!` en DCs.
+- **DNS primario en DC-03:** Configurado a DC-01 (10.0.2.10) para ADWS cross-domain (fix v1.1).
+- **Puerto ADWS (9389):** Firewall rule añadida en DC-01 para subred 10.0.2.0/24 (fix v1.1).
+- **C:\Temp en DC-03:** Creado para transferencia de herramientas via Evil-WinRM (fix v1.1).
+- **WinRM en WKSTNs:** Puerto 5985 abierto. Cuenta Administrador local activada manualmente antes del script.
+- **SID History:** sIDHistory protegido en AD — no modificable via LDAP aunque DA. Usar DSInternals v4.14.
+- **mimikatz misc::addsid:** Eliminado en v2.2.0+. Usar DSInternals Add-ADDBSidHistory en su lugar.
 
-*Ultima actualizacion: Mayo 2026 — Entorno CRTO completo — Adrian Camacho*
+*Ultima actualizacion: Junio 2026 — Entorno CRTO completo v1.1 — Adrian Camacho*
