@@ -306,3 +306,54 @@
 **Horas:** ~6h
 
 *⚡ Leyenda: ✅ Completado | 🔄 Parcial | ⏳ Pendiente*
+---
+
+### Semana 9 — 01/06/2026
+
+#### 📌 01/06/2026 — Sesión 18: Lab-06 BLACK POLICY — Fases 01-02 + Provisioning completo
+
+**Provisioning infraestructura completa:**
+- DC-02, DC-03, DC-04, WKSTN-01 (reinstalada), WKSTN-02 provisionados
+- Forest Trusts BiDirectional operativos: atackcorp ↔ corp ↔ ext
+- SID Filtering OFF en todos los trusts — CrownJewels ejecutados en DC-01
+- Fixes v1.1: 08_setup_DC03_Child.ps1 (DNS primario DC-01, ADWS port 9389, C:\Temp)
+- arsenal_setup.sh v2.1: bloodyad, mimikatz, DSInternals v4.14 añadidos
+
+**Lab-06 Fase 01 — Reconnaissance:**
+- Host discovery 10.0.2.0/24 — DC-01/02/04 activos
+- Port scan completo tres DCs — MSSQL 1433 en DC-01 (hallazgo adicional)
+- SMB enum: IT-Scripts share DC-01 → 4 credenciales en texto claro (backup_svc DA, iis_svc, sa, webapp_db)
+- LDAP anonymous bind tres forests — naming contexts confirmados
+- Cross-forest Kerberoasting: corp_svc (CorpSvc2024!) + ext_svc (ExtSvc2024!) crackeados con wordlist dirigida
+
+**Lab-06 Fase 02 — SID History Injection:**
+- Evil-WinRM DC-03 como child.admin (child.atackcorp.local)
+- SID DA atackcorp.local obtenido via .NET NTAccount.Translate() — workaround Evil-WinRM token limitado
+- DSInternals v4.14 subido via Evil-WinRM → Add-ADDBSidHistory con Force
+- child.user SIDHistory = S-1-5-21-768292631-183641691-1245477636-512 (DA atackcorp.local) ✅
+- Evil-WinRM DC-01 como child.user — whoami /groups confirma DA cross-domain ✅
+- DCSync krbtgt atackcorp.local: NTLM d5237a2e... · AES256 2f123c9b... ✅
+
+**Problemas resueltos:**
+- Evil-WinRM Get-ADGroup cross-domain falla (token red) → .NET NTAccount.Translate() como workaround
+- bloodyad v2.5.4 elimina add sidHistory — sIDHistory protegido en AD, no modificable via LDAP
+- mimikatz misc::addsid eliminado en v2.2.0+ → DSInternals como herramienta preferida
+- DC-03 DNS primario incorrecto → Set-DnsClientServerAddress a DC-01
+- DC-01 ADWS puerto 9389 cerrado → netsh firewall rule añadida
+- Defender bloquea mimikatz en upload → Set-MpPreference -DisableRealtimeMonitoring $true
+
+**Horas:** ~15h
+
+---
+
+## 🏆 Técnicas Dominadas — Actualizado 01/06/2026
+
+| Técnica | MITRE ID | Lab | Nivel |
+|---------|----------|-----|-------|
+| SID History Injection | T1134.005 | Lab-06 | ✅ Dominada |
+| Cross-Forest Kerberoasting | T1558.003 | Lab-06 | ✅ Dominada |
+| Trust Discovery multi-forest | T1482 | Lab-06 | ✅ Dominada |
+| DSInternals — ntds.dit manipulation | T1003.003 | Lab-06 | ✅ Dominada |
+| Credential Hunting cross-forest SMB | T1552.001 | Lab-06 | ✅ Dominada |
+| DCSync cross-domain (SID History) | T1003.006 | Lab-06 | ✅ Dominada |
+| .NET NTAccount LDAP translation | T1087.002 | Lab-06 | ✅ Dominada |

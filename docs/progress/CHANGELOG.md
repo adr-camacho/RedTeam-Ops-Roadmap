@@ -3,6 +3,40 @@
 > Registro de cambios estructurales del repositorio.
 > Tipos: `ADD` | `UPDATE` | `FIX` | `REFACTOR` | `DOCS`
 
+
+## [2026-06-01] — Lab-06 BLACK POLICY Fases 01-02 + Fixes provisioning
+
+### ADD — Lab-06 ejecución
+- `Lab-06/docs/execution/enumeration_log.md` — Reconnaissance completo multi-forest
+- `Lab-06/docs/execution/sid_history.md` — SID History injection via DSInternals
+- `Lab-06/docs/execution/infrastructure_setup.md` — Infraestructura multi-forest
+- `Lab-06/loot/fase01-kerberoast-corp.txt` + `fase01-kerberoast-ext.txt` — hashes corp_svc / ext_svc
+- `Lab-06/loot/fase02-dcsync-krbtgt.ntds.kerberos` — krbtgt AES256/AES128
+- `Lab-06/screenshots/FASE-01-Reconnaissance/` — 10 capturas
+- `Lab-06/screenshots/FASE-02-SID-History/` — 7 capturas
+
+### ADD — Arsenal v2.1
+- `tooling/arsenal_setup.sh` v2.1 — bloodyad (apt), mimikatz.exe, DSInternals v4.14
+
+### FIX — Scripts provisioning v1.1
+- `08_setup_DC03_Child.ps1` v1.1 — DNS primario DC-01, ADWS port 9389, C:\Temp
+- `10_setup_Trusts_And_SIDHistory.ps1` — ADWS firewall rule añadida en DC-01
+
+### UPDATE — Docs globales
+- `README.md` — badges actualizados (52 TTPs, ~141h), Lab-06 en progreso
+- `docs/design/DESIGN.md` v2.1 — infraestructura multi-forest, fixes, lecciones
+- `docs/progress/PROGRESS.md` — Sesión 18 añadida
+- `Lab-06/OPERATION_BLACK_POLICY.md` — Fase 02 completada, loot krbtgt
+- `Lab-06/README.md` — progreso actualizado
+
+### DOCS — Lecciones aprendidas
+- Evil-WinRM token de red bloquea ADWS cross-domain → .NET NTAccount.Translate()
+- sIDHistory protegido en AD — DSInternals requerido, bloodyad no puede modificarlo
+- mimikatz misc::addsid eliminado en v2.2.0+
+
+---
+
+
 ## [2026-05-31] — Infraestructura CRTO completa + Setup Lab-06
 
 ### ADD — Nueva infraestructura (entorno CRTO completo)
