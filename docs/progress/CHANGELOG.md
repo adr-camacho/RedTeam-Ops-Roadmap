@@ -4,30 +4,32 @@
 > Tipos: `ADD` | `UPDATE` | `FIX` | `REFACTOR` | `DOCS`
 
 
-## [2026-06-01] — Lab-06 BLACK POLICY Fase 03 — Cross-Forest Trust Abuse
+## [2026-06-02] — Lab-06 BLACK POLICY Fase 04 — GPO Abuse
 
-### ADD — Lab-06 Fase 03
-- `Lab-06/docs/execution/cross_forest_trust.md` — Cross-Forest Trust Abuse completo
-- `Lab-06/loot/fase03-kerberoast-corpsvc-targeted.txt` — hash corp_svc Targeted Kerberoasting
-- `Lab-06/loot/fase03-dcsync-corp-krbtgt.*` — krbtgt corp.local NTLM + AES256
-- `Lab-06/loot/fase03-dcsync-ext-krbtgt.*` — krbtgt ext.local NTLM + AES256
-- `Lab-06/loot/credentials_backup.txt` — credenciales ext.admin/ext_svc en texto claro
-- `Lab-06/screenshots/FASE-03-Cross-Forest-Trust/` — 9 capturas
+### ADD — Lab-06 Fase 04
+- `Lab-06/docs/execution/gpo_abuse.md` — GPO Abuse completo via pyGPOAbuse
+- `Lab-06/loot/dacledit-20260602-102701.bak` — backup DACL original GPO IT-Baseline
+- `Lab-06/loot/dacledit-20260602-125831.bak` — backup DACL post-restore
+- `Lab-06/screenshots/FASE-04-GPO-Abuse/` — 9 capturas
+
+### ADD — Arsenal
+- `pyGPOAbuse` instalado en `/opt/redteam/pyGPOAbuse`
 
 ### UPDATE — Docs Lab-06
-- `OPERATION_BLACK_POLICY.md` — Fase 03 completada, loot corp.local + ext.local
-- `README.md` — progreso Fase 03/05, Crown Jewels 3/4 completados
-
-### UPDATE — Docs globales
-- `docs/progress/PROGRESS.md` — Sesión 19 añadida
+- `OPERATION_BLACK_POLICY.md` — Fase 04 completada, helpdesk.ruiz admin WKSTN-01
+- `README.md` — Crown Jewel 1 completado
+- `docs/reference/CREDENTIALS.md` — nuevo doc con todas las credenciales del entorno
 
 ### FIX — Infraestructura
-- `09_setup_DC04_Ext.ps1` pendiente: `New-SmbShare -ReadAccess "Everyone"` falla en Windows español → usar SID `*S-1-1-0`
+- WKSTN-01: reglas firewall ICMP + SMB añadidas manualmente
+- WKSTN-01: `06_wkstn01_fixed.ps1` pendiente actualización con firewall rules
+- GPP XML manual no funciona en Windows 11 → usar pyGPOAbuse
+- `New-SmbShare -ReadAccess "Everyone"` falla en español → usar SID `*S-1-1-0`
 
-### DOCS — Lecciones aprendidas Fase 03
-- corp_svc sin WinRM — comportamiento correcto para cuentas de servicio
-- impacket-secretsdump requiere ejecutarse desde directorio con carpeta loot/
-- "Everyone" en New-SmbShare falla en Windows Server en español
+### DOCS — Lecciones aprendidas Fase 04
+- GPP ScheduledTasks XML no procesado en Windows 11 — pyGPOAbuse más compatible
+- GPT.INI Version counter debe incrementarse para que el cliente reprocese el GPO
+- Windows 11 bloquea WMI y Remote Scheduled Tasks por defecto
 
 ---
 
