@@ -2,7 +2,9 @@
 # =============================================================
 # arsenal_setup.sh — Setup del arsenal ofensivo en Kali Linux
 # Red Team Ops Roadmap — atackcorp.local
-# Autor: Adrián Camacho | Versión: 2.1 | Junio 2026
+# Autor: Adrián Camacho | Versión: 2.2 | Junio 2026
+# Changelog v2.2:
+#   - Añadido pyGPOAbuse en /opt/redteam/pyGPOAbuse
 # Changelog v2.1:
 #   - Añadido bloodyad (apt) — manipulación LDAP AD
 #   - Añadido mimikatz.exe en /opt/redteam/windows/
@@ -102,3 +104,14 @@ echo -e "${CYAN}  /opt/redteam/krbrelayx/dnstool.py${NC}"
 echo -e "${CYAN}  /opt/redteam/PetitPotam.py${NC}"
 echo -e "${CYAN}  /opt/ligolo/proxy + agent${NC}"
 echo -e "${RED}═══════════════════════════════════════════════════════${NC}"
+
+info "Instalando pyGPOAbuse (GPO Abuse — Lab-06+)"
+if [ ! -d "/opt/redteam/pyGPOAbuse" ]; then
+    sudo git clone https://github.com/Hackndo/pyGPOAbuse.git /opt/redteam/pyGPOAbuse
+    cd /opt/redteam/pyGPOAbuse
+    pip install -r requirements.txt --break-system-packages -q
+    cd - > /dev/null
+    success "pyGPOAbuse instalado en /opt/redteam/pyGPOAbuse"
+else
+    success "pyGPOAbuse ya instalado"
+fi

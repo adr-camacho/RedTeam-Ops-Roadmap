@@ -58,14 +58,42 @@ lab_config() {
             ;;
         "03")
             LAB_NAME="DARK GATE — ADCS Abuse (APT29)"
-            TARGETS=("10.0.2.10:DC-01")
+            TARGETS=("10.0.2.10:DC-01" "10.0.2.8:WKSTN-01")
             NEEDS_LIGOLO=false
             SLIVER_LISTENER="https"
             SLIVER_PORT=443
             ;;
+        "04")
+            LAB_NAME="IRON FOREST — WriteDACL DCSync (APT28)"
+            TARGETS=("10.0.2.10:DC-01" "10.0.2.8:WKSTN-01")
+            NEEDS_LIGOLO=false
+            SLIVER_LISTENER="https"
+            SLIVER_PORT=8443
+            ;;
+        "05")
+            LAB_NAME="SILVER CHAIN — RBCD Shadow Credentials (APT28)"
+            TARGETS=("10.0.2.10:DC-01" "10.0.2.8:WKSTN-01")
+            NEEDS_LIGOLO=false
+            SLIVER_LISTENER="https"
+            SLIVER_PORT=8443
+            ;;
+        "06")
+            LAB_NAME="BLACK POLICY — Multi-Forest GPO SID History (APT28)"
+            TARGETS=("10.0.2.10:DC-01" "10.0.2.11:DC-02" "10.0.2.13:DC-03" "10.0.2.14:DC-04" "10.0.2.8:WKSTN-01" "10.0.2.12:WKSTN-02")
+            NEEDS_LIGOLO=false
+            SLIVER_LISTENER="https"
+            SLIVER_PORT=8443
+            ;;
+        "07")
+            LAB_NAME="SHADOW VAULT — LAPS DPAPI (APT28)"
+            TARGETS=("10.0.2.10:DC-01" "10.0.2.8:WKSTN-01")
+            NEEDS_LIGOLO=false
+            SLIVER_LISTENER="https"
+            SLIVER_PORT=8443
+            ;;
         *)
             err "Lab no reconocido: $LAB"
-            echo "    Labs disponibles: 01, 02, 03"
+            echo "    Labs disponibles: 01, 02, 03, 04, 05, 06, 07"
             exit 1
             ;;
     esac
@@ -197,6 +225,42 @@ check_tools() {
                 err "PetitPotam ❌ → descarga: curl -o /opt/redteam/PetitPotam.py https://raw.githubusercontent.com/topotam/PetitPotam/main/PetitPotam.py"
             fi
             ;;
+        "04"|"05")
+            if command -v bloodyad &>/dev/null; then
+                ok "bloodyad ✅"
+            else
+                err "bloodyad ❌ → sudo apt install bloodyad"
+            fi
+            if command -v certipy-ad &>/dev/null; then
+                ok "certipy-ad ✅"
+            else
+                err "certipy-ad ❌"
+            fi
+            ;;
+        "06")
+            if command -v bloodyad &>/dev/null; then
+                ok "bloodyad ✅"
+            else
+                err "bloodyad ❌ → sudo apt install bloodyad"
+            fi
+            if [ -f "/opt/redteam/pyGPOAbuse/pygpoabuse.py" ]; then
+                ok "pyGPOAbuse ✅"
+            else
+                err "pyGPOAbuse ❌ → sudo git clone https://github.com/Hackndo/pyGPOAbuse.git /opt/redteam/pyGPOAbuse"
+            fi
+            if [ -f "/opt/redteam/windows/DSInternals_module.zip" ]; then
+                ok "DSInternals ✅"
+            else
+                err "DSInternals ❌ → ejecuta arsenal_setup.sh"
+            fi
+            ;;
+        "07")
+            if command -v bloodyad &>/dev/null; then
+                ok "bloodyad ✅"
+            else
+                err "bloodyad ❌ → sudo apt install bloodyad"
+            fi
+            ;;
     esac
 }
 
@@ -236,6 +300,48 @@ summary() {
             echo -e "    ESC1 → certipy-ad req -upn Administrador@atackcorp.local"
             echo -e "    ESC4 → fin.garcia:Finance2024! (GenericWrite)"
             echo -e "    ESC8 → impacket-ntlmrelayx + PetitPotam"
+            ;;
+        "04")
+            echo -e "  ${YELLOW}Credenciales de entrada:${NC}"
+            echo -e "    helpdesk.ruiz : Helpdesk2024!"
+            echo ""
+            echo -e "  ${YELLOW}Vectores principales:${NC}"
+            echo -e "    BloodHound CE → WriteDACL fin.garcia sobre dominio"
+            echo -e "    Credential hunting → IT-Scripts SMB share"
+            echo -e "    WriteDACL → DCSync → hash Administrador"
+            echo -e "    ADIDNS WPAD → Responder → NTLMv2"
+            ;;
+        "05")
+            echo -e "  ${YELLOW}Credenciales de entrada:${NC}"
+            echo -e "    helpdesk.ruiz : Helpdesk2024!"
+            echo ""
+            echo -e "  ${YELLOW}Vectores principales:${NC}"
+            echo -e "    BloodHound CE → GenericWrite fin.garcia sobre iis_svc + WKSTN-01"
+            echo -e "    RBCD → S4U2Self/S4U2Proxy → Admin WKSTN-01"
+            echo -e "    Shadow Credentials → pywhisker → PKINIT → hash iis_svc"
+            echo -e "    Silver Ticket → MSSQLSvc/DC-01:1433"
+            echo -e "    Diamond Ticket → krbtgt AES256"
+            ;;
+        "06")
+            echo -e "  ${YELLOW}Credenciales de entrada:${NC}"
+            echo -e "    helpdesk.ruiz : Helpdesk2024!"
+            echo ""
+            echo -e "  ${YELLOW}Vectores principales:${NC}"
+            echo -e "    Cross-Forest Kerberoasting → corp_svc + ext_svc"
+            echo -e "    SID History → DSInternals → child.user = DA atackcorp"
+            echo -e "    GPO Abuse → pyGPOAbuse → helpdesk.ruiz admin WKSTN-01"
+            echo -e "    Forest Trust → corp.local + ext.local comprometidos"
+            echo ""
+            echo -e "  ${YELLOW}Forests:${NC} atackcorp.local | corp.local | child.atackcorp.local | ext.local"
+            ;;
+        "07")
+            echo -e "  ${YELLOW}Credenciales de entrada:${NC}"
+            echo -e "    helpdesk.ruiz : Helpdesk2024!"
+            echo ""
+            echo -e "  ${YELLOW}Vectores planificados:${NC}"
+            echo -e "    LAPS → LAPSToolkit → contrasena admin local"
+            echo -e "    DPAPI → SharpDPAPI → credenciales cifradas"
+            echo -e "    Shadow Credentials → LSASS dump sin Mimikatz"
             ;;
     esac
     echo ""

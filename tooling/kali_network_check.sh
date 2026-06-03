@@ -47,21 +47,41 @@ fi
 echo ""
 echo -e "${CYAN}[*] Estado de VMs por lab:${NC}"
 
-declare -A VMS=(
-    ["Lab-01 DC-01"]="10.0.2.10"
-    ["Lab-01 WKSTN-01"]="10.0.2.8"
-    ["Lab-02 PROD"]="10.0.2.200"
-    ["Lab-02 GIT"]="10.0.3.150"
-    ["Lab-02 PC-01"]="10.0.3.7"
-    ["Lab-03 DC-01"]="10.0.2.10"
+# Infraestructura principal (Labs 01-06)
+declare -A CORE_VMS=(
+    ["DC-01 — atackcorp.local"]="10.0.2.10"
+    ["DC-02 — corp.local"]="10.0.2.11"
+    ["DC-03 — child.atackcorp.local"]="10.0.2.13"
+    ["DC-04 — ext.local"]="10.0.2.14"
+    ["WKSTN-01 — atackcorp.local"]="10.0.2.8"
+    ["WKSTN-02 — corp.local"]="10.0.2.12"
 )
 
-for name in "${!VMS[@]}"; do
-    ip="${VMS[$name]}"
-    if nmap -sn -n --unprivileged "$ip" 2>/dev/null | grep -q "Host is up"; then
+echo ""
+echo -e "  ${CYAN}Infraestructura principal (10.0.2.0/24):${NC}"
+for name in "DC-01 — atackcorp.local" "DC-02 — corp.local" "DC-03 — child.atackcorp.local" "DC-04 — ext.local" "WKSTN-01 — atackcorp.local" "WKSTN-02 — corp.local"; do
+    ip="${CORE_VMS[$name]}"
+    if ping -c 1 -W 1 "$ip" &>/dev/null 2>&1; then
         ok "$name ($ip) — ENCENDIDA ✅"
     else
         info "$name ($ip) — apagada"
+    fi
+done
+
+# Red interna Lab-02
+echo ""
+echo -e "  ${CYAN}Red interna Lab-02 (10.0.3.0/24 via Ligolo):${NC}"
+declare -A LAB02_VMS=(
+    ["PROD — Linux Server"]="10.0.3.10"
+    ["GIT — Linux Server"]="10.0.3.11"
+    ["PC-01 — Windows"]="10.0.3.20"
+)
+for name in "PROD — Linux Server" "GIT — Linux Server" "PC-01 — Windows"; do
+    ip="${LAB02_VMS[$name]}"
+    if ping -c 1 -W 1 "$ip" &>/dev/null 2>&1; then
+        ok "$name ($ip) — ENCENDIDA ✅"
+    else
+        info "$name ($ip) — apagada (solo accesible via Ligolo tunnel)"
     fi
 done
 
@@ -116,7 +136,7 @@ fi
 # ─────────────────────────────────────────────────────────────
 echo ""
 echo -e "${CYAN}[*] Puertos activos relevantes:${NC}"
-sudo ss -tlnp 2>/dev/null | grep -E ":(443|445|4444|8080|11601|5985) " | while read line; do
+sudo ss -tlnp 2>/dev/null | grep -E ":(443|445|4444|8080|8443|11601|5985) " | while read line; do
     echo "    $line"
 done
 
