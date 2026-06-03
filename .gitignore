@@ -32,6 +32,7 @@ loot/*.out
 !loot/corporate_base.txt
 !loot/asrep_hashes.txt
 !loot/kerberoast_hashes.txt
+!loot/*.bak
 
 # ── Binarios y payloads compilados ───────────────────────────
 *.exe

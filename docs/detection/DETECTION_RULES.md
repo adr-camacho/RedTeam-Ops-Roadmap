@@ -1034,3 +1034,211 @@ tags:
 ---
 
 *Última actualización: Mayo 2026 — Labs 03-05 añadidos (ADCS, WriteDACL, RBCD, Shadow Creds, Silver/Diamond Ticket) — Adrián Camacho*
+---
+
+## Lab-06 — BLACK POLICY | APT28 (Fancy Bear)
+
+---
+
+### T1134.005 — SID-History Injection
+
+**Event IDs clave:**
+
+| Event ID | Descripcion |
+|----------|-------------|
+| **4765** | SID History added to an account — alerta critica inmediata |
+| **4766** | Attempt to add SID History failed |
+| 7045 | NTDS service stopped (DSInternals requiere parar NTDS) |
+
+```yaml
+title: SID History Added to Account
+id: sid-history-injection-001
+status: stable
+description: Detecta adicion de SID History a cualquier cuenta AD
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID:
+      - 4765
+      - 4766
+  condition: selection
+falsepositives:
+  - Migraciones AD legitimas (muy raras en produccion)
+level: critical
+tags:
+  - attack.privilege_escalation
+  - attack.t1134.005
+```
+
+**Hardening:**
+```powershell
+# Habilitar SID Filtering en todos los trusts
+netdom trust atackcorp.local /domain:corp.local /quarantine:Yes
+netdom trust atackcorp.local /domain:ext.local /quarantine:Yes
+
+# Auditar cuentas con sIDHistory no vacio
+Get-ADUser -Filter * -Properties sIDHistory |
+    Where-Object {$_.sIDHistory.Count -gt 0} |
+    Select-Object SamAccountName, sIDHistory
+```
+
+---
+
+### T1558.003 — Kerberoasting Cross-Forest + Targeted Kerberoasting
+
+**Event IDs clave:**
+
+| Event ID | Descripcion |
+|----------|-------------|
+| **4769** | Kerberos TGS request — buscar EncryptionType 0x17 (RC4) desde IPs externas al dominio |
+| **4738** | User account changed — servicePrincipalName modificado (Targeted Kerberoasting) |
+
+```yaml
+title: Targeted Kerberoasting via SPN Injection
+id: targeted-kerberoast-001
+status: experimental
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4738
+    ServicePrincipalName|contains: 'fake/'
+  condition: selection
+level: high
+tags:
+  - attack.credential_access
+  - attack.t1558.003
+```
+
+```yaml
+title: Cross-Forest RC4 Kerberoasting
+id: crossforest-kerberoast-001
+status: experimental
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4769
+    TicketEncryptionType: '0x17'
+  filter_local:
+    IpAddress|startswith: '10.0.2.'
+  filter_dc:
+    IpAddress: '::1'
+  condition: selection and not filter_local and not filter_dc
+level: high
+tags:
+  - attack.credential_access
+  - attack.t1558.003
+```
+
+---
+
+### T1484.001 — GPO Modification via pyGPOAbuse
+
+**Event IDs clave:**
+
+| Event ID | Descripcion |
+|----------|-------------|
+| **5136** | Directory service object modified — GPO DACL o GPT.INI modificado |
+| **4698** | Scheduled task was created — tarea creada por GPO en workstation |
+| **4702** | Scheduled task was updated |
+| 4699 | Scheduled task was deleted (cleanup) |
+| 4700 | Scheduled task was enabled |
+
+```yaml
+title: GPO Modified - Potential GPO Abuse
+id: gpo-abuse-001
+status: experimental
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 5136
+    ObjectClass: groupPolicyContainer
+    AttributeLDAPDisplayName:
+      - nTSecurityDescriptor
+      - gPCMachineExtensionNames
+      - versionNumber
+  condition: selection
+falsepositives:
+  - Administradores modificando GPOs legitimamente
+level: high
+tags:
+  - attack.privilege_escalation
+  - attack.t1484.001
+```
+
+```yaml
+title: Unexpected ScheduledTask Created via GPO
+id: gpo-schedtask-001
+status: experimental
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4698
+  filter_legitimate:
+    TaskName|startswith:
+      - '\Microsoft\'
+      - '\Windows\'
+  condition: selection and not filter_legitimate
+level: medium
+tags:
+  - attack.privilege_escalation
+  - attack.t1053.005
+```
+
+---
+
+### T1482 — Domain Trust Discovery
+
+**Event IDs clave:**
+
+| Event ID | Descripcion |
+|----------|-------------|
+| 4662 | Operation on AD object — enumeracion de objetos trustedDomain |
+| 4624 | Logon con Type 3 desde IPs externas al dominio |
+
+```yaml
+title: Domain Trust Enumeration via LDAP
+id: trust-discovery-001
+status: experimental
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4662
+    ObjectType: trustedDomain
+    AccessMask: '0x20000'
+  condition: selection
+level: low
+tags:
+  - attack.reconnaissance
+  - attack.t1482
+```
+
+---
+
+### Resumen Event IDs Lab-06
+
+| Tecnica | MITRE | Event ID | Nivel |
+|---------|-------|----------|-------|
+| SID History Injection | T1134.005 | **4765**, 4766 | Critico |
+| NTDS detenido (DSInternals) | T1003.003 | 7045 | Alto |
+| GPO DACL modificado | T1484.001 | **5136** | Alto |
+| ScheduledTask creada via GPO | T1053.005 | **4698** | Medio |
+| Targeted Kerberoasting SPN | T1558.003 | **4738** | Alto |
+| Cross-Forest Kerberoasting RC4 | T1558.003 | **4769** | Alto |
+| Trust Discovery | T1482 | 4662 | Bajo |
+| DCSync multi-forest | T1003.006 | **4662** DS-Replication | Alto |
+
+---
+
+*Ultima actualizacion: Junio 2026 — Lab-06 BLACK POLICY añadido (SID History, GPO Abuse, Cross-Forest Kerberoasting) — Adrian Camacho*

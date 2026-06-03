@@ -166,20 +166,21 @@ atackcorp\Administrador — Domain Admin — DC-01 comprometido 🏆
 
 | Documento | Descripción |
 |-----------|-------------|
-| [infrastructure_setup.md](docs/infrastructure_setup.md) | Entorno, vectores inyectados y script de setup |
-| [enumeration_log.md](docs/enumeration_log.md) | Fase 1: Reconnaissance |
-| [exploitation.md](docs/exploitation.md) | Fases 2-3: AS-REP Roasting + foothold |
-| [post-exploitation.md](docs/post-exploitation.md) | Fases 4-5: Discovery + Kerberoasting → DA |
-| [lateral_movement.md](docs/lateral_movement.md) | Fases 6-7: Lateral Movement + C2 Sliver |
-| [privilege_escalation.md](docs/privilege_escalation.md) | Fase 8: LPE WKSTN-01 |
-| [persistence.md](docs/persistence.md) | Fase 9: Golden Ticket |
-| [objective_completion.md](docs/objective_completion.md) | Fase 10: DCSync + Pass-the-Hash |
-| [mitigations.md](docs/mitigations.md) | Blue Team: detección, SIGMA rules, hardening |
-| [delegation.md](docs/delegation.md) | Fase 11: Unconstrained + Constrained Delegation |
-| [gpo_abuse.md](docs/gpo_abuse.md) | Fase 12: GPO Abuse via helpdesk.ruiz |
-| [acl_abuse.md](docs/acl_abuse.md) | Fase 13: ACL Abuse + Targeted Kerberoasting |
-| [bloodhound.md](docs/bloodhound.md) | BloodHound CE — metodología y attack paths |
-| [lessons_learned.md](docs/lessons_learned.md) | 19 lecciones técnicas con causa raíz |
+| [infrastructure_setup.md](docs/execution/infrastructure_setup.md) | Entorno, vectores inyectados y script de setup |
+| [enumeration_log.md](docs/execution/enumeration_log.md) | Fase 1: Reconnaissance |
+| [exploitation.md](docs/execution/exploitation.md) | Fases 2-3: AS-REP Roasting + foothold |
+| [post_exploitation.md](docs/execution/post_exploitation.md) | Fases 4-5: Discovery + Kerberoasting → DA |
+| [lateral_movement.md](docs/execution/lateral_movement.md) | Fases 6-7: Lateral Movement + C2 Sliver |
+| [privilege_escalation.md](docs/execution/privilege_escalation.md) | Fase 8: LPE WKSTN-01 |
+| [persistence.md](docs/execution/persistence.md) | Fase 9: Golden Ticket |
+| [objective_completion.md](docs/execution/objective_completion.md) | Fase 10: DCSync + Pass-the-Hash |
+| [mitigations.md](docs/analysis/mitigations.md) | Blue Team: detección, SIGMA rules, hardening |
+| [delegation.md](docs/execution/delegation.md) | Fase 11: Unconstrained + Constrained Delegation |
+| [gpo_abuse.md](docs/execution/gpo_abuse.md) | Fase 12: GPO Abuse via helpdesk.ruiz |
+| [acl_abuse.md](docs/execution/acl_abuse.md) | Fase 13: ACL Abuse + Targeted Kerberoasting |
+| [bloodhound.md](docs/execution/bloodhound.md) | BloodHound CE — metodología y attack paths |
+| [lessons_learned.md](docs/analysis/lessons_learned.md) | 19 lecciones técnicas con causa raíz |
+| [tradecraft.md](docs/theory/tradecraft.md) | Teoría y TTPs — APT29 adversary emulation |
 
 ---
 
