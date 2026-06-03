@@ -4,6 +4,50 @@
 > Tipos: `ADD` | `UPDATE` | `FIX` | `REFACTOR` | `DOCS`
 
 
+## [2026-06-03] — Análisis completo del repo + mejoras calidad
+
+### ADD — Visual
+- `docs/assets/virtualbox_lab_environment.png` — captura VirtualBox todas las VMs corriendo con nombres descriptivos
+
+### UPDATE — README global
+- Badges actualizados: 62 TTPs, ~155h, 6/15 Labs
+- Lab-06 marcado como completado con sección de fases y TTPs
+- Tabla MITRE Coverage: 10 nuevas técnicas Lab-06 añadidas
+- Árbol de estructura: Lab-06 actualizado
+
+### PENDIENTE — Scripts provisioning (próxima sesión)
+- `06_wkstn01_fixed.ps1` — añadir reglas firewall ICMP, SMB, WMI, Remote Scheduled Tasks
+- `07_setup_DC02_Corp.ps1` — añadir creación de C:\Temp
+- `09_setup_DC04_Ext.ps1` — reemplazar "Everyone" por SID *S-1-1-0 en New-SmbShare
+- `CrownJewels-Lab06-BlackPolicy.ps1` — reemplazar nombre de grupo por SID en Enterprise-Strategy
+
+---
+
+## [2026-06-02] — Lab-06 BLACK POLICY Fase 05 — C2 + Cleanup + COMPLETADO
+
+### ADD — Lab-06 Fase 05
+- `Lab-06/docs/execution/c2_sliver.md` — C2 Sliver beacons WKSTN-01 + DC-02
+- `Lab-06/docs/execution/cleanup_opsec.md` — artefactos eliminados, Defender reactivado
+- `Lab-06/docs/execution/lateral_movement.md` — movimientos laterales completos Lab-06
+- `Lab-06/loot/IPO_strategy_2026.txt` — Crown Jewel TOP SECRET exfiltrado
+- `Lab-06/screenshots/FASE-05-C2-Cleanup/` — 4 capturas
+
+### UPDATE — Docs Lab-06 COMPLETADO
+- `OPERATION_BLACK_POLICY.md` — todas las fases completadas, todos los Crown Jewels
+- `README.md` — Lab-06 completado, 5/5 fases, badges brightgreen
+- `docs/analysis/lessons_learned.md` — L-01 a L-11 Fases 01-02
+- `docs/analysis/mitigations.md` — Fases 01-02 con Event IDs y SIGMA rules
+
+### ADD — Docs referencia
+- `docs/reference/CREDENTIALS.md` — nuevo: todas las credenciales del entorno de lab
+- `docs/assets/virtualbox_lab_environment.png` — entorno VirtualBox real corriendo
+
+### FIX — Infraestructura Fase 05
+- C:\Temp no existe en DC-02 → creado manualmente (pendiente script 07)
+- Enterprise-Strategy share falla con nombre de grupo en multi-forest → SID directo
+
+---
+
 ## [2026-06-02] — Lab-06 BLACK POLICY Fase 04 — GPO Abuse
 
 ### ADD — Lab-06 Fase 04

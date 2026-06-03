@@ -1,7 +1,12 @@
-# 09_Setup_DC04_Ext.ps1 -- DC-04 ext.local (Forest 3)
-Import-Module ActiveDirectory
-Write-Host "[*] Configurando ext.local..."
+# 09_setup_DC04_Ext.ps1 -- DC-04 ext.local (Forest 3)
+# Version: 1.1 | Actualizado: Junio 2026
+# FIX v1.1: New-SmbShare "Everyone" falla en Windows Server en espanol
+#            -> Usar SID *S-1-1-0 en lugar de "Everyone"
 
+Import-Module ActiveDirectory
+Write-Host "[*] Configurando ext.local..." -ForegroundColor Cyan
+
+# --- OUs ---
 $OUs = @(
     "OU=Corporativo,DC=ext,DC=local",
     "OU=IT,DC=ext,DC=local",
@@ -18,6 +23,7 @@ foreach ($ou in $OUs) {
     }
 }
 
+# --- Usuarios ---
 $usuarios = @(
     @{Name="Ext User";    Sam="ext.user";   Pass="ExtUser2024!";  OU="OU=Usuarios,OU=Corporativo,DC=ext,DC=local"},
     @{Name="Ext Admin";   Sam="ext.admin";  Pass="ExtAdmin2024!"; OU="OU=Administradores,OU=IT,DC=ext,DC=local"},
@@ -32,22 +38,35 @@ foreach ($u in $usuarios) {
     }
 }
 
+# --- Domain Admins ---
 Add-ADGroupMember -Identity "Admins. del dominio" -Members "ext.admin" -ErrorAction SilentlyContinue
 Write-Host "[!] ext.admin -> Domain Admins"
 
+# --- SPN ext_svc (Kerberoasteable cross-forest) ---
 Set-ADUser -Identity "ext_svc" -ServicePrincipalNames @{Add="MSSQLSvc/DC-04.ext.local:1433"}
 Write-Host "[!] SPN ext_svc -> Kerberoasting cross-forest habilitado"
 
+# --- Grupo Ext-Readers ---
 New-ADGroup -Name "Ext-Readers" -GroupScope Global -Path "OU=Corporativo,DC=ext,DC=local" -ErrorAction SilentlyContinue
 Add-ADGroupMember -Identity "Ext-Readers" -Members "ext.user" -ErrorAction SilentlyContinue
-Write-Host "[+] Grupo Ext-Readers creado"
+Write-Host "[+] Grupo Ext-Readers creado con ext.user"
 
+# --- Share Ext-Data con credenciales expuestas (Crown Jewel Lab-06) ---
 New-Item -Path "C:\Shares\Ext-Data" -ItemType Directory -Force | Out-Null
 $doc = "=== EXT CORP CREDENTIALS ===`next.admin / ExtAdmin2024!`nSQL: ext_svc / ExtSvc2024!`n=== CONFIDENTIAL ==="
 Set-Content "C:\Shares\Ext-Data\credentials_backup.txt" $doc
-New-SmbShare -Name "Ext-Data" -Path "C:\Shares\Ext-Data" -ReadAccess "Everyone" -ErrorAction SilentlyContinue
-Write-Host "[!] Share Ext-Data con credenciales expuestas creado"
 
+# FIX v1.1: "Everyone" falla en Windows Server en espanol
+# Usar SID *S-1-1-0 (Everyone universal)
+New-SmbShare -Name "Ext-Data" -Path "C:\Shares\Ext-Data" `
+    -ReadAccess "*S-1-1-0" `
+    -ErrorAction SilentlyContinue
+Write-Host "[!] Share Ext-Data creado con ReadAccess Everyone (SID *S-1-1-0)"
+Write-Host "    -> Credenciales ext.admin y ext_svc expuestas (Crown Jewel Lab-06 Fase 03)"
+
+# --- WinRM ---
 Enable-PSRemoting -Force | Out-Null
 Write-Host "[+] WinRM habilitado"
-Write-Host "[OK] Setup ext.local completado."
+
+Write-Host ""
+Write-Host "[OK] Setup ext.local completado (v1.1)" -ForegroundColor Green

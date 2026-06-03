@@ -1,7 +1,11 @@
-# 07_Setup_DC02_Corp.ps1 -- DC-02 corp.local (Forest 2)
-Import-Module ActiveDirectory
-Write-Host "[*] Configurando corp.local..."
+# 07_setup_DC02_Corp.ps1 -- DC-02 corp.local (Forest 2)
+# Version: 1.1 | Actualizado: Junio 2026
+# FIX v1.1: Añadido C:\Temp para transferencia de herramientas
 
+Import-Module ActiveDirectory
+Write-Host "[*] Configurando corp.local..." -ForegroundColor Cyan
+
+# --- OUs ---
 $OUs = @(
     "OU=Corporativo,DC=corp,DC=local",
     "OU=IT,DC=corp,DC=local",
@@ -19,6 +23,7 @@ foreach ($ou in $OUs) {
     }
 }
 
+# --- Usuarios ---
 $usuarios = @(
     @{Name="John Smith";   Sam="john.smith";   Pass="JohnCorp2024!";  OU="OU=Usuarios,OU=Corporativo,DC=corp,DC=local"},
     @{Name="Sarah Connor"; Sam="sarah.connor"; Pass="SarahCorp2024!"; OU="OU=Usuarios,OU=Corporativo,DC=corp,DC=local"},
@@ -34,12 +39,15 @@ foreach ($u in $usuarios) {
     }
 }
 
+# --- Domain Admins ---
 Add-ADGroupMember -Identity "Admins. del dominio" -Members "corp.admin" -ErrorAction SilentlyContinue
 Write-Host "[!] corp.admin -> Domain Admins"
 
+# --- SPN corp_svc (Kerberoasteable cross-forest) ---
 Set-ADUser -Identity "corp_svc" -ServicePrincipalNames @{Add="MSSQLSvc/DC-02.corp.local:1433"}
-Write-Host "[!] SPN corp_svc -> Kerberoasting habilitado"
+Write-Host "[!] SPN corp_svc -> Kerberoasting cross-forest habilitado"
 
+# --- ACL: john.smith GenericAll sobre corp_svc (Lab-06 Fase 03 path) ---
 $johnSID = (Get-ADUser "john.smith").SID
 $corpSvc = Get-ADUser "corp_svc" -Properties DistinguishedName
 $acl = Get-Acl "AD:\$($corpSvc.DistinguishedName)"
@@ -50,14 +58,27 @@ $rule = New-Object System.DirectoryServices.ActiveDirectoryAccessRule(
 )
 $acl.AddAccessRule($rule)
 Set-Acl "AD:\$($corpSvc.DistinguishedName)" $acl
-Write-Host "[!] john.smith GenericAll sobre corp_svc"
+Write-Host "[!] john.smith GenericAll sobre corp_svc (Targeted Kerberoasting path)"
 
+# --- Share Corp-Data ---
 New-Item -Path "C:\Shares\Corp-Data" -ItemType Directory -Force | Out-Null
 New-SmbShare -Name "Corp-Data" -Path "C:\Shares\Corp-Data" `
-    -ReadAccess "CORP\Usuarios del dominio" -FullAccess "CORP\Admins. del dominio" `
+    -ReadAccess "*S-1-5-21-750084600-2533406826-1069631424-513" `
+    -FullAccess "*S-1-5-21-750084600-2533406826-1069631424-512" `
     -ErrorAction SilentlyContinue
 Write-Host "[+] Share Corp-Data creado"
 
+# --- C:\Temp para transferencia de herramientas (FIX v1.1) ---
+New-Item -Path "C:\Temp" -ItemType Directory -Force | Out-Null
+$acl = Get-Acl "C:\Temp"
+$rule = New-Object System.Security.AccessControl.FileSystemAccessRule("*S-1-1-0","FullControl","Allow")
+$acl.SetAccessRule($rule)
+Set-Acl "C:\Temp" $acl
+Write-Host "[+] C:\Temp creado (FIX v1.1)"
+
+# --- WinRM ---
 Enable-PSRemoting -Force | Out-Null
 Write-Host "[+] WinRM habilitado"
-Write-Host "[OK] Setup corp.local completado."
+
+Write-Host ""
+Write-Host "[OK] Setup corp.local completado (v1.1)" -ForegroundColor Green
