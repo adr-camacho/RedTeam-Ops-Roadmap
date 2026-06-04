@@ -4,50 +4,6 @@
 > Tipos: `ADD` | `UPDATE` | `FIX` | `REFACTOR` | `DOCS`
 
 
-## [2026-06-03] — Análisis completo del repo + mejoras calidad
-
-### ADD — Visual
-- `docs/assets/virtualbox_lab_environment.png` — captura VirtualBox todas las VMs corriendo con nombres descriptivos
-
-### UPDATE — README global
-- Badges actualizados: 62 TTPs, ~155h, 6/15 Labs
-- Lab-06 marcado como completado con sección de fases y TTPs
-- Tabla MITRE Coverage: 10 nuevas técnicas Lab-06 añadidas
-- Árbol de estructura: Lab-06 actualizado
-
-### PENDIENTE — Scripts provisioning (próxima sesión)
-- `06_wkstn01_fixed.ps1` — añadir reglas firewall ICMP, SMB, WMI, Remote Scheduled Tasks
-- `07_setup_DC02_Corp.ps1` — añadir creación de C:\Temp
-- `09_setup_DC04_Ext.ps1` — reemplazar "Everyone" por SID *S-1-1-0 en New-SmbShare
-- `CrownJewels-Lab06-BlackPolicy.ps1` — reemplazar nombre de grupo por SID en Enterprise-Strategy
-
----
-
-## [2026-06-02] — Lab-06 BLACK POLICY Fase 05 — C2 + Cleanup + COMPLETADO
-
-### ADD — Lab-06 Fase 05
-- `Lab-06/docs/execution/c2_sliver.md` — C2 Sliver beacons WKSTN-01 + DC-02
-- `Lab-06/docs/execution/cleanup_opsec.md` — artefactos eliminados, Defender reactivado
-- `Lab-06/docs/execution/lateral_movement.md` — movimientos laterales completos Lab-06
-- `Lab-06/loot/IPO_strategy_2026.txt` — Crown Jewel TOP SECRET exfiltrado
-- `Lab-06/screenshots/FASE-05-C2-Cleanup/` — 4 capturas
-
-### UPDATE — Docs Lab-06 COMPLETADO
-- `OPERATION_BLACK_POLICY.md` — todas las fases completadas, todos los Crown Jewels
-- `README.md` — Lab-06 completado, 5/5 fases, badges brightgreen
-- `docs/analysis/lessons_learned.md` — L-01 a L-11 Fases 01-02
-- `docs/analysis/mitigations.md` — Fases 01-02 con Event IDs y SIGMA rules
-
-### ADD — Docs referencia
-- `docs/reference/CREDENTIALS.md` — nuevo: todas las credenciales del entorno de lab
-- `docs/assets/virtualbox_lab_environment.png` — entorno VirtualBox real corriendo
-
-### FIX — Infraestructura Fase 05
-- C:\Temp no existe en DC-02 → creado manualmente (pendiente script 07)
-- Enterprise-Strategy share falla con nombre de grupo en multi-forest → SID directo
-
----
-
 ## [2026-06-02] — Lab-06 BLACK POLICY Fase 04 — GPO Abuse
 
 ### ADD — Lab-06 Fase 04
@@ -382,4 +338,38 @@
 
 ---
 
-*Formato basado en [Keep a Changelog](https://keepachangelog.com/)*
+*Formato basado en [Keep a Changelog](https://keepachangelog.com/)## [2026-06-04] — DC-01 rebuild Windows Server 2025 + Lab-07 LAPS setup
+
+### INFRA — DC-01 rebuild
+- DC-01 reinstalado con **Windows Server 2025** (Build 26100+)
+- Razon: WS2022 Build 20348.558 incompatible con Windows LAPS nativo y LAPS legacy
+  - Windows LAPS nativo requiere WS2022 Build 20348.1547+ o WS2025
+  - LAPS legacy MSI: ldifde falla con error FSMO 0x21a2 en builds antiguos
+  - LAPS legacy CSE: bloqueado en Windows 11 Build 26100 (23H2+)
+- WS2025 incluye Windows LAPS nativo sin instalacion adicional
+- Scripts de provisioning 01-05 re-ejecutados en nuevo DC-01
+
+### ADD — Scripts provisioning
+- `setup/provisioning/12_setup_LAPS.ps1` — Windows LAPS nativo WS2025
+  - Update-LapsADSchema, permisos WKSTN-01, misconfiguration helpdesk.ruiz
+  - GPO LAPS-Policy vinculada a OU=IT,OU=Corporativo
+- `setup/provisioning/14_setup_Defender.ps1` — Defender config controlada para labs
+  - Defender ACTIVO con exclusiones C:\Temp, C:\Tools, C:\CorporateData
+  - MAPS/telemetria deshabilitada
+  - GPO Defender-Lab-Config para workstations
+
+### UPDATE — Docs referencia
+- `docs/reference/LAB_INFRASTRUCTURE.md` — DC-01 OS actualizado a WS2025
+- `docs/reference/CREDENTIALS.md` — sin cambios (mismas credenciales)
+- `setup/README.md` — orden provisioning actualizado (incluye scripts 12 y 14)
+
+### DOCS — Lecciones aprendidas DC-01 rebuild
+- WS2022 Build 20348.558 demasiado antiguo para Windows LAPS nativo
+- LAPS legacy ldifde requiere replicacion AD completa + Schema Master operativo
+- DC-03 debe estar encendido para que DC-01 pueda extender el schema
+- Instalador SSEI de SQL Server es web-only — usar SQLEXPR_x64_ENU.exe para offline
+- Adaptador NAT temporal en DC-01 necesario para descarga de software
+
+---
+
+*

@@ -9,9 +9,9 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Última actualización | 03/06/2026 |
+| Última actualización | 31/05/2026 |
 | Fase actual | Phase-02: AD Avanzado (infraestructura CRTO completa — Lab-06 en curso) |
-| Horas totales invertidas | ~155h |
+| Horas totales invertidas | ~121h |
 | Fase actual | Phase-02: AD Avanzado (Lab-05 completado) |
 
 ---
@@ -32,7 +32,7 @@
 |-----|--------|-------------|-----------|-------|---------|
 | Lab-04: Iron Forest | ✅ Completado | 28/05/2026 | 29/05/2026 | ~20h | ✅ Completo |
 | Lab-05: Silver Chain | ✅ Completado | 30/05/2026 | 30/05/2026 | ~20h | ✅ Completo |
-| Lab-06: Black Policy | ✅ Completado | 31/05/2026 | 02/06/2026 | ~35h | ✅ Completo |
+| Lab-06: Black Policy | ⏳ Pendiente | — | — | — | — |
 | Lab-07: Shadow Vault | ⏳ Pendiente | — | — | — | — |
 
 ### 🔴 Phase-03 — Red Team & Evasión
@@ -308,84 +308,39 @@
 *⚡ Leyenda: ✅ Completado | 🔄 Parcial | ⏳ Pendiente*
 ---
 
-#### 📌 01/06/2026 — Sesión 19: Lab-06 BLACK POLICY — Fase 03 Cross-Forest Trust Abuse
 
-**Lab-06 Fase 03 — Cross-Forest Trust Abuse:**
+### Semana 10 — 04/06/2026
 
-**Path A — corp.local via Targeted Kerberoasting:**
-- dacledit confirma john.smith GenericAll (FullControl 0xf01ff) sobre corp_svc ✅
-- bloodyAD set SPN fake/dc02.corp.local en corp_svc via GenericAll ✅
-- Targeted Kerberoasting → hash corp_svc capturado + John crackea CorpSvc2024! ✅
-- Evil-WinRM DC-02 como corp.admin (DA corp.local) ✅
-- DCSync krbtgt corp.local: NTLM 3e30210f... · AES256 42ebdb6b... ✅
-- OPSEC cleanup: SPN restaurado a MSSQLSvc/DC-02.corp.local:1433 ✅
+#### 📌 04/06/2026 — Sesión 23: DC-01 rebuild WS2025 + Lab-07 LAPS setup
 
-**Path B — ext.local via Credential Exposure:**
-- Share Ext-Data accesible con ext.user:ExtUser2024! ✅
-- credentials_backup.txt: ext.admin/ExtAdmin2024! + ext_svc/ExtSvc2024! ✅
-- Evil-WinRM DC-04 como ext.admin (DA ext.local) ✅
-- DCSync krbtgt ext.local: NTLM 5c8afa0a... · AES256 90be6556... ✅
+**DC-01 Rebuild — Windows Server 2025:**
+- DC-01 eliminado (WS2022 Build 20348.558 incompatible con Windows LAPS nativo)
+- Nueva VM creada con Windows Server 2025 (Build 26100+)
+- Provisioning completo re-ejecutado: scripts 01-04 completados
+- SQL Server 2022 Express descargado e instalando (pendiente script 05)
+- Razon del rebuild:
+  - Windows LAPS nativo requiere WS2022 Build 20348.1547+ o WS2025
+  - LAPS legacy ldifde falla con error FSMO 0x21a2 (replicacion AD)
+  - LAPS legacy CSE bloqueado en Windows 11 Build 26100 (23H2+)
 
-**Problemas resueltos:**
-- Share Ext-Data no creado en provisioning — "Everyone" falla en Windows español → usar SID *S-1-1-0
-- corp_svc sin acceso WinRM — comportamiento correcto (cuenta de servicio)
-- impacket-secretsdump falla fuera del directorio del lab — siempre ejecutar desde el lab
+**Nuevos scripts generados:**
+- `12_setup_LAPS.ps1` — Windows LAPS nativo WS2025 con misconfiguration helpdesk.ruiz
+- `14_setup_Defender.ps1` — Defender activo con exclusiones controladas para labs
 
-**Horas:** ~3h
+**Documentacion actualizada:**
+- LAB_INFRASTRUCTURE.md — DC-01 OS actualizado a WS2025
+- CHANGELOG.md — entrada rebuild DC-01
+- setup/README.md — pasos 9-10 nuevos (LAPS + Defender)
+- README.md global — tabla VMs actualizada
 
----
+**Pendiente completar esta sesion:**
+- Script 05 — SQL Server Express (descargando)
+- Script 06 — WKSTN-01 re-unir al dominio
+- Script 12 — Windows LAPS
+- Script 14 — Defender config
+- Lab-07 Fase 01 — LAPS password extraction
 
-#### 📌 02/06/2026 — Sesión 20: Lab-06 BLACK POLICY — Fase 04 GPO Abuse
-
-**Lab-06 Fase 04 — GPO Abuse via WriteDACL:**
-- ldapsearch identifica 3 GPOs — IT-Baseline como target ✅
-- dacledit confirma WriteDACL helpdesk.ruiz sobre GPO IT-Baseline ✅
-- dacledit write FullControl sobre GPO — backup DACL automático ✅
-- Intento XML manual (ScheduledTasks.xml, Groups.xml) — FALLO en Windows 11 ✅ documentado
-- pyGPOAbuse crea ScheduledTask TASK_b5246ce1 — funciona correctamente ✅
-- gpupdate /force en WKSTN-01 → helpdesk.ruiz en BUILTIN\Administradores ✅
-- Evil-WinRM WKSTN-01 como helpdesk.ruiz — acceso confirmado ✅
-- OPSEC cleanup: pyGPOAbuse --cleanup + dacledit restore ✅
-
-**Problemas resueltos:**
-- GPP XML manual no procesado en Windows 11 → pyGPOAbuse
-- GPT.INI Version=0 → cliente no reprocesa GPO sin incrementar versión
-- Windows 11 bloquea WMI y Remote Scheduled Tasks por defecto
-- WriteDACL no estaba configurado en provisioning → aplicado manualmente en DC-01
-
-**Horas:** ~4h
-
----
-
-#### 📌 02/06/2026 — Sesión 21: Lab-06 BLACK POLICY — Fase 05 C2 + Cleanup
-
-**Lab-06 Fase 05 — Sliver C2 + Crown Jewel Final:**
-- Sliver listener HTTPS :8443 activo ✅
-- Beacon BLACK_POLICY_WKSTN01 — check-in 10.0.2.8 (WKSTN-01) ✅
-- Beacon BLACK_POLICY_DC02 — check-in 10.0.2.11 (DC-02) ✅
-- smbclient Enterprise-Strategy — IPO_strategy_2026.txt exfiltrado (TOP SECRET) ✅
-- Cleanup: beacons eliminados, Defender reactivado en WKSTN-01 y DC-02 ✅
-
-**Problemas resueltos:**
-- C:\Temp no existe en DC-02 → creado manualmente (pendiente fix script 07)
-- Enterprise-Strategy share falla con nombre de grupo en multi-forest → SID directo *S-1-5-21-...-512
-- Red Kali caída → NetworkManager restart
-
-**Horas:** ~2h
-
----
-
-#### 📌 03/06/2026 — Sesión 22: Análisis y mejora del repo
-
-**Mejoras aplicadas:**
-- Captura VirtualBox con todas las VMs corriendo añadida al README global
-- VMs renombradas con nombres descriptivos (DC-01 — atackcorp.local, etc.)
-- Análisis completo del repo — identificados 12 problemas y 4 mejoras
-- docs/assets/virtualbox_lab_environment.png → README global
-
-**Horas:** ~2h
-
----
+**Horas:** ~4h (en curso)
 
 
 ### Semana 9 — 01/06/2026
@@ -476,11 +431,3 @@
 | Credential Hunting cross-forest SMB | T1552.001 | Lab-06 | ✅ Dominada |
 | DCSync cross-domain (SID History) | T1003.006 | Lab-06 | ✅ Dominada |
 | .NET NTAccount LDAP translation | T1087.002 | Lab-06 | ✅ Dominada |
-
-| Targeted Kerberoasting via GenericAll | T1558.003 | Lab-06 | ✅ Dominada |
-| ACL abuse cross-forest (dacledit) | T1222 | Lab-06 | ✅ Dominada |
-| Forest Trust credential exposure | T1552.001 | Lab-06 | ✅ Dominada |
-| GPO Abuse via pyGPOAbuse | T1484.001 | Lab-06 | ✅ Dominada |
-| GPT.INI version manipulation | T1484.001 | Lab-06 | ✅ Dominada |
-| Sliver C2 multi-forest (beacons múltiples) | T1071.001 | Lab-06 | ✅ Dominada |
-| Enterprise share exfiltration via DA | T1039 | Lab-06 | ✅ Dominada |

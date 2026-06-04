@@ -133,7 +133,31 @@ netsh advfirewall firewall add rule name="WinRM" protocol=TCP dir=in localport=5
 .\setup\provisioning\11_Setup_WKSTN02_Corp_fixed.ps1
 ```
 
-### Paso 9 — Crown Jewels por lab
+### Paso 9 — Windows LAPS (DC-01 — WS2025)
+
+> ⚠️ Solo ejecutar en DC-01 con Windows Server 2025. WS2022 no soporta Windows LAPS nativo.
+
+```powershell
+.\setup\provisioning\12_setup_LAPS.ps1
+```
+
+Luego en WKSTN-01:
+```powershell
+gpupdate /force
+```
+
+Verificar desde DC-01:
+```powershell
+Get-LapsADPassword -Identity WKSTN-01 -AsPlainText
+```
+
+### Paso 10 — Defender config (DC-01)
+
+```powershell
+.\setup\provisioning\14_setup_Defender.ps1
+```
+
+### Paso 11 — Crown Jewels por lab
 
 Antes de ejecutar cada lab, ejecutar el CrownJewels correspondiente en DC-01:
 
