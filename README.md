@@ -91,7 +91,7 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 
 | Host | IP | OS | RAM | Rol |
 |---|---|---|---|---|
-| DC-01 | 10.0.2.10 | Windows Server 2025 | 4GB | Domain Controller — atackcorp.local + ADCS + Windows LAPS |
+| DC-01 | 10.0.2.10 | Windows Server 2025 | 12GB | Domain Controller — atackcorp.local + ADCS + Windows LAPS |
 | DC-02 | 10.0.2.11 | Windows Server 2022 | 3GB | Domain Controller — corp.local (Forest 2) |
 | DC-03 | 10.0.2.13 | Windows Server 2022 | 3GB | Domain Controller — child.atackcorp.local |
 | DC-04 | 10.0.2.14 | Windows Server 2022 | 2GB | Domain Controller — ext.local (Forest 3) |
@@ -278,6 +278,26 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 </details>
 
 ---
+
+### ✅ Lab-06 — BLACK POLICY | APT28 (Fancy Bear)
+
+**5 fases completadas · ~25 horas · Documentación completa**
+
+<details>
+<summary>Ver todas las fases y TTPs</summary>
+
+| Fase | Nombre | Técnica | MITRE ID | Herramienta |
+|---|---|---|---|---|
+| 01 | Reconnaissance | Cross-Forest enum + Kerberoasting corp_svc/ext_svc | T1558.003, T1135 | nxc, impacket-GetUserSPNs, John |
+| 02 | SID History Injection | DSInternals Add-ADDBSidHistory → child.user = DA atackcorp | T1134.005 | DSInternals v4.14, Evil-WinRM |
+| 03 | Cross-Forest Trust | corp.local + ext.local comprometidos · DCSync krbtgt x3 | T1482, T1003.006 | bloodyAD, impacket-secretsdump |
+| 04 | GPO Abuse | WriteDACL helpdesk.ruiz → FullControl GPO → admin WKSTN-01 | T1484.001 | dacledit, pyGPOAbuse |
+| 05 | C2 + Cleanup | Beacons WKSTN-01 + DC-02 · Crown Jewel IPO_strategy_2026.txt | T1071.001, T1070 | Sliver, dacledit |
+
+**Crown Jewels:** `IPO_strategy_2026.txt` · krbtgt atackcorp/corp/ext · helpdesk.ruiz admin local WKSTN-01  
+**Lecciones clave:** Evil-WinRM limita tokens de red (Get-ADGroup cross-domain falla) · bloodyAD v2.5.4 elimina sIDHistory · DSInternals como alternativa a mimikatz misc::addsid · pyGPOAbuse más compatible que GPP XML en Windows 11
+
+</details>
 
 ## 🔄 En progreso
 
