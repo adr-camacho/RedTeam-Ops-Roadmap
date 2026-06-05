@@ -422,16 +422,18 @@ graph LR
 ---
 
 ## 🧠 Metodología
-
-```
-1. ADVERSARY SELECTION  → Seleccionar grupo APT real · Estudiar TTPs documentadas
-2. THEORY               → Fundamentos del protocolo antes de ejecutar
-3. INFRASTRUCTURE       → Setup reproducible con scripts PowerShell
-4. EXECUTION            → Comandos documentados con output real + notas OPSEC
-5. ANALYSIS             → Post-mortem: qué funcionó, qué falló y por qué
-6. BLUE TEAM            → Event IDs · Reglas SIGMA · Hardening
-7. REPORT               → Reporte ejecutivo en PDF + lessons learned
-```
+┌────────────────────────────────────────────────────────────────┐
+│  PASO 1: ADVERSARY SELECTION  → APT real · Kill chain · TTPs   │
+│  PASO 2: THREAT MODEL         → Crown Jewels · Scope · Éxito   │
+│  PASO 3: THEORY               → Fundamentos antes de ejecutar  │
+│  PASO 4: INFRASTRUCTURE       → Setup reproducible + snapshots │
+│  PASO 5: RECONNAISSANCE       → BloodHound · Attack paths      │
+│  PASO 6: EXECUTION            → Comandos + output + OPSEC      │
+│  PASO 7: CLEANUP              → Artefactos · ACLs · GPOs       │
+│  PASO 8: ANALYSIS             → Post-mortem + lecciones        │
+│  PASO 9: BLUE TEAM            → Event IDs · SIGMA · Hardening  │
+│  PASO 10: REPORT              → PDF ejecutivo + lessons learned│
+└────────────────────────────────────────────────────────────────┘
 
 ---
 
