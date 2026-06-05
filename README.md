@@ -279,14 +279,16 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 
 ---
 
-## 🔜 Próximo objetivo
+## 🔄 En progreso
 
-**Lab-06 — BLACK POLICY · APT28 (Fancy Bear)**
+**Lab-07 — SHADOW VAULT · APT28 (Fancy Bear)**
 
 | Campo | Detalle |
 |---|---|
-| Técnicas | SID History, Cross-Forest Trust, GPO abuse avanzado, Domain Trust attacks |
-| Crown Jewels | Acceso cross-domain via SID History injection |
+| Estado | Infraestructura lista · CrownJewels ejecutados · Fase 01 pendiente |
+| Técnicas | Windows LAPS abuse, DPAPI extraction, Shadow Credentials, LSASS dump sin Mimikatz |
+| Crown Jewels | msLAPS-Password WKSTN-01 · DPAPI Credential Manager · HR-Confidential share |
+| Credencial inicial | `helpdesk.ruiz:Helpdesk2024!` |
 
 ---
 
@@ -309,7 +311,7 @@ Red-Team_Labs/
 │   │   ├── THREAT_MODEL.md                  # Modelo de amenaza del entorno
 │   │   └── WRITEUP_TEMPLATE.md              # Plantilla para nuevos labs
 │   ├── progress/
-│   │   ├── PROGRESS.md                      # Diario de sesiones + 35 técnicas dominadas
+│   │   ├── PROGRESS.md                      # Diario de sesiones + 56 técnicas dominadas
 │   │   └── CHANGELOG.md                     # Historial de cambios del repo
 │   └── reference/
 │       ├── ARSENAL.md                        # Arsenal completo con rutas y versiones
@@ -318,20 +320,23 @@ Red-Team_Labs/
 │       └── TOOL_INDEX.md                    # Índice de herramientas con versiones
 │
 ├── setup/
-│   ├── provisioning/
-|   |   └── 00_Setup_Lab01-GhostForest-v2.ps1
-│   │   ├── 01_ad_promotion.ps1
-│   │   ├── 02_users_ous.ps1
-│   │   ├── 03_acls_delegations.ps1
-│   │   ├── 04_iis_smb_gpo.ps1
-│   │   ├── 05_mssql.ps1
-│   │   ├── 06_wkstn01.ps1
-│   │   ├── 07_Setup_DC02_Corp.ps1
-│   │   ├── 08_Setup_DC03_Child.ps1
-│   │   ├── 09_Setup_DC04_Ext.ps1
-│   │   ├── 10_Setup_Trusts_And_SIDHistory.ps1
-│   │   ├── 11_Setup_WKSTN02_Corp.ps1
-│   │   
+│   ├── DC-01/                               # Scripts DC-01 (atackcorp.local)
+│   │   ├── 01_promover_controlador_de_dominio_atackcorp.ps1
+│   │   ├── 02_crear_usuarios_ous_atackcorp.ps1
+│   │   ├── 03_configurar_acls_delegaciones_atackcorp.ps1
+│   │   ├── 04_instalar_iis_smb_shares_gpos_atackcorp.ps1
+│   │   ├── 05_instalar_sql_server_express_atackcorp.ps1
+│   │   ├── 10_configurar_forest_trusts_sid_filtering.ps1
+│   │   ├── 12_configurar_windows_laps_atackcorp.ps1
+│   │   ├── 13_instalar_adcs_ca_atackcorp.ps1
+│   │   └── 14_configurar_defender_exclusiones_atackcorp.ps1
+│   ├── DC-02/                               # Scripts DC-02 (corp.local)
+│   ├── DC-03/                               # Scripts DC-03 (child.atackcorp.local)
+│   ├── DC-04/                               # Scripts DC-04 (ext.local)
+│   ├── WKSTN-01/                            # Scripts WKSTN-01
+│   ├── WKSTN-02/                            # Scripts WKSTN-02
+│   ├── CrownJewels/                         # Crown Jewels Labs 01-15
+│   ├── README.md                            # Guia completa de aprovisionamiento
 │   └── screenshots/                         # Evidencia del setup del entorno
 │
 ├── tooling/                                 # Scripts de setup del arsenal Kali
@@ -370,7 +375,7 @@ Red-Team_Labs/
 - `docs/analysis/lessons_learned.md` — Qué funcionó, qué falló y por qué
 - `docs/analysis/mitigations.md` — Detección y hardening Blue Team
 - `docs/report/*.pdf` — Reporte ejecutivo en PDF
-- `setup/CrownJewels-Lab*.ps1` — Script de verificación de objetivos
+- `setup/CrownJewels/CrownJewels-Lab*.ps1` — Script de verificación de objetivos
 - `screenshots/FASE-XX-Nombre/` — Evidencia visual organizada por fase
 - `loot/` — Hashes, tickets y credenciales capturadas
 
@@ -458,39 +463,46 @@ graph LR
 ### Requisitos de hardware
 
 ```
-RAM mínima:    32 GB  (entorno CRTO completo — 4 DCs + 2 WKSTNs + Kali)
+RAM mínima:    30 GB  (entorno CRTO completo — 4 DCs + 2 WKSTNs + Kali)
 CPU:           8 cores (recomendado — VT-x/AMD-V activo en BIOS)
 Disco:         400 GB libres
 Hypervisor:    VirtualBox 7.x
-RAM por VM:    Kali 8GB · DC-01 4GB · DC-02/03 3GB · DC-04 2GB · WKSTNs 3GB
+RAM por VM:    Kali 8GB · DC-01 12GB · DC-02/03/04 4GB · WKSTNs 4GB
 ```
 
 ### Setup automatizado
 
 ```powershell
-# DC-01 — atackcorp.local
-.\setup\provisioning\01_ad_promotion.ps1
-.\setup\provisioning\02_users_ous.ps1
-.\setup\provisioning\03_acls_delegations.ps1
-.\setup\provisioning\04_iis_smb_gpo.ps1
-.\setup\provisioning\05_mssql.ps1
-.\setup\provisioning\10_Setup_Trusts_And_SIDHistory.ps1  # post Forest Trusts
+# DC-01 — atackcorp.local (ejecutar en orden)
+.\setup\DC-01\01_promover_controlador_de_dominio_atackcorp.ps1
+.\setup\DC-01\02_crear_usuarios_ous_atackcorp.ps1
+.\setup\DC-01\03_configurar_acls_delegaciones_atackcorp.ps1
+.\setup\DC-01\04_instalar_iis_smb_shares_gpos_atackcorp.ps1
+.\setup\DC-01\05_instalar_sql_server_express_atackcorp.ps1  # GUI recomendada
 
 # WKSTN-01 — atackcorp.local
-.\setup\provisioning\06_wkstn01.ps1
-.\setup\provisioning\00_setup_lab01_ghost_forest_v2.ps1
+.\setup\WKSTN-01\01_configurar_workstation_wkstn01_atackcorp.ps1
 
 # DC-02 — corp.local
-.\setup\provisioning\07_Setup_DC02_Corp.ps1
+.\setup\DC-02\01_configurar_dominio_corp_local.ps1
 
 # DC-03 — child.atackcorp.local
-.\setup\provisioning\08_Setup_DC03_Child.ps1
+.\setup\DC-03\01_configurar_dominio_child_atackcorp.ps1
 
 # DC-04 — ext.local
-.\setup\provisioning\09_Setup_DC04_Ext.ps1
+.\setup\DC-04\01_configurar_dominio_ext_local.ps1
 
 # WKSTN-02 — corp.local
-.\setup\provisioning\11_Setup_WKSTN02_Corp.ps1
+.\setup\WKSTN-02\01_configurar_workstation_wkstn02_corp.ps1
+
+# Trusts + LAPS + ADCS + Defender (DC-01)
+.\setup\DC-01\10_configurar_forest_trusts_sid_filtering.ps1
+.\setup\DC-01\12_configurar_windows_laps_atackcorp.ps1
+.\setup\DC-01\13_instalar_adcs_ca_atackcorp.ps1
+.\setup\DC-01\14_configurar_defender_exclusiones_atackcorp.ps1
+
+# Crown Jewels (DC-01, antes de cada lab)
+.\setup\CrownJewels\CrownJewels-Lab0X-NombreOperacion.ps1
 ```
 
 ```bash
