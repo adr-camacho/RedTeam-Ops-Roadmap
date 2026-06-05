@@ -139,6 +139,54 @@
 
 ---
 
+
+### Semana 10 — 04-05/06/2026
+
+#### 04/06/2026 — Sesion 23: DC-01 rebuild WS2025 + Setup completo infraestructura
+
+**DC-01 Rebuild — Windows Server 2025:**
+- DC-01 eliminado (WS2022 Build 20348.558 incompatible con Windows LAPS nativo)
+- Nueva VM con Windows Server 2025 (Build 26100+)
+- Scripts de provisioning 01-14 re-ejecutados en todas las maquinas
+- SQL Server 2022 Express instalado (22GB RAM necesarios para instalacion fluida)
+- ADCS: CA AtackCorp-CA + Web Enrollment operativos
+- Windows LAPS nativo configurado y verificado
+- Defender con exclusiones controladas configurado
+- Forest Trusts reconfigurados via .NET (netdom falla en WS2025)
+- WKSTN-01 re-unida al dominio nuevo
+
+**CrownJewels:**
+- Labs 01-07 ejecutados en nuevo DC-01
+
+**Lecciones tecnicas clave:**
+- WS2025: New-ADTrust no existe, netdom /quarantine falla
+- SQL Server instalacion silenciosa bloquea con < 12GB RAM
+- DC-03 necesario para schema extension (Schema FSMO)
+- C:\Temp SID fix: WellKnownSidType.WorldSid
+
+**Horas sesion:** ~10h
+
+---
+
+#### 05/06/2026 — Sesion 24: Reorganizacion repo + Documentacion
+
+**Reorganizacion setup/:**
+- Nueva estructura por maquina: DC-01, DC-02, DC-03, DC-04, WKSTN-01, WKSTN-02, CrownJewels
+- Scripts con nombres descriptivos (01_promover_controlador_de_dominio_atackcorp.ps1, etc.)
+- Todos los fixes aplicados en los scripts reescritos
+- Script Deploy-SetupScripts.ps1 para despliegue automatico
+- 35 archivos cambiados, 1774 inserciones
+
+**Documentacion:**
+- RULES_OF_ENGAGEMENT.md — nuevo documento operacional
+- CREDENTIALS.md v2.0 — actualizado con todas las credenciales
+- CHANGELOG.md — entrada completa del rebuild
+- setup/README.md v3.0 — guion completo con orden de ejecucion
+
+**Horas sesion:** ~4h
+
+**Total acumulado:** ~135h
+
 ## 🏆 Técnicas Dominadas
 
 | Técnica | MITRE ID | Lab | Nivel |
@@ -307,41 +355,6 @@
 
 *⚡ Leyenda: ✅ Completado | 🔄 Parcial | ⏳ Pendiente*
 ---
-
-
-### Semana 10 — 04/06/2026
-
-#### 📌 04/06/2026 — Sesión 23: DC-01 rebuild WS2025 + Lab-07 LAPS setup
-
-**DC-01 Rebuild — Windows Server 2025:**
-- DC-01 eliminado (WS2022 Build 20348.558 incompatible con Windows LAPS nativo)
-- Nueva VM creada con Windows Server 2025 (Build 26100+)
-- Provisioning completo re-ejecutado: scripts 01-04 completados
-- SQL Server 2022 Express descargado e instalando (pendiente script 05)
-- Razon del rebuild:
-  - Windows LAPS nativo requiere WS2022 Build 20348.1547+ o WS2025
-  - LAPS legacy ldifde falla con error FSMO 0x21a2 (replicacion AD)
-  - LAPS legacy CSE bloqueado en Windows 11 Build 26100 (23H2+)
-
-**Nuevos scripts generados:**
-- `12_setup_LAPS.ps1` — Windows LAPS nativo WS2025 con misconfiguration helpdesk.ruiz
-- `14_setup_Defender.ps1` — Defender activo con exclusiones controladas para labs
-
-**Documentacion actualizada:**
-- LAB_INFRASTRUCTURE.md — DC-01 OS actualizado a WS2025
-- CHANGELOG.md — entrada rebuild DC-01
-- setup/README.md — pasos 9-10 nuevos (LAPS + Defender)
-- README.md global — tabla VMs actualizada
-
-**Pendiente completar esta sesion:**
-- Script 05 — SQL Server Express (descargando)
-- Script 06 — WKSTN-01 re-unir al dominio
-- Script 12 — Windows LAPS
-- Script 14 — Defender config
-- Lab-07 Fase 01 — LAPS password extraction
-
-**Horas:** ~4h (en curso)
-
 
 ### Semana 9 — 01/06/2026
 

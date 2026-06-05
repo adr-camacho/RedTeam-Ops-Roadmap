@@ -58,7 +58,7 @@ Dominio: atackcorp.local
 
 | Host | SO | IP | RAM | Rol | Servicios |
 |------|----|----|-----|-----|-----------|
-| DC-01 | Windows Server 2022 Standard Evaluation | `10.0.2.10` | 2GB | Domain Controller | AD DS, DNS, MSSQL, IIS, SMB |
+| DC-01 | Windows Server 2025 Standard Evaluation | `10.0.2.10` | 2GB | Domain Controller | AD DS, DNS, MSSQL, IIS, SMB |
 | WKSTN-01 | Windows 11 Enterprise Evaluation | `10.0.2.8` | 4GB | Workstation | SMB, WinRM, Servicios locales |
 | Kali | Kali Linux 2026.1 | `10.0.2.9` | 2GB | Atacante | Arsenal Red Team |
 
@@ -858,9 +858,12 @@ Kali (10.0.2.9) — Atacante / C2
 - **WinRM en WKSTNs:** Puerto 5985 abierto. Cuenta Administrador local activada manualmente antes del script.
 - **SID History:** sIDHistory protegido en AD — no modificable via LDAP aunque DA. Usar DSInternals v4.14.
 - **mimikatz misc::addsid:** Eliminado en v2.2.0+. Usar DSInternals Add-ADDBSidHistory en su lugar.
-- **DC-01 rebuild Junio 2026:** Reinstalado con Windows Server 2025 (Build 26100+) por incompatibilidad de LAPS legacy con WS2022 Build 20348.558.
-- **Windows LAPS nativo:** DC-01 WS2025 incluye Windows LAPS nativo — atributo msLAPS-Password, no requiere MSI legacy.
-- **SQL Server 2022 Express:** Instalado en DC-01 post-rebuild.
-- **Adaptador NAT temporal:** Durante el rebuild se añade Adaptador 2 NAT para descarga de software — eliminar tras provisioning.
 
-*Ultima actualizacion: Junio 2026 — DC-01 rebuild WS2025 — Adrian Camacho*
+- **DC-01 rebuild Junio 2026:** Reinstalado con Windows Server 2025 (Build 26100+)
+- **Windows LAPS nativo:** WS2025 incluye LAPS sin MSI — atributo msLAPS-Password
+- **SQL Server 2022 Express:** Instalado en DC-01 post-rebuild (GUI — RAM minima 12GB)
+- **ADCS:** CA AtackCorp-CA + Web Enrollment en http://DC-01/certsrv
+- **Trusts WS2025:** New-ADTrust no existe — usar .NET DirectoryServices
+- **netdom /quarantine:** Falla en WS2025 — usar SetSidFilteringStatus
+
+*Ultima actualizacion: Junio 2026 — Entorno CRTO completo v1.1 — Adrian Camacho*
