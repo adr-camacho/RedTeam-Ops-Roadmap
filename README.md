@@ -91,7 +91,7 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 
 | Host | IP | OS | RAM | Rol |
 |---|---|---|---|---|
-| DC-01 | 10.0.2.10 | Windows Server 2025 | 12GB | Domain Controller — atackcorp.local + ADCS + Windows LAPS |
+| DC-01 | 10.0.2.10 | Windows Server 2025 | 4GB | Domain Controller — atackcorp.local + ADCS + Windows LAPS |
 | DC-02 | 10.0.2.11 | Windows Server 2022 | 3GB | Domain Controller — corp.local (Forest 2) |
 | DC-03 | 10.0.2.13 | Windows Server 2022 | 3GB | Domain Controller — child.atackcorp.local |
 | DC-04 | 10.0.2.14 | Windows Server 2022 | 2GB | Domain Controller — ext.local (Forest 3) |
@@ -422,18 +422,23 @@ graph LR
 ---
 
 ## 🧠 Metodología
-┌────────────────────────────────────────────────────────────────┐
-│  PASO 1: ADVERSARY SELECTION  → APT real · Kill chain · TTPs   │
-│  PASO 2: THREAT MODEL         → Crown Jewels · Scope · Éxito   │
-│  PASO 3: THEORY               → Fundamentos antes de ejecutar  │
-│  PASO 4: INFRASTRUCTURE       → Setup reproducible + snapshots │
-│  PASO 5: RECONNAISSANCE       → BloodHound · Attack paths      │
-│  PASO 6: EXECUTION            → Comandos + output + OPSEC      │
-│  PASO 7: CLEANUP              → Artefactos · ACLs · GPOs       │
-│  PASO 8: ANALYSIS             → Post-mortem + lecciones        │
-│  PASO 9: BLUE TEAM            → Event IDs · SIGMA · Hardening  │
-│  PASO 10: REPORT              → PDF ejecutivo + lessons learned│
-└────────────────────────────────────────────────────────────────┘
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  PASO  1: ADVERSARY SELECTION  → APT real · Kill chain · TTPs      │
+│  PASO  2: THREAT MODEL         → Crown Jewels · Scope · Éxito      │
+│  PASO  3: THEORY               → Fundamentos antes de ejecutar     │
+│  PASO  4: INFRASTRUCTURE       → Setup reproducible + snapshots    │
+│  PASO  5: RECONNAISSANCE       → BloodHound · Attack paths         │
+│  PASO  6: EXECUTION            → Comandos + output + OPSEC         │
+│  PASO  7: CLEANUP              → Artefactos · ACLs · GPOs          │
+│  PASO  8: ANALYSIS             → Post-mortem + lecciones           │
+│  PASO  9: BLUE TEAM            → Event IDs · SIGMA · Hardening     │
+│  PASO 10: REPORT               → PDF ejecutivo + lessons learned   │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+> Metodología completa en [`docs/operations/METHODOLOGY.md`](docs/operations/METHODOLOGY.md)
 
 ---
 
@@ -485,11 +490,11 @@ graph LR
 ### Requisitos de hardware
 
 ```
-RAM mínima:    30 GB  (entorno CRTO completo — 4 DCs + 2 WKSTNs + Kali)
+RAM mínima:    40 GB  (entorno CRTO completo — 4 DCs + 2 WKSTNs + Kali)
 CPU:           8 cores (recomendado — VT-x/AMD-V activo en BIOS)
 Disco:         400 GB libres
 Hypervisor:    VirtualBox 7.x
-RAM por VM:    Kali 8GB · DC-01 12GB · DC-02/03/04 4GB · WKSTNs 4GB
+RAM por VM:    Kali 8GB · DC-01 22GB · DC-02/03/04 4GB · WKSTNs 4GB
 ```
 
 ### Setup automatizado
