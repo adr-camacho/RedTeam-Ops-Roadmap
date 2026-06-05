@@ -11,12 +11,12 @@
 
 ```
   [ Active Directory Adversary Emulation — APT29 · APT41 · APT28 · Lazarus · APT10 ]
-  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 5/15 Labs · 45 TTPs ]
+  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 6/15 Labs · 56 TTPs ]
 ```
 
 [![Estado](https://img.shields.io/badge/Estado-En%20Progreso-orange?style=for-the-badge)](.)
-[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-45-brightgreen?style=for-the-badge)](.)
-[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E115h-purple?style=for-the-badge)](.)
+[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-56-brightgreen?style=for-the-badge)](.)
+[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E135h-purple?style=for-the-badge)](.)
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-black?style=for-the-badge)](https://attack.mitre.org)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet?style=for-the-badge)](.)
 [![Licencia](https://img.shields.io/badge/Uso-Educativo-green?style=for-the-badge)](.)
@@ -56,7 +56,7 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐             │
 │  │    DC-01      │  │    DC-03      │  │   WKSTN-01   │             │
 │  │  10.0.2.10    │  │  10.0.2.13    │  │  10.0.2.8    │             │
-│  │  Root DC      │  │  child.atack  │  │  Windows 11  │             │
+│  │  Root DC      │  │  child.atack. │  │  Windows 11  │             │
 │  │  ADCS         │  │  corp.local   │  │              │             │
 │  └──────┬────────┘  └──────────────┘  └──────────────┘             │
 │         │ BiDir Trust          BiDir Trust                          │
@@ -131,8 +131,8 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 |---|---|---|---|---|
 | Lab-04 | 🔴 **IRON FOREST** | APT28 (Fancy Bear) | ✅ Completado ~20h | WriteDACL→DCSync, Credential Hunting, ADIDNS Poisoning, Overpass-the-Hash |
 | Lab-05 | ⛓️ **SILVER CHAIN** | APT28 (Fancy Bear) | ✅ Completado ~20h | RBCD, Shadow Credentials, Silver Ticket, Diamond Ticket |
-| Lab-06 | 📋 **BLACK POLICY** | APT28 (Fancy Bear) | ⏳ Pendiente | SID History, Cross-Forest Trust, GPO abuse avanzado |
-| Lab-07 | 🔒 **SHADOW VAULT** | APT28 (Fancy Bear) | ⏳ Pendiente | LAPS, DPAPI, Shadow Credentials, LSASS dump sin Mimikatz |
+| Lab-06 | 📋 **BLACK POLICY** | APT28 (Fancy Bear) | ✅ Completado ~25h | SID History Injection, Cross-Forest Trust, GPO Abuse, DSInternals |
+| Lab-07 | 🔒 **SHADOW VAULT** | APT28 (Fancy Bear) | 🔄 En progreso | LAPS abuse, DPAPI, Shadow Credentials, LSASS dump sin Mimikatz |
 
 ### 🔴 Phase-03 — Red Team & Evasión de Defensas
 
@@ -347,8 +347,8 @@ Red-Team_Labs/
 ├── Phase-02-Post-Exploitation/
 │   ├── Lab-04-Iron-Forest/     ✅ 8 fases  · ~20h · APT28
 │   ├── Lab-05-Silver-Chain/    ✅ 6 fases  · ~20h · APT28
-│   ├── Lab-06-Black-Policy/    ⏳ Pendiente · APT28
-│   └── Lab-07-Shadow-Vault/    ⏳ Pendiente · APT28
+│   ├── Lab-06-Black-Policy/    ✅ Completado · ~25h · APT28
+│   └── Lab-07-Shadow-Vault/    🔄 En progreso · APT28
 │
 ├── Phase-03-Red-Team-Operations/
 │   ├── Lab-08-Ghost-Signals/   ⏳ Pendiente · Lazarus
@@ -504,7 +504,7 @@ bash tooling/arsenal_setup.sh
 
 ## 📊 MITRE ATT&CK Coverage
 
-**Técnicas dominadas: 45 · Parciales: 2 · En roadmap: 24+**
+**Técnicas dominadas: 56 · Parciales: 2 · En roadmap: 24+**
 
 | Táctica | Técnica | ID | Lab | Estado |
 |---|---|---|---|---|
@@ -544,7 +544,7 @@ bash tooling/arsenal_setup.sh
 | `docs/reference/ARSENAL.md` | Arsenal completo con rutas y versiones |
 | `docs/reference/LAB_INFRASTRUCTURE.md` | Infraestructura detallada de cada lab |
 | `docs/reference/MITRE_MAPPING.md` | Mapping MITRE ATT&CK v14 completo |
-| `docs/progress/PROGRESS.md` | Diario de sesiones + 45 técnicas dominadas |
+| `docs/progress/PROGRESS.md` | Diario de sesiones + 56 técnicas dominadas |
 | `docs/progress/CHANGELOG.md` | Historial completo de cambios |
 
 ---
