@@ -4,6 +4,51 @@
 > Tipos: `ADD` | `UPDATE` | `FIX` | `REFACTOR` | `DOCS`
 
 
+## [2026-06-06] — Lab-07 SHADOW VAULT ejecutado + docs + scripts actualizados
+
+### FEAT — Lab-07 SHADOW VAULT completado
+- Fase 01 ✅ LAPS Password Extraction (nxc ldap -M laps)
+- Fase 02 ✅ DPAPI Credential Extraction (impacket-dpapi offline)
+- Fase 03 ⚠️ LSASS Dump bloqueado (Windows 11 23H2+ KPP/PPL)
+- Fase 04 ✅ Shadow Credentials (pywhisker + certipy-ad)
+- Fase 05 ✅ Sliver C2 SUPPORTING_NECKLACE + OPSEC Cleanup
+
+### ADD — Documentación Lab-07
+- docs/execution/OPERATION_SHADOW_VAULT.md
+- docs/execution/exploitation.md (comandos completos)
+- docs/execution/infrastructure_setup.md
+- docs/execution/laps_extraction.md
+- docs/execution/dpapi_extraction.md
+- docs/execution/lsass_dump.md (bloqueado — análisis técnico)
+- docs/execution/shadow_credentials.md
+- docs/execution/c2_sliver.md
+- docs/analysis/lessons_learned.md (8 lecciones técnicas)
+- docs/analysis/mitigations.md (hallazgos H-01 a H-04)
+- docs/report/Reporte_SHADOW_VAULT.pdf
+- loot/loot.txt
+
+### FIX — Scripts actualizados
+- setup/WKSTN-01 v3.1: grupos helpdesk.ruiz, WinRM SDDL, Firewall OFF, LAPS sin GKDI, PPL=0, Defender OFF
+- setup/DC-01/12_laps v1.1: ADPasswordEncryptionEnabled=0 en GPO, AllowedPrincipals nombre completo
+- setup/CrownJewels/CrownJewels-Lab07 v2.0: cmdkey via PsExec -i 1 (sesion interactiva helpdesk.ruiz)
+
+### UPDATE — Tooling
+- tooling/arsenal_setup.sh v2.3: netexec, LAPSToolkit, avisos nanodump/SharpDPAPI, ldeep, pylaps
+- tooling/lab_start.sh v2.0: Labs 04-07 añadidos, verificacion WKSTN via nxc smb
+
+### UPDATE — Reference docs
+- docs/reference/TOOL_INDEX.md v2.1: Lab-07 x9 herramientas + notas operacionales
+- docs/reference/ARSENAL.md v2.2: pywhisker, ldeep, impacket-dpapi documentados
+- docs/reference/CREDENTIALS.md v2.1: LAPS password + sa DPAPI loot
+- docs/reference/MITRE_MAPPING.md: Lab-07 ✅ Completado, TTPs marcadas
+
+### FIX — Repo cleanup
+- Eliminado setup/provisioning_backup (conflicto merge resuelto)
+
+### PENDIENTE (próximas sesiones)
+- Lab-07 LSASS dump: técnica avanzada BYOD/kernel — Labs 08-11
+- Lab-08 GHOST SIGNAL — inicio Phase-03 (EDR evasion)
+
 ## [2026-06-05] — DC-01 rebuild WS2025 + Setup completo + Reorganizacion repo
 
 ### INFRA — DC-01 rebuild Windows Server 2025

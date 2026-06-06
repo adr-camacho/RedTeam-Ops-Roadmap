@@ -11,12 +11,12 @@
 
 ```
   [ Active Directory Adversary Emulation — APT29 · APT41 · APT28 · Lazarus · APT10 ]
-  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 6/15 Labs · 56 TTPs ]
+  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 7/15 Labs · 61 TTPs ]
 ```
 
 [![Estado](https://img.shields.io/badge/Estado-En%20Progreso-orange?style=for-the-badge)](.)
 [![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-56-brightgreen?style=for-the-badge)](.)
-[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E135h-purple?style=for-the-badge)](.)
+[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E142h-purple?style=for-the-badge)](.)
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-black?style=for-the-badge)](https://attack.mitre.org)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet?style=for-the-badge)](.)
 [![Licencia](https://img.shields.io/badge/Uso-Educativo-green?style=for-the-badge)](.)
@@ -132,7 +132,7 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 | Lab-04 | 🔴 **IRON FOREST** | APT28 (Fancy Bear) | ✅ Completado ~20h | WriteDACL→DCSync, Credential Hunting, ADIDNS Poisoning, Overpass-the-Hash |
 | Lab-05 | ⛓️ **SILVER CHAIN** | APT28 (Fancy Bear) | ✅ Completado ~20h | RBCD, Shadow Credentials, Silver Ticket, Diamond Ticket |
 | Lab-06 | 📋 **BLACK POLICY** | APT28 (Fancy Bear) | ✅ Completado ~25h | SID History Injection, Cross-Forest Trust, GPO Abuse, DSInternals |
-| Lab-07 | 🔒 **SHADOW VAULT** | APT28 (Fancy Bear) | 🔄 En progreso | LAPS abuse, DPAPI, Shadow Credentials, LSASS dump sin Mimikatz |
+| Lab-07 | 🔒 **SHADOW VAULT** | APT28 (Fancy Bear) | ✅ Completado ~8h | LAPS abuse, DPAPI extraction, Shadow Credentials, C2 Sliver |
 
 ### 🔴 Phase-03 — Red Team & Evasión de Defensas
 
@@ -299,18 +299,39 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 
 </details>
 
-## 🔄 En progreso
+---
 
-**Lab-07 — SHADOW VAULT · APT28 (Fancy Bear)**
+### ✅ Lab-07 — SHADOW VAULT | APT28 (Fancy Bear)
 
-| Campo | Detalle |
-|---|---|
-| Estado | Infraestructura lista · CrownJewels ejecutados · Fase 01 pendiente |
-| Técnicas | Windows LAPS abuse, DPAPI extraction, Shadow Credentials, LSASS dump sin Mimikatz |
-| Crown Jewels | msLAPS-Password WKSTN-01 · DPAPI Credential Manager · HR-Confidential share |
-| Credencial inicial | `helpdesk.ruiz:Helpdesk2024!` |
+**5 fases completadas · ~8 horas · Documentación completa**
+
+<details>
+<summary>Ver todas las fases y TTPs</summary>
+
+| Fase | Nombre | Técnica | MITRE ID | Herramienta |
+|---|---|---|---|---|
+| 01 | LAPS Password Extraction | Windows LAPS Password Disclosure via LDAP | T1201, T1078.003 | nxc ldap -M laps, impacket-smbclient |
+| 02 | DPAPI Credential Extraction | DPAPI Master Key dump + Credential Manager decrypt | T1555.004 | impacket-dpapi masterkey/credential |
+| 03 | LSASS Dump sin Mimikatz | comsvcs.dll MiniDump — BLOQUEADO Windows 11 23H2+ | T1003.001 | Bloqueado por KPP — Labs 08-11 |
+| 04 | Shadow Credentials | msDS-KeyCredentialLink abuse + PKINIT | T1649 | pywhisker, certipy-ad |
+| 05 | C2 + OPSEC Cleanup | Sliver HTTPS beacon + eliminación artefactos | T1071.001, T1070.004 | Sliver, impacket-smbclient |
+
+**Crown Jewels:** `WKSTN-01\Administrador:@98q6$13Z{K99;` · `sa:SQLsa2026!` (DC-01\SQLEXPRESS) · NT hash WKSTN-01$  
+**Lecciones clave:** WS2025 LAPS usa GKDI por defecto (herramientas Linux no descifran) · Evil-WinRM Network Logon no tiene SeDebugPrivilege · Windows 11 23H2+ KPP bloquea LSASS dump incluso con PPL=0 · pywhisker requiere --use-ldaps en WS2025 · usar certipy-ad (no certipy)
+
+</details>
 
 ---
+
+## 🔜 Próximo objetivo
+
+**Lab-08 — GHOST SIGNAL · Lazarus Group**
+
+| Campo | Detalle |
+|-------|---------|
+| Técnicas | AMSI Bypass, EDR Evasion, Process Injection, Direct Syscalls, BYOD |
+| Objetivo | Operar en entorno con Defender activo sin deshabilitar Tamper Protection |
+| Adversario | Lazarus Group — TTP de evasión avanzada |
 
 ## 📂 Estructura del Repositorio
 
@@ -373,7 +394,7 @@ Red-Team_Labs/
 │   ├── Lab-04-Iron-Forest/     ✅ 8 fases  · ~20h · APT28
 │   ├── Lab-05-Silver-Chain/    ✅ 6 fases  · ~20h · APT28
 │   ├── Lab-06-Black-Policy/    ✅ Completado · ~25h · APT28
-│   └── Lab-07-Shadow-Vault/    🔄 En progreso · APT28
+│   └── Lab-07-Shadow-Vault/    ✅ Completado · ~8h · APT28
 │
 ├── Phase-03-Red-Team-Operations/
 │   ├── Lab-08-Ghost-Signals/   ⏳ Pendiente · Lazarus

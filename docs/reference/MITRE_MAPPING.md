@@ -159,45 +159,14 @@
 | Command & Control | Application Layer Protocol | Web Protocols | T1071.001 | Sliver HTTP beacon | ✅ |
 | Defense Evasion | Indicator Removal | — | T1070 | impacket + pywhisker | ✅ |
 
-#### Lab-06 — BLACK POLICY ✅ Completado
-
-| Táctica | Técnica | Sub-técnica | ID | Herramienta | Estado |
-|---------|---------|-------------|-----|-------------|--------|
-| Reconnaissance | Network Service Discovery | — | T1046 | Nmap, ldapsearch | ✅ |
-| Reconnaissance | Network Share Discovery | — | T1135 | CrackMapExec, smbclient | ✅ |
-| Reconnaissance | Domain Trust Discovery | — | T1482 | ldapsearch, impacket | ✅ |
-| Credential Access | Steal/Forge Kerberos Tickets | Kerberoasting (cross-forest) | T1558.003 | impacket-GetUserSPNs | ✅ |
-| Credential Access | Steal/Forge Kerberos Tickets | Targeted Kerberoasting (GenericAll) | T1558.003 | bloodyAD + GetUserSPNs | ✅ |
-| Credential Access | OS Credential Dumping | DCSync multi-forest | T1003.006 | impacket-secretsdump | ✅ |
-| Credential Access | OS Credential Dumping | ntds.dit manipulation | T1003.003 | DSInternals v4.14 | ✅ |
-| Credential Access | Credentials in Files | SMB share credential exposure | T1552.001 | smbclient | ✅ |
-| Privilege Escalation | Access Token Manipulation | SID-History Injection | T1134.005 | DSInternals Add-ADDBSidHistory | ✅ |
-| Privilege Escalation | Domain Policy Modification | Group Policy (pyGPOAbuse) | T1484.001 | pyGPOAbuse, dacledit | ✅ |
-| Lateral Movement | Remote Services | Windows Remote Management | T1021.006 | Evil-WinRM cross-forest | ✅ |
-| Defense Evasion | Indicator Removal | GPO + SPN cleanup | T1070 | pyGPOAbuse cleanup, bloodyAD | ✅ |
-| Command & Control | Application Layer Protocol | Web Protocols (HTTPS) | T1071.001 | Sliver :8443 | ✅ |
-| Command & Control | Encrypted Channel | Asymmetric Cryptography | T1573.002 | Sliver mTLS | ✅ |
-| Collection | Data from Network Shared Drive | Enterprise-Strategy exfil | T1039 | smbclient | ✅ |
-
-**Lecciones técnicas Lab-06:**
-- `sIDHistory` protegido en AD — no modificable via LDAP aunque DA (ni bloodyAD ni dacledit)
-- GPP XML manual no funciona en Windows 11 — pyGPOAbuse usa mecanismo diferente más compatible
-- mimikatz `misc::addsid` eliminado en v2.2.0+ — DSInternals es la herramienta correcta
-- Cross-forest Kerberoasting requiere TGT previo (impacket-getTGT + KRB5CCNAME)
-- `New-SmbShare -ReadAccess "Everyone"` falla en Windows Server en español → usar SID `*S-1-1-0`
-
-#### Lab-07 — SHADOW VAULT 🔄 En Progreso
+#### Labs 06-07 — Pendientes
 
 | Táctica | Técnica | Sub-técnica | ID | Lab | Herramienta | Estado |
 |---------|---------|-------------|-----|-----|-------------|--------|
+| Privilege Escalation | Domain Policy Modification | Group Policy | T1484.001 | Lab-06 | — | ⏳ |
+| Privilege Escalation | Domain Policy Modification | Domain Trust Modification | T1484.002 | Lab-06 | — | ⏳ |
 | Credential Access | OS Credential Dumping | LSASS Memory | T1003.001 | Lab-07 | nanodump | ⏳ |
 | Credential Access | Unsecured Credentials | DPAPI | T1555 | Lab-07 | SharpDPAPI | ⏳ |
-| Credential Access | Unsecured Credentials | Credentials in Registry | T1552.002 | Lab-07 | cmdkey / Windows Credential Manager | ⏳ |
-| Credential Access | Steal/Forge Auth Certs | — | T1649 | Lab-07 | Shadow Credentials — pywhisker | ⏳ |
-| Discovery | Password Policy Discovery | — | T1201 | Lab-07 | nxc ldap -M laps | ⏳ |
-| Discovery | Remote System Discovery | — | T1018 | Lab-07 | Get-LapsADPassword | ⏳ |
-| Privilege Escalation | Valid Accounts | Local Accounts | T1078.003 | Lab-07 | LAPS admin local WKSTN-01 | ⏳ |
-| Lateral Movement | Remote Services | SMB / Windows Admin Shares | T1021.002 | Lab-07 | smbclient con LAPS pass | ⏳ |
 
 ---
 

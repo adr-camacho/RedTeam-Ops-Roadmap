@@ -2,7 +2,7 @@
 ## Credenciales de administracion del entorno de laboratorio
 
 **Uso:** Solo para gestion del entorno — NO son credenciales de ataque  
-**Autor:** Adrian Camacho | **Actualizado:** Junio 2026 (v2.0)
+**Autor:** Adrian Camacho | **Actualizado:** Junio 2026 (v2.1 — Lab-07 LAPS + DPAPI loot)
 
 > Este archivo contiene credenciales de laboratorio en texto claro.  
 > **Nunca subir a repositorios publicos en entornos reales.**  
@@ -82,7 +82,7 @@
 | SQL Server app | `sql_svc` | `SQLSvc2024!` | Login con rol sysadmin |
 | IIS App Pool | `ATACKCORP\iis_svc` | `IISService2024!` | Constrained Delegation |
 | Webapp DB | `webapp_db` | `WebappDB2024!` | IT-Scripts/deploy_webapp.ps1 |
-| LAPS Admin local WKSTN-01 | `Administrador` | Ver msLAPS-Password | Legible por helpdesk.ruiz |
+| LAPS Admin local WKSTN-01 | `Administrador` | `@98q6$13Z{K99;` (rota mensualmente) | Legible por helpdesk.ruiz — msLAPS-Password |
 
 ---
 
@@ -95,6 +95,7 @@
 | Azure tenant | `admin@atackcorp.onmicrosoft.com` | `AzureTemp2026!` | CorporateData/Executive/ |
 | CA backup | — | `CAbackup2025!AtackCorp` | CorporateData/PKI-Admin/ |
 | Zabbix | `zabbix` | `Zabbix@2026!` | CorporateData/IT/ |
+| SQL Server SA (DPAPI Lab-07) | `sa` | `SQLsa2026!` | DC-01\SQLEXPRESS — extraída via DPAPI |
 
 ---
 

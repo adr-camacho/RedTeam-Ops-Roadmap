@@ -2,7 +2,7 @@
 
 > Documentación de todas las herramientas instaladas y utilizadas durante la realización del roadmap.  
 > Organizado por categoría funcional, con descripción técnica, uso principal y lab de referencia.
-> **Versión:** 2.1 | **Actualizado:** Junio 2026
+> **Versión:** 2.2 | **Actualizado:** Junio 2026 (Lab-07)
 
 ---
 
@@ -244,26 +244,6 @@
   Start-Service NTDS
   ```
 - **OPSEC:** Parar NTDS genera ~30s de interrupción AD — genera alertas en producción.
-- **Labs:** Lab-06+
-
----
-
-
-### pyGPOAbuse
-- **Descripcion:** Herramienta Python para abusar de GPOs. Crea ScheduledTasks maliciosas en SYSVOL, actualiza GPT.INI Version counter y es compatible con Windows 11 (donde el XML manual de GPP no funciona).
-- **Version:** Latest (GitHub)
-- **Instalacion:** `sudo git clone https://github.com/Hackndo/pyGPOAbuse.git /opt/redteam/pyGPOAbuse`
-- **Ruta:** `/opt/redteam/pyGPOAbuse/pygpoabuse.py`
-- **Uso:**
-  ```bash
-  # Crear ScheduledTask maliciosa
-  python3 pygpoabuse.py 'dominio/user:pass' -gpo-id 'GUID' -command 'CMD' -dc-ip IP -f
-
-  # Cleanup
-  python3 pygpoabuse.py 'dominio/user:pass' -gpo-id 'GUID' -dc-ip IP -taskname 'TASK_xxxx' --cleanup
-  ```
-- **Nota:** Target como argumento posicional. Flag `-f` fuerza sobrescritura. `-taskname` para cleanup selectivo.
-- **OPSEC:** Event ID 5136 (GPO modificado) + 4698/4699 (ScheduledTask). Menos ruidoso que XML manual.
 - **Labs:** Lab-06+
 
 ---

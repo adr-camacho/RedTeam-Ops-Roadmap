@@ -1,103 +1,109 @@
-# 12_setup_LAPS.ps1 -- Windows LAPS nativo (Windows Server 2025)
-# Version: 1.0 | Junio 2026
-# Prerequisito: DC-01 promovido como DC, AD operativo
-# Prerequisito: Ejecutar DESPUES de 02_users_ous.ps1
+# 12_configurar_windows_laps_atackcorp.ps1
+# Maquina: DC-01 (atackcorp.local — Windows Server 2025)
+# Prerequisito: Script 02 ejecutado (helpdesk.ruiz creado)
+#               WKSTN-01 unida al dominio y en OU=IT
+# Version: 1.1 | Junio 2026
 #
-# NOTA: Este script usa Windows LAPS nativo (WS2025+)
-#       NO requiere instalacion de MSI legacy
-#       Atributo: msLAPS-Password (no ms-Mcs-AdmPwd)
-#
-# MISCONFIGURATION INTENCIONAL para Lab-07:
-#   helpdesk.ruiz tiene permisos de lectura sobre msLAPS-Password de WKSTN-01
-#   Esto permite el ataque LAPS Password Disclosure
+# FIX v1.1 (Lab-07):
+#   - ADPasswordEncryptionEnabled=0 en GPO LAPS-Policy
+#     WS2025 usa cifrado GKDI por defecto — herramientas Linux no descifran GKDI
+#   - AllowedPrincipals usa nombre completo ATACKCORP\helpdesk.ruiz
+#   - Añadida verificacion de que WKSTN-01 tiene la GPO aplicada
+#   - Instruccion gpupdate /force en WKSTN-01 tras ejecutar
 
+if ($env:COMPUTERNAME -ne "DC-01") { Write-Warning "Ejecutar en DC-01"; exit 1 }
 Import-Module ActiveDirectory
-Write-Host "=============================================" -ForegroundColor DarkCyan
-Write-Host "    Windows LAPS Setup -- DC-01 (WS2025)    " -ForegroundColor DarkCyan
-Write-Host "=============================================" -ForegroundColor DarkCyan
 
-# BLOQUE 1 -- Extender schema AD para Windows LAPS
+Write-Host "================================================" -ForegroundColor DarkCyan
+Write-Host "  DC-01: Windows LAPS nativo (v1.1)" -ForegroundColor DarkCyan
+Write-Host "================================================" -ForegroundColor DarkCyan
+
+# --- Extender schema AD para Windows LAPS ---
 Write-Host "[*] Extendiendo schema AD para Windows LAPS..." -ForegroundColor Yellow
 try {
     Update-LapsADSchema -Confirm:$false
-    Write-Host "    [+] Schema LAPS extendido correctamente" -ForegroundColor Green
+    Write-Host "[+] Schema LAPS extendido (msLAPS-Password, msLAPS-EncryptedPassword)" -ForegroundColor Green
 } catch {
-    Write-Host "    [!] Error al extender schema: $_" -ForegroundColor Red
-    Write-Host "    [i] Verifica que eres Schema Admin" -ForegroundColor Yellow
-    exit 1
+    if ($_.Exception.Message -like "*already*" -or $_.Exception.Message -like "*ya*") {
+        Write-Host "[i] Schema LAPS ya extendido" -ForegroundColor Cyan
+    } else {
+        Write-Host "[!] Error schema: $_" -ForegroundColor Red
+    }
 }
 
-# BLOQUE 2 -- Permisos para que WKSTN-01 escriba su propia password
-Write-Host "[*] Configurando permisos LAPS en OU IT..." -ForegroundColor Yellow
+# --- Configurar permisos en OU=IT ---
+Write-Host "[*] Configurando permisos LAPS en OU=IT..." -ForegroundColor Yellow
 try {
-    Set-LapsADComputerSelfPermission -Identity "OU=IT,OU=Corporativo,DC=atackcorp,DC=local"
-    Write-Host "    [+] WKSTN-01 puede escribir su propia LAPS password" -ForegroundColor Green
-} catch {
-    Write-Host "    [!] Error permisos SelfPermission: $_" -ForegroundColor Red
-}
+    # Habilitar WKSTN-01 para reportar password LAPS al DC
+    Set-LapsADComputerSelfPermission -Identity "OU=IT,DC=atackcorp,DC=local"
+    Write-Host "[+] Self-permission configurada en OU=IT" -ForegroundColor Green
+} catch { Write-Host "[!] Error self-permission: $_" -ForegroundColor Red }
 
-# BLOQUE 3 -- MISCONFIGURATION: helpdesk.ruiz puede leer LAPS passwords
-# Esta es la vulnerabilidad intencional que se explotara en Lab-07
-Write-Host "[*] Configurando misconfiguration LAPS (Lab-07)..." -ForegroundColor Yellow
 try {
-    Set-LapsADReadPasswordPermission -Identity "OU=IT,OU=Corporativo,DC=atackcorp,DC=local" `
-        -AllowedPrincipals "helpdesk.ruiz"
-    Write-Host "    [!] MISCONFIGURATION: helpdesk.ruiz puede leer msLAPS-Password de WKSTN-01" -ForegroundColor Red
-    Write-Host "    [i] Este es el vector de ataque de Lab-07 Fase 01" -ForegroundColor Cyan
-} catch {
-    Write-Host "    [!] Error permisos ReadPassword: $_" -ForegroundColor Red
+    # helpdesk.ruiz puede leer msLAPS-Password (misconfiguration intencional para el lab)
+    Set-LapsADReadPasswordPermission -Identity "OU=IT,DC=atackcorp,DC=local" `
+        -AllowedPrincipals "ATACKCORP\helpdesk.ruiz"
+    Write-Host "[!] helpdesk.ruiz puede leer msLAPS-Password de WKSTN-01 (misconfiguration lab)" -ForegroundColor Red
+} catch { Write-Host "[!] Error read-permission: $_" -ForegroundColor Red }
+
+# --- Crear y configurar GPO LAPS-Policy ---
+Write-Host "[*] Configurando GPO LAPS-Policy..." -ForegroundColor Yellow
+$gpoName = "LAPS-Policy"
+$gpo = Get-GPO -Name $gpoName -ErrorAction SilentlyContinue
+if (-not $gpo) {
+    $gpo = New-GPO -Name $gpoName
+    Write-Host "[+] GPO LAPS-Policy creada" -ForegroundColor Green
+} else {
+    Write-Host "[i] GPO LAPS-Policy ya existe" -ForegroundColor Cyan
 }
 
-# BLOQUE 4 -- GPO para activar Windows LAPS en WKSTN-01
-Write-Host "[*] Creando GPO Windows LAPS..." -ForegroundColor Yellow
+# Vincular GPO a OU=IT
 try {
-    # Eliminar GPO anterior si existe
-    Get-GPO -Name "LAPS-Policy" -ErrorAction SilentlyContinue | Remove-GPO -Confirm:$false
-
-    New-GPO -Name "LAPS-Policy" | New-GPLink -Target "OU=IT,OU=Corporativo,DC=atackcorp,DC=local" | Out-Null
-
-    # Configurar politica LAPS via registry CSE
-    Set-GPRegistryValue -Name "LAPS-Policy" `
-        -Key "HKLM\Software\Microsoft\Windows\CurrentVersion\LAPS\Config" `
-        -ValueName "BackupDirectory" -Type DWord -Value 2 | Out-Null
-
-    Set-GPRegistryValue -Name "LAPS-Policy" `
-        -Key "HKLM\Software\Microsoft\Windows\CurrentVersion\LAPS\Config" `
-        -ValueName "PasswordAgeDays" -Type DWord -Value 30 | Out-Null
-
-    Set-GPRegistryValue -Name "LAPS-Policy" `
-        -Key "HKLM\Software\Microsoft\Windows\CurrentVersion\LAPS\Config" `
-        -ValueName "PasswordLength" -Type DWord -Value 14 | Out-Null
-
-    Set-GPRegistryValue -Name "LAPS-Policy" `
-        -Key "HKLM\Software\Microsoft\Windows\CurrentVersion\LAPS\Config" `
-        -ValueName "AdministratorAccountName" -Type String -Value "Administrador" | Out-Null
-
-    Set-GPRegistryValue -Name "LAPS-Policy" `
-        -Key "HKLM\Software\Microsoft\Windows\CurrentVersion\LAPS\Config" `
-        -ValueName "PasswordComplexity" -Type DWord -Value 4 | Out-Null
-
-    Write-Host "    [+] GPO LAPS-Policy creada y vinculada a OU=IT,OU=Corporativo" -ForegroundColor Green
+    New-GPLink -Name $gpoName -Target "OU=IT,DC=atackcorp,DC=local" -ErrorAction Stop | Out-Null
+    Write-Host "[+] GPO vinculada a OU=IT" -ForegroundColor Green
 } catch {
-    Write-Host "    [!] Error creando GPO: $_" -ForegroundColor Red
+    Write-Host "[i] GPO ya vinculada a OU=IT" -ForegroundColor Cyan
 }
 
-# BLOQUE 5 -- Verificacion
-Write-Host "[*] Verificando configuracion LAPS..." -ForegroundColor Yellow
-try {
-    $schema = Get-LapsADSchema
-    Write-Host "    [+] Schema LAPS verificado" -ForegroundColor Green
-} catch {
-    Write-Host "    [!] No se pudo verificar el schema" -ForegroundColor Yellow
-}
+# Configurar settings LAPS en GPO
+$lapsKey = "HKLM\Software\Microsoft\Windows\CurrentVersion\LAPS\Config"
 
+# Backup directory: Active Directory (2)
+Set-GPRegistryValue -Name $gpoName -Key $lapsKey -ValueName "BackupDirectory" -Type DWord -Value 2
+
+# Password age: 30 dias
+Set-GPRegistryValue -Name $gpoName -Key $lapsKey -ValueName "PasswordAgeDays" -Type DWord -Value 30
+
+# Password length: 14 caracteres
+Set-GPRegistryValue -Name $gpoName -Key $lapsKey -ValueName "PasswordLength" -Type DWord -Value 14
+
+# Cuenta administrador: Administrador
+Set-GPRegistryValue -Name $gpoName -Key $lapsKey -ValueName "AdministratorAccountName" -Type String -Value "Administrador"
+
+# FIX v1.1: Deshabilitar cifrado GKDI para compatibilidad con herramientas Linux
+# WS2025 usa GKDI por defecto — nxc, ldeep, pyLAPS no descifran GKDI desde Linux
+# En produccion: mantener ADPasswordEncryptionEnabled=1 (mas seguro)
+Set-GPRegistryValue -Name $gpoName -Key $lapsKey -ValueName "ADPasswordEncryptionEnabled" -Type DWord -Value 0
+Write-Host "[!] ADPasswordEncryptionEnabled=0 (sin cifrado GKDI — solo para lab)" -ForegroundColor Red
+
+Write-Host "[+] GPO LAPS-Policy configurada" -ForegroundColor Green
+
+# --- Verificar configuracion ---
+Write-Host "[*] Verificacion de configuracion LAPS..." -ForegroundColor Yellow
+Get-GPO -Name $gpoName | Select-Object DisplayName, GpoStatus, ModificationTime | Format-Table
+
+# --- Instrucciones post-ejecucion ---
 Write-Host ""
-Write-Host "=============================================" -ForegroundColor DarkCyan
-Write-Host " Windows LAPS Setup completado" -ForegroundColor DarkCyan
-Write-Host "=============================================" -ForegroundColor DarkCyan
-Write-Host "  Schema extendido: msLAPS-Password" -ForegroundColor Cyan
-Write-Host "  GPO: LAPS-Policy vinculada a OU=IT,OU=Corporativo" -ForegroundColor Cyan
-Write-Host "  MISCONFIGURATION: helpdesk.ruiz puede leer LAPS passwords" -ForegroundColor Red
+Write-Host "================================================" -ForegroundColor DarkGreen
+Write-Host "  Script 12 completado (v1.1)" -ForegroundColor DarkGreen
+Write-Host "================================================" -ForegroundColor DarkGreen
 Write-Host ""
-Write-Host "  SIGUIENTE PASO: En WKSTN-01 ejecutar gpupdate /force" -ForegroundColor Yellow
-Write-Host "  VERIFICAR: Get-LapsADPassword -Identity WKSTN-01 -AsPlainText" -ForegroundColor Yellow
+Write-Host "SIGUIENTE PASO — Ejecutar en WKSTN-01:" -ForegroundColor Yellow
+Write-Host "  gpupdate /force" -ForegroundColor Cyan
+Write-Host "  Invoke-LapsPolicyProcessing  (como Administrador)" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "VERIFICAR desde DC-01 tras gpupdate en WKSTN-01:" -ForegroundColor Yellow
+Write-Host "  Get-LapsADPassword -Identity WKSTN-01 -AsPlainText" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "VERIFICAR desde helpdesk.ruiz:" -ForegroundColor Yellow
+Write-Host "  nxc ldap 10.0.2.10 -u helpdesk.ruiz -p 'Helpdesk2024!' -M laps" -ForegroundColor Cyan

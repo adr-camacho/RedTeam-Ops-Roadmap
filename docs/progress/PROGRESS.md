@@ -187,6 +187,40 @@
 
 **Total acumulado:** ~135h
 
+
+---
+
+### Semana 11 — 06/06/2026
+
+#### Sesiones 25-26: Lab-07 SHADOW VAULT — Ejecución completa
+
+**Fases ejecutadas:**
+- Fase 01 ✅ LAPS Password Extraction — nxc laps → WKSTN-01\Administrador:@98q6$13Z{K99;
+- Fase 02 ✅ DPAPI Credential Extraction — impacket-dpapi → sa:SQLsa2026! + helpdesk.ruiz:Helpdesk2024!
+- Fase 03 ⚠️ LSASS Dump — Bloqueado por Windows 11 23H2+ KPP (documentado)
+- Fase 04 ✅ Shadow Credentials — pywhisker + certipy-ad → NT hash WKSTN-01$
+- Fase 05 ✅ C2 + OPSEC Cleanup — Sliver SUPPORTING_NECKLACE + artefactos eliminados
+
+**Loot:**
+- WKSTN-01\Administrador : @98q6$13Z{K99; (LAPS msLAPS-Password)
+- sa : SQLsa2026! (DPAPI — DC-01\SQLEXPRESS)
+- helpdesk.ruiz : Helpdesk2024! (DPAPI — portal-it)
+- WKSTN-01$ NT hash : 5bcb127196e1fd7cc35e3d62066cabe3 (Shadow Credentials)
+
+**Problemas resueltos:**
+- WS2025 LAPS cifrado GKDI → deshabilitar ADPasswordEncryptionEnabled
+- helpdesk.ruiz sin grupos locales en WKSTN-01 → WKSTN-01 v3.1 script actualizado
+- WinRM SDDL no incluía helpdesk.ruiz → Set-PSSessionConfiguration con SID
+- Evil-WinRM requiere DOMINIO\usuario para usuarios de dominio
+- LSASS dump bloqueado en Windows 11 23H2+ → documentado para Labs 08-11
+- Firewall se reactiva tras reinicio → Set-NetFirewallProfile en provisioning
+
+**Scripts actualizados:**
+- setup/WKSTN-01 v3.1, setup/DC-01/12_laps v1.1, CrownJewels-Lab07 v2.0
+- tooling/arsenal_setup.sh v2.3, tooling/lab_start.sh v2.0
+
+**Horas sesión:** ~8h | **Total acumulado: ~143h**
+
 ## 🏆 Técnicas Dominadas
 
 | Técnica | MITRE ID | Lab | Nivel |
@@ -387,7 +421,7 @@
 
 ---
 
-## 🏆 Técnicas Dominadas — Actualizado 01/06/2026
+## 🏆 Técnicas Dominadas — Actualizado 06/06/2026
 
 | Técnica | MITRE ID | Lab | Nivel |
 |---------|----------|-----|-------|
@@ -433,7 +467,7 @@
 
 ---
 
-## 🏆 Técnicas Dominadas — Actualizado 01/06/2026
+## 🏆 Técnicas Dominadas — Actualizado 06/06/2026
 
 | Técnica | MITRE ID | Lab | Nivel |
 |---------|----------|-----|-------|
@@ -444,3 +478,8 @@
 | Credential Hunting cross-forest SMB | T1552.001 | Lab-06 | ✅ Dominada |
 | DCSync cross-domain (SID History) | T1003.006 | Lab-06 | ✅ Dominada |
 | .NET NTAccount LDAP translation | T1087.002 | Lab-06 | ✅ Dominada |
+| Windows LAPS Password Disclosure | T1201 | Lab-07 | ✅ Dominada |
+| DPAPI offline credential extraction | T1555.004 | Lab-07 | ✅ Dominada |
+| Shadow Credentials (msDS-KeyCredentialLink) | T1649 | Lab-07 | ✅ Dominada |
+| PKINIT auth — certipy-ad | T1649 | Lab-07 | ✅ Dominada |
+| LSASS dump evasion research | T1003.001 | Lab-07 | ⚠️ Parcial (KPP Win11) |
