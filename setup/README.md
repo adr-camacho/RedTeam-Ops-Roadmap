@@ -1,212 +1,232 @@
-# ⚙️ Guía de Provisioning — Red Team Ops Roadmap
-## Setup completo del entorno de laboratorio
+# Setup Guide — Red Team Ops Roadmap
+## Guia completa de aprovisionamiento del entorno
 
-**Versión:** 2.1 | **Actualizado:** Junio 2026 | **Autor:** Adrián Camacho
+**Version:** 3.0 | **Actualizado:** Junio 2026  
+**Autor:** Adrian Camacho
 
----
-
-## Requisitos de hardware
-
-```
-RAM:     32 GB mínimo (4 DCs + 2 WKSTNs + Kali simultáneos)
-CPU:     8 cores — VT-x/AMD-V activo en BIOS
-Disco:   400 GB libres
-VM:      VirtualBox 7.x
-```
+> Esta guia cubre el aprovisionamiento completo del entorno de laboratorio.
+> El README principal del proyecto esta en la raiz del repositorio.
 
 ---
 
-## Arquitectura del entorno
+## Infraestructura
+
+| Maquina   | IP         | OS                    | RAM   | Rol                              |
+|-----------|------------|-----------------------|-------|----------------------------------|
+| DC-01     | 10.0.2.10  | Windows Server 2025   | 22GB  | Root DC atackcorp.local + ADCS + Windows LAPS |
+| DC-02     | 10.0.2.11  | Windows Server 2022   | 4GB   | DC corp.local (Forest 2)         |
+| DC-03     | 10.0.2.13  | Windows Server 2022   | 4GB   | DC child.atackcorp.local         |
+| DC-04     | 10.0.2.14  | Windows Server 2022   | 4GB   | DC ext.local (Forest 3)          |
+| WKSTN-01  | 10.0.2.8   | Windows 11            | 4GB   | Workstation atackcorp.local       |
+| WKSTN-02  | 10.0.2.12  | Windows 11            | 4GB   | Workstation corp.local            |
+| Kali      | 10.0.2.9   | Kali Linux            | 4GB   | Atacante                         |
+
+**Red VirtualBox:** NAT Network "LabRedTeam" (10.0.2.0/24)
+
+---
+
+## Estructura de scripts
 
 ```
-Forest 1: atackcorp.local
-  DC-01  10.0.2.10  Windows Server 2022  4GB  Root DC + ADCS
-  DC-03  10.0.2.13  Windows Server 2022  2GB  child.atackcorp.local
-  WKSTN-01  10.0.2.8  Windows 11  3GB
-
-Forest 2: corp.local  ←──BiDir Trust──→  atackcorp.local
-  DC-02  10.0.2.11  Windows Server 2022  2GB
-  WKSTN-02  10.0.2.12  Windows 11  2GB
-
-Forest 3: ext.local  ←──BiDir Trust──→  atackcorp.local
-  DC-04  10.0.2.14  Windows Server 2022  2GB
-
-Kali  10.0.2.9  Kali Linux 2026.1  8GB  Atacante / C2
-Red:  NAT Network "LabRedTeam" — 10.0.2.0/24
+setup/
+├── DC-01/          Scripts para DC-01 (atackcorp.local)
+│   ├── 01_promover_controlador_de_dominio_atackcorp.ps1
+│   ├── 02_crear_usuarios_ous_atackcorp.ps1
+│   ├── 03_configurar_acls_delegaciones_atackcorp.ps1
+│   ├── 04_instalar_iis_smb_shares_gpos_atackcorp.ps1
+│   ├── 05_instalar_sql_server_express_atackcorp.ps1
+│   ├── 10_configurar_forest_trusts_sid_filtering.ps1
+│   ├── 12_configurar_windows_laps_atackcorp.ps1
+│   ├── 13_instalar_adcs_ca_atackcorp.ps1
+│   └── 14_configurar_defender_exclusiones_atackcorp.ps1
+├── DC-02/          Scripts para DC-02 (corp.local)
+├── DC-03/          Scripts para DC-03 (child.atackcorp.local)
+├── DC-04/          Scripts para DC-04 (ext.local)
+├── WKSTN-01/       Scripts para WKSTN-01
+├── WKSTN-02/       Scripts para WKSTN-02
+├── CrownJewels/    Crown Jewels Labs 01-15
+└── README.md       Esta guia
 ```
 
 ---
 
-## Orden de provisioning
+## Orden de ejecucion
 
-> ⚠️ Ejecutar en este orden exacto. Cada script depende del anterior.
+> Ejecutar cada script en la maquina indicada. Todos requieren PowerShell como Administrador.
 
-### Paso 0 — Kali: clonar repo e instalar arsenal
+### FASE 1 — DC-01 base
 
-```bash
-git clone https://github.com/adr-camacho/RedTeam-Ops-Roadmap.git ~/RedTeam-Repo
-cd ~/RedTeam-Repo
-bash tooling/arsenal_setup.sh
+#### Paso 1 — Promover DC-01
+```
+Maquina: DC-01
+Script:  DC-01/01_promover_controlador_de_dominio_atackcorp.ps1
+Notas:   Renombrar equipo a DC-01 y reiniciar ANTES de ejecutar
 ```
 
-### Paso 1 — DC-01: instalación y promoción AD
-
-Instalar Windows Server 2022, configurar IP estática `10.0.2.10`, luego:
-
-```powershell
-# PowerShell como Administrador local
-.\setup\provisioning\01_ad_promotion.ps1
-# El servidor se reinicia automáticamente
+#### Paso 2 — Usuarios y OUs
+```
+Maquina: DC-01 (tras reinicio post-promocion)
+Script:  DC-01/02_crear_usuarios_ous_atackcorp.ps1
 ```
 
-### Paso 2 — DC-01: usuarios, OUs y ACLs
-
-```powershell
-.\setup\provisioning\02_users_ous.ps1
-.\setup\provisioning\03_acls_delegations.ps1
-.\setup\provisioning\04_iis_smb_gpo.ps1
-.\setup\provisioning\05_mssql.ps1
+#### Paso 3 — ACLs y delegaciones
+```
+Maquina: DC-01
+Script:  DC-01/03_configurar_acls_delegaciones_atackcorp.ps1
+Notas:   Re-ejecutar despues de unir WKSTN-01 al dominio
 ```
 
-### Paso 3 — WKSTN-01: prerequisites manuales
-
-```powershell
-# ANTES del script — ejecutar manualmente en WKSTN-01
-Enable-PSRemoting -Force
-Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
-net user Administrador /active:yes
-net user Administrador NuevaPassword2026!
-netsh advfirewall firewall add rule name="WinRM" protocol=TCP dir=in localport=5985 action=allow
+#### Paso 4 — IIS, SMB, GPOs
+```
+Maquina: DC-01
+Script:  DC-01/04_instalar_iis_smb_shares_gpos_atackcorp.ps1
 ```
 
-Luego:
-
-```powershell
-.\setup\provisioning\06_wkstn01_fixed.ps1
+#### Paso 5 — SQL Server Express
+```
+Maquina: DC-01
+Script:  DC-01/05_instalar_sql_server_express_atackcorp.ps1
+PREREQUISITO: SQL Server 2022 Express instalado via GUI
+Notas:   Instalacion silenciosa bloquea PS con RAM < 12GB
+         Usar GUI o tarea programada SYSTEM
 ```
 
-### Paso 4 — DC-02: corp.local
+---
 
-Instalar Windows Server 2022, configurar IP `10.0.2.11`, promover como DC de `corp.local`, luego:
+### FASE 2 — Workstations
 
-```powershell
-.\setup\provisioning\07_setup_DC02_Corp.ps1
+#### Paso 6 — WKSTN-01
+```
+Maquina: WKSTN-01 (unida a atackcorp.local)
+Script:  WKSTN-01/01_configurar_workstation_wkstn01_atackcorp.ps1
+Prerequisito manual:
+  Enable-PSRemoting -Force
+  net user Administrador /active:yes
+  net user Administrador NuevaPassword2026!
+  netsh advfirewall firewall add rule name="WinRM" protocol=TCP dir=in localport=5985 action=allow
 ```
 
-### Paso 5 — DC-03: child.atackcorp.local
+---
 
-Instalar Windows Server 2022, configurar IP `10.0.2.13`, promover como child DC de `atackcorp.local`, luego:
+### FASE 3 — Dominios secundarios
 
-```powershell
-.\setup\provisioning\08_setup_DC03_Child.ps1
-# v1.1 — incluye DNS primario → DC-01, ADWS port 9389, C:\Temp
+#### Paso 7 — DC-02 (corp.local)
+```
+Maquina: DC-02
+Script:  DC-02/01_configurar_dominio_corp_local.ps1
 ```
 
-### Paso 6 — DC-04: ext.local
-
-Instalar Windows Server 2022, configurar IP `10.0.2.14`, promover como DC de `ext.local`, luego:
-
-```powershell
-.\setup\provisioning\09_setup_DC04_Ext.ps1
+#### Paso 8 — DC-03 (child.atackcorp.local)
+```
+Maquina: DC-03
+Script:  DC-03/01_configurar_dominio_child_atackcorp.ps1
+Notas:   DC-03 debe estar encendido al extender schema AD en DC-01
 ```
 
-### Paso 7 — DC-01: Forest Trusts + SID Filtering
-
-```powershell
-# En DC-01 — configura trusts BiDirectional con los 3 forests
-.\setup\provisioning\10_setup_Trusts_And_SIDHistory.ps1
+#### Paso 9 — DC-04 (ext.local)
+```
+Maquina: DC-04
+Script:  DC-04/01_configurar_dominio_ext_local.ps1
 ```
 
-> Este script requiere que DC-02, DC-03 y DC-04 estén operativos.
+---
 
-### Paso 8 — WKSTN-02: corp.local
+### FASE 4 — Forest Trusts
 
-```powershell
-# Prerequisites manuales primero (igual que WKSTN-01)
-Enable-PSRemoting -Force
-Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
-net user Administrador /active:yes
-net user Administrador Admin1234!
-netsh advfirewall firewall add rule name="WinRM" protocol=TCP dir=in localport=5985 action=allow
-
-# Luego el script
-.\setup\provisioning\11_Setup_WKSTN02_Corp_fixed.ps1
+#### Paso 10 — Trusts + SID Filtering OFF
+```
+Maquina: DC-01
+Script:  DC-01/10_configurar_forest_trusts_sid_filtering.ps1
+Prerequisito: DC-02, DC-03, DC-04 operativos
+Notas:   Usa .NET — netdom /quarantine falla en WS2025
+         DNS Conditional Forwarders se crean automaticamente
 ```
 
-### Paso 9 — Crown Jewels por lab
+---
 
-Antes de ejecutar cada lab, ejecutar el CrownJewels correspondiente en DC-01:
+### FASE 5 — WKSTN-02
+
+#### Paso 11 — WKSTN-02
+```
+Maquina: WKSTN-02 (unida a corp.local)
+Script:  WKSTN-02/01_configurar_workstation_wkstn02_corp.ps1
+```
+
+---
+
+### FASE 6 — Servicios avanzados DC-01
+
+#### Paso 12 — Windows LAPS
+```
+Maquina: DC-01
+Script:  DC-01/12_configurar_windows_laps_atackcorp.ps1
+Prerequisito: WS2025 (Windows LAPS nativo)
+              OU path: OU=IT,DC=atackcorp,DC=local
+Tras ejecutar: gpupdate /force en WKSTN-01
+Verificar: Get-LapsADPassword -Identity WKSTN-01 -AsPlainText
+```
+
+#### Paso 13 — ADCS
+```
+Maquina: DC-01
+Script:  DC-01/13_instalar_adcs_ca_atackcorp.ps1
+Notas:   Templates ESC1/ESC4 via GUI (certsrv.msc) en Lab-03
+```
+
+#### Paso 14 — Defender
+```
+Maquina: DC-01
+Script:  DC-01/14_configurar_defender_exclusiones_atackcorp.ps1
+```
+
+---
+
+### FASE 7 — Crown Jewels
+
+Ejecutar en DC-01 antes del lab correspondiente:
 
 ```powershell
 # Lab-01
-.\Phase-01-Fundamentals\Lab-01-Ghost-Forest\setup\CrownJewels-Lab01-GhostForest.ps1
+.\setup\CrownJewels\CrownJewels-Lab01-GhostForest.ps1
 
-# Lab-04
-.\Phase-02-Post-Exploitation\Lab-04-Iron-Forest\setup\CrownJewels-Lab04-IronForest.ps1
+# Lab-02 (ejecutar en PC-01 de la red 10.0.3.x)
+# Lab-03
+.\setup\CrownJewels\CrownJewels-Lab03-DarkGate.ps1
 
-# Lab-05
-.\Phase-02-Post-Exploitation\Lab-05-Silver-Chain\setup\CrownJewels-Lab05-SilverChain.ps1
-
-# Lab-06
-.\Phase-02-Post-Exploitation\Lab-06-Black-Policy\setup\CrownJewels-Lab06-BlackPolicy.ps1
-```
-
-### Paso 10 — Kali: /etc/hosts
-
-```bash
-sudo bash -c 'cat >> /etc/hosts << EOF
-10.0.2.10  DC-01.atackcorp.local  atackcorp.local  DC-01
-10.0.2.11  corp.local  DC-02.corp.local
-10.0.2.13  child.atackcorp.local  DC-03.child.atackcorp.local
-10.0.2.14  ext.local  DC-04.ext.local
-10.0.2.8   WKSTN-01.atackcorp.local  WKSTN-01
-10.0.2.12  WKSTN-02.corp.local  WKSTN-02
-EOF'
+# Labs 04-07
+.\setup\CrownJewels\CrownJewels-Lab04-IronForest.ps1
+.\setup\CrownJewels\CrownJewels-Lab05-SilverChain.ps1
+.\setup\CrownJewels\CrownJewels-Lab06-BlackPolicy_v2.ps1
+.\setup\CrownJewels\CrownJewels-Lab07-ShadowVault_clean.ps1
 ```
 
 ---
 
-## Verificación del entorno
+## Credenciales resumidas
 
-```bash
-# Desde Kali — verificar conectividad completa
-for ip in 10.0.2.10 10.0.2.11 10.0.2.13 10.0.2.14 10.0.2.8 10.0.2.12; do
-    ping -c 1 -W 1 $ip > /dev/null && echo "✅ $ip" || echo "❌ $ip"
-done
+| Sistema | Usuario | Contrasena |
+|---------|---------|-----------|
+| Todos los DCs | Administrador | `NuevaPassword2026!` |
+| ATACKCORP\ceo.martinez | ceo.martinez | `Direccion2024!` |
+| ATACKCORP\helpdesk.ruiz | helpdesk.ruiz | `Helpdesk2024!` |
+| ATACKCORP\fin.garcia | fin.garcia | `Finance2024!` |
+| ATACKCORP\sql_svc | sql_svc | `SQLSvc2024!` |
+| SQL Server SA | sa | `Sa_Admin2024!` |
+| CORP\corp.admin | corp.admin | `CorpAdmin2024!` |
 
-# Verificar acceso WinRM
-evil-winrm -i 10.0.2.10 -u helpdesk.ruiz -p 'Helpdesk2024!'
-
-# Verificar trusts desde DC-01
-Get-ADTrust -Filter * | Select-Object Name, Direction, TrustType
-```
-
----
-
-## Credenciales de acceso rápido
-
-| VM | Usuario | Contraseña | Uso |
-|----|---------|-----------|-----|
-| DC-01 | Administrador | NuevaPassword2026! | Admin dominio |
-| DC-02 | Administrador | Admin1234! | Admin corp.local |
-| DC-03 | Administrador | Admin1234! | Admin child domain |
-| DC-04 | Administrador | Admin1234! | Admin ext.local |
-| WKSTN-01 | Administrador | NuevaPassword2026! | Admin local |
-| WKSTN-02 | Administrador | Admin1234! | Admin local |
-| Kali | kali | kali | — |
+> Credenciales completas en: `docs/reference/CREDENTIALS.md`
 
 ---
 
-## Problemas conocidos y soluciones
+## Notas tecnicas importantes
 
-| Problema | Causa | Solución |
-|----------|-------|---------|
-| `Enable-PSRemoting` en script corta Evil-WinRM | PSRemoting reinicia el stack WinRM | Ejecutar manualmente antes del script |
-| Cuenta Administrador inactiva en Windows 11 | Windows 11 deshabilita admin local por defecto | `net user Administrador /active:yes` |
-| DC-03 ADWS cross-domain falla | DNS primario incorrecto | Script 08 v1.1 lo corrige automáticamente |
-| mimikatz bloqueado por Defender | Firma conocida | `Set-MpPreference -DisableRealtimeMonitoring $true` antes del upload |
-| `impacket-GetUserSPNs` cross-forest sin hashes | Falta TGT | `impacket-getTGT` + `export KRB5CCNAME` primero |
+- **WS2025 y LAPS:** Windows LAPS nativo incluido — no instalar MSI legacy
+- **WS2025 y Trusts:** New-ADTrust no existe — usar .NET DirectoryServices
+- **SQL Server:** Instalacion silenciosa bloquea con RAM < 12GB — usar GUI
+- **C:\Temp SID:** *S-1-1-0 falla en WS2025 — usar WellKnownSidType.WorldSid
+- **DC-03:** Necesario encendido para extender schema AD
+- **WKSTN firewall:** ICMP bloqueado tras reinicio — usar nxc smb para verificar
 
 ---
 
-*Red Team Ops Roadmap v2.1 — Adrián Camacho | Junio 2026*
+*Red Team Ops Roadmap — Adrian Camacho | Junio 2026*

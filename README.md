@@ -11,12 +11,12 @@
 
 ```
   [ Active Directory Adversary Emulation — APT29 · APT41 · APT28 · Lazarus · APT10 ]
-  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 6/15 Labs · 62+ TTPs ]
+  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 6/15 Labs · 56 TTPs ]
 ```
 
 [![Estado](https://img.shields.io/badge/Estado-En%20Progreso-orange?style=for-the-badge)](.)
-[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-62-brightgreen?style=for-the-badge)](.)
-[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E155h-purple?style=for-the-badge)](.)
+[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-56-brightgreen?style=for-the-badge)](.)
+[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E135h-purple?style=for-the-badge)](.)
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-black?style=for-the-badge)](https://attack.mitre.org)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet?style=for-the-badge)](.)
 [![Licencia](https://img.shields.io/badge/Uso-Educativo-green?style=for-the-badge)](.)
@@ -56,7 +56,7 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐             │
 │  │    DC-01      │  │    DC-03      │  │   WKSTN-01   │             │
 │  │  10.0.2.10    │  │  10.0.2.13    │  │  10.0.2.8    │             │
-│  │  Root DC      │  │  child.atack  │  │  Windows 11  │             │
+│  │  Root DC      │  │  child.atack. │  │  Windows 11  │             │
 │  │  ADCS         │  │  corp.local   │  │              │             │
 │  └──────┬────────┘  └──────────────┘  └──────────────┘             │
 │         │ BiDir Trust          BiDir Trust                          │
@@ -91,7 +91,7 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 
 | Host | IP | OS | RAM | Rol |
 |---|---|---|---|---|
-| DC-01 | 10.0.2.10 | Windows Server 2022 | 4GB | Domain Controller — atackcorp.local + ADCS |
+| DC-01 | 10.0.2.10 | Windows Server 2025 | 4GB | Domain Controller — atackcorp.local + ADCS + Windows LAPS |
 | DC-02 | 10.0.2.11 | Windows Server 2022 | 3GB | Domain Controller — corp.local (Forest 2) |
 | DC-03 | 10.0.2.13 | Windows Server 2022 | 3GB | Domain Controller — child.atackcorp.local |
 | DC-04 | 10.0.2.14 | Windows Server 2022 | 2GB | Domain Controller — ext.local (Forest 3) |
@@ -131,8 +131,8 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 |---|---|---|---|---|
 | Lab-04 | 🔴 **IRON FOREST** | APT28 (Fancy Bear) | ✅ Completado ~20h | WriteDACL→DCSync, Credential Hunting, ADIDNS Poisoning, Overpass-the-Hash |
 | Lab-05 | ⛓️ **SILVER CHAIN** | APT28 (Fancy Bear) | ✅ Completado ~20h | RBCD, Shadow Credentials, Silver Ticket, Diamond Ticket |
-| Lab-06 | 📋 **BLACK POLICY** | APT28 (Fancy Bear) | ✅ Completado ~35h | SID History, Cross-Forest Trust Abuse, GPO Abuse via pyGPOAbuse, Sliver C2 multi-forest |
-| Lab-07 | 🔒 **SHADOW VAULT** | APT28 (Fancy Bear) | ⏳ Pendiente | LAPS, DPAPI, Shadow Credentials, LSASS dump sin Mimikatz |
+| Lab-06 | 📋 **BLACK POLICY** | APT28 (Fancy Bear) | ✅ Completado ~25h | SID History Injection, Cross-Forest Trust, GPO Abuse, DSInternals |
+| Lab-07 | 🔒 **SHADOW VAULT** | APT28 (Fancy Bear) | 🔄 En progreso | LAPS abuse, DPAPI, Shadow Credentials, LSASS dump sin Mimikatz |
 
 ### 🔴 Phase-03 — Red Team & Evasión de Defensas
 
@@ -279,27 +279,36 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 
 ---
 
-## 🔜 Próximo objetivo
-
 ### ✅ Lab-06 — BLACK POLICY | APT28 (Fancy Bear)
 
-**5 fases completadas · ~35 horas · Documentación completa**
+**5 fases completadas · ~25 horas · Documentación completa**
 
 <details>
 <summary>Ver todas las fases y TTPs</summary>
 
 | Fase | Nombre | Técnica | MITRE ID | Herramienta |
 |---|---|---|---|---|
-| 01 | Reconnaissance | Network scan + SMB enum + Cross-Forest Kerberoasting | T1046, T1135, T1558.003, T1482 | Nmap, ldapsearch, GetUserSPNs |
-| 02 | SID History Injection | child.user + SID DA atackcorp → DCSync krbtgt | T1134.005, T1003.006 | DSInternals v4.14 |
-| 03 | Cross-Forest Trust Abuse | GenericAll corp_svc → Targeted Kerberoast → DA corp/ext | T1558.003, T1552.001 | bloodyAD, dacledit, smbclient |
-| 04 | GPO Abuse | helpdesk.ruiz WriteDACL → pyGPOAbuse → Admin local WKSTN-01 | T1484.001, T1053.005 | pyGPOAbuse, impacket-dacledit |
-| 05 | C2 + Crown Jewel | Sliver beacons WKSTN-01 + DC-02 · IPO_strategy_2026.txt exfiltrado | T1071.001, T1573.002 | Sliver v1.7.3 |
+| 01 | Reconnaissance | Cross-Forest enum + Kerberoasting corp_svc/ext_svc | T1558.003, T1135 | nxc, impacket-GetUserSPNs, John |
+| 02 | SID History Injection | DSInternals Add-ADDBSidHistory → child.user = DA atackcorp | T1134.005 | DSInternals v4.14, Evil-WinRM |
+| 03 | Cross-Forest Trust | corp.local + ext.local comprometidos · DCSync krbtgt x3 | T1482, T1003.006 | bloodyAD, impacket-secretsdump |
+| 04 | GPO Abuse | WriteDACL helpdesk.ruiz → FullControl GPO → admin WKSTN-01 | T1484.001 | dacledit, pyGPOAbuse |
+| 05 | C2 + Cleanup | Beacons WKSTN-01 + DC-02 · Crown Jewel IPO_strategy_2026.txt | T1071.001, T1070 | Sliver, dacledit |
 
-**Crown Jewels:** DA atackcorp via GPO y SID History · DA corp.local · DA ext.local · Beacons WKSTN-01+DC-02 · IPO_strategy_2026.txt TOP SECRET  
-**Lecciones clave:** sIDHistory no modificable via LDAP → DSInternals · GPP XML falla en Windows 11 → pyGPOAbuse · mimikatz misc::addsid eliminado en v2.2.0+ · Evil-WinRM token limita ADWS cross-domain
+**Crown Jewels:** `IPO_strategy_2026.txt` · krbtgt atackcorp/corp/ext · helpdesk.ruiz admin local WKSTN-01  
+**Lecciones clave:** Evil-WinRM limita tokens de red (Get-ADGroup cross-domain falla) · bloodyAD v2.5.4 elimina sIDHistory · DSInternals como alternativa a mimikatz misc::addsid · pyGPOAbuse más compatible que GPP XML en Windows 11
 
 </details>
+
+## 🔄 En progreso
+
+**Lab-07 — SHADOW VAULT · APT28 (Fancy Bear)**
+
+| Campo | Detalle |
+|---|---|
+| Estado | Infraestructura lista · CrownJewels ejecutados · Fase 01 pendiente |
+| Técnicas | Windows LAPS abuse, DPAPI extraction, Shadow Credentials, LSASS dump sin Mimikatz |
+| Crown Jewels | msLAPS-Password WKSTN-01 · DPAPI Credential Manager · HR-Confidential share |
+| Credencial inicial | `helpdesk.ruiz:Helpdesk2024!` |
 
 ---
 
@@ -312,7 +321,7 @@ Red-Team_Labs/
 │
 ├── docs/
 │   ├── design/
-│   │   └── DESIGN.md                        # Filosofía, adversary emulation, roadmap v2.1
+│   │   └── DESIGN.md                        # Filosofía, adversary emulation, roadmap v2.0
 │   ├── detection/
 │   │   └── DETECTION_RULES.md               # Reglas SIGMA y Event IDs por técnica
 │   ├── operations/
@@ -322,7 +331,7 @@ Red-Team_Labs/
 │   │   ├── THREAT_MODEL.md                  # Modelo de amenaza del entorno
 │   │   └── WRITEUP_TEMPLATE.md              # Plantilla para nuevos labs
 │   ├── progress/
-│   │   ├── PROGRESS.md                      # Diario de sesiones + 35 técnicas dominadas
+│   │   ├── PROGRESS.md                      # Diario de sesiones + 56 técnicas dominadas
 │   │   └── CHANGELOG.md                     # Historial de cambios del repo
 │   └── reference/
 │       ├── ARSENAL.md                        # Arsenal completo con rutas y versiones
@@ -331,20 +340,23 @@ Red-Team_Labs/
 │       └── TOOL_INDEX.md                    # Índice de herramientas con versiones
 │
 ├── setup/
-│   ├── provisioning/
-|   |   └── 00_Setup_Lab01-GhostForest-v2.ps1
-│   │   ├── 01_ad_promotion.ps1
-│   │   ├── 02_users_ous.ps1
-│   │   ├── 03_acls_delegations.ps1
-│   │   ├── 04_iis_smb_gpo.ps1
-│   │   ├── 05_mssql.ps1
-│   │   ├── 06_wkstn01.ps1
-│   │   ├── 07_Setup_DC02_Corp.ps1
-│   │   ├── 08_Setup_DC03_Child.ps1
-│   │   ├── 09_Setup_DC04_Ext.ps1
-│   │   ├── 10_Setup_Trusts_And_SIDHistory.ps1
-│   │   ├── 11_Setup_WKSTN02_Corp.ps1
-│   │   
+│   ├── DC-01/                               # Scripts DC-01 (atackcorp.local)
+│   │   ├── 01_promover_controlador_de_dominio_atackcorp.ps1
+│   │   ├── 02_crear_usuarios_ous_atackcorp.ps1
+│   │   ├── 03_configurar_acls_delegaciones_atackcorp.ps1
+│   │   ├── 04_instalar_iis_smb_shares_gpos_atackcorp.ps1
+│   │   ├── 05_instalar_sql_server_express_atackcorp.ps1
+│   │   ├── 10_configurar_forest_trusts_sid_filtering.ps1
+│   │   ├── 12_configurar_windows_laps_atackcorp.ps1
+│   │   ├── 13_instalar_adcs_ca_atackcorp.ps1
+│   │   └── 14_configurar_defender_exclusiones_atackcorp.ps1
+│   ├── DC-02/                               # Scripts DC-02 (corp.local)
+│   ├── DC-03/                               # Scripts DC-03 (child.atackcorp.local)
+│   ├── DC-04/                               # Scripts DC-04 (ext.local)
+│   ├── WKSTN-01/                            # Scripts WKSTN-01
+│   ├── WKSTN-02/                            # Scripts WKSTN-02
+│   ├── CrownJewels/                         # Crown Jewels Labs 01-15
+│   ├── README.md                            # Guia completa de aprovisionamiento
 │   └── screenshots/                         # Evidencia del setup del entorno
 │
 ├── tooling/                                 # Scripts de setup del arsenal Kali
@@ -360,8 +372,8 @@ Red-Team_Labs/
 ├── Phase-02-Post-Exploitation/
 │   ├── Lab-04-Iron-Forest/     ✅ 8 fases  · ~20h · APT28
 │   ├── Lab-05-Silver-Chain/    ✅ 6 fases  · ~20h · APT28
-│   ├── Lab-06-Black-Policy/    ✅ 5 fases  · ~35h · APT28
-│   └── Lab-07-Shadow-Vault/    ⏳ Pendiente · APT28
+│   ├── Lab-06-Black-Policy/    ✅ Completado · ~25h · APT28
+│   └── Lab-07-Shadow-Vault/    🔄 En progreso · APT28
 │
 ├── Phase-03-Red-Team-Operations/
 │   ├── Lab-08-Ghost-Signals/   ⏳ Pendiente · Lazarus
@@ -383,7 +395,7 @@ Red-Team_Labs/
 - `docs/analysis/lessons_learned.md` — Qué funcionó, qué falló y por qué
 - `docs/analysis/mitigations.md` — Detección y hardening Blue Team
 - `docs/report/*.pdf` — Reporte ejecutivo en PDF
-- `setup/CrownJewels-Lab*.ps1` — Script de verificación de objetivos
+- `setup/CrownJewels/CrownJewels-Lab*.ps1` — Script de verificación de objetivos
 - `screenshots/FASE-XX-Nombre/` — Evidencia visual organizada por fase
 - `loot/` — Hashes, tickets y credenciales capturadas
 
@@ -412,14 +424,21 @@ graph LR
 ## 🧠 Metodología
 
 ```
-1. ADVERSARY SELECTION  → Seleccionar grupo APT real · Estudiar TTPs documentadas
-2. THEORY               → Fundamentos del protocolo antes de ejecutar
-3. INFRASTRUCTURE       → Setup reproducible con scripts PowerShell
-4. EXECUTION            → Comandos documentados con output real + notas OPSEC
-5. ANALYSIS             → Post-mortem: qué funcionó, qué falló y por qué
-6. BLUE TEAM            → Event IDs · Reglas SIGMA · Hardening
-7. REPORT               → Reporte ejecutivo en PDF + lessons learned
+┌────────────────────────────────────────────────────────────────────┐
+│  PASO  1: ADVERSARY SELECTION  → APT real · Kill chain · TTPs      │
+│  PASO  2: THREAT MODEL         → Crown Jewels · Scope · Éxito      │
+│  PASO  3: THEORY               → Fundamentos antes de ejecutar     │
+│  PASO  4: INFRASTRUCTURE       → Setup reproducible + snapshots    │
+│  PASO  5: RECONNAISSANCE       → BloodHound · Attack paths         │
+│  PASO  6: EXECUTION            → Comandos + output + OPSEC         │
+│  PASO  7: CLEANUP              → Artefactos · ACLs · GPOs          │
+│  PASO  8: ANALYSIS             → Post-mortem + lecciones           │
+│  PASO  9: BLUE TEAM            → Event IDs · SIGMA · Hardening     │
+│  PASO 10: REPORT               → PDF ejecutivo + lessons learned   │
+└────────────────────────────────────────────────────────────────────┘
 ```
+
+> Metodología completa en [`docs/operations/METHODOLOGY.md`](docs/operations/METHODOLOGY.md)
 
 ---
 
@@ -471,39 +490,46 @@ graph LR
 ### Requisitos de hardware
 
 ```
-RAM mínima:    32 GB  (entorno CRTO completo — 4 DCs + 2 WKSTNs + Kali)
+RAM mínima:    40 GB  (entorno CRTO completo — 4 DCs + 2 WKSTNs + Kali)
 CPU:           8 cores (recomendado — VT-x/AMD-V activo en BIOS)
 Disco:         400 GB libres
 Hypervisor:    VirtualBox 7.x
-RAM por VM:    Kali 8GB · DC-01 4GB · DC-02/03 3GB · DC-04 2GB · WKSTNs 3GB
+RAM por VM:    Kali 8GB · DC-01 22GB · DC-02/03/04 4GB · WKSTNs 4GB
 ```
 
 ### Setup automatizado
 
 ```powershell
-# DC-01 — atackcorp.local
-.\setup\provisioning\01_ad_promotion.ps1
-.\setup\provisioning\02_users_ous.ps1
-.\setup\provisioning\03_acls_delegations.ps1
-.\setup\provisioning\04_iis_smb_gpo.ps1
-.\setup\provisioning\05_mssql.ps1
-.\setup\provisioning\10_Setup_Trusts_And_SIDHistory.ps1  # post Forest Trusts
+# DC-01 — atackcorp.local (ejecutar en orden)
+.\setup\DC-01\01_promover_controlador_de_dominio_atackcorp.ps1
+.\setup\DC-01\02_crear_usuarios_ous_atackcorp.ps1
+.\setup\DC-01\03_configurar_acls_delegaciones_atackcorp.ps1
+.\setup\DC-01\04_instalar_iis_smb_shares_gpos_atackcorp.ps1
+.\setup\DC-01\05_instalar_sql_server_express_atackcorp.ps1  # GUI recomendada
 
 # WKSTN-01 — atackcorp.local
-.\setup\provisioning\06_wkstn01.ps1
-.\setup\provisioning\00_setup_lab01_ghost_forest_v2.ps1
+.\setup\WKSTN-01\01_configurar_workstation_wkstn01_atackcorp.ps1
 
 # DC-02 — corp.local
-.\setup\provisioning\07_Setup_DC02_Corp.ps1
+.\setup\DC-02\01_configurar_dominio_corp_local.ps1
 
 # DC-03 — child.atackcorp.local
-.\setup\provisioning\08_Setup_DC03_Child.ps1
+.\setup\DC-03\01_configurar_dominio_child_atackcorp.ps1
 
 # DC-04 — ext.local
-.\setup\provisioning\09_Setup_DC04_Ext.ps1
+.\setup\DC-04\01_configurar_dominio_ext_local.ps1
 
 # WKSTN-02 — corp.local
-.\setup\provisioning\11_Setup_WKSTN02_Corp.ps1
+.\setup\WKSTN-02\01_configurar_workstation_wkstn02_corp.ps1
+
+# Trusts + LAPS + ADCS + Defender (DC-01)
+.\setup\DC-01\10_configurar_forest_trusts_sid_filtering.ps1
+.\setup\DC-01\12_configurar_windows_laps_atackcorp.ps1
+.\setup\DC-01\13_instalar_adcs_ca_atackcorp.ps1
+.\setup\DC-01\14_configurar_defender_exclusiones_atackcorp.ps1
+
+# Crown Jewels (DC-01, antes de cada lab)
+.\setup\CrownJewels\CrownJewels-Lab0X-NombreOperacion.ps1
 ```
 
 ```bash
@@ -517,7 +543,7 @@ bash tooling/arsenal_setup.sh
 
 ## 📊 MITRE ATT&CK Coverage
 
-**Técnicas dominadas: 62 · Parciales: 2 · En roadmap: 20+**
+**Técnicas dominadas: 56 · Parciales: 2 · En roadmap: 24+**
 
 | Táctica | Técnica | ID | Lab | Estado |
 |---|---|---|---|---|
@@ -543,15 +569,6 @@ bash tooling/arsenal_setup.sh
 | Credential Access | Shadow Credentials | T1556 | Lab-05 | ✅ |
 | Credential Access | Silver Ticket | T1558.002 | Lab-05 | ✅ |
 | Credential Access | Diamond Ticket | T1558.001 | Lab-05 | ✅ |
-| Reconnaissance | Trust Discovery | T1482 | Lab-06 | ✅ |
-| Reconnaissance | Network Share Discovery | T1135 | Lab-06 | ✅ |
-| Privilege Escalation | SID-History Injection | T1134.005 | Lab-06 | ✅ |
-| Privilege Escalation | GPO Modification (pyGPOAbuse) | T1484.001 | Lab-01/06 | ✅ |
-| Credential Access | Cross-Forest Kerberoasting | T1558.003 | Lab-06 | ✅ |
-| Credential Access | Targeted Kerberoasting via GenericAll | T1558.003 | Lab-06 | ✅ |
-| Credential Access | DCSync multi-forest | T1003.006 | Lab-06 | ✅ |
-| Credential Access | ntds.dit manipulation (DSInternals) | T1003.003 | Lab-06 | ✅ |
-| Defense Evasion | Indicator Removal (GPO cleanup) | T1070 | Lab-04/06 | ✅ |
 
 ---
 
@@ -559,14 +576,14 @@ bash tooling/arsenal_setup.sh
 
 | Documento | Descripción |
 |---|---|
-| `docs/design/DESIGN.md` | Filosofía, adversary emulation, roadmap v2.1 |
+| `docs/design/DESIGN.md` | Filosofía, adversary emulation, roadmap v2.0 |
 | `docs/detection/DETECTION_RULES.md` | Reglas SIGMA y Event IDs por técnica |
 | `docs/operations/ENGAGEMENT_CHECKLIST.md` | Checklist pre/durante/post operación |
 | `docs/operations/OPSEC_NOTES.md` | 17 secciones de OPSEC operacional |
 | `docs/reference/ARSENAL.md` | Arsenal completo con rutas y versiones |
 | `docs/reference/LAB_INFRASTRUCTURE.md` | Infraestructura detallada de cada lab |
 | `docs/reference/MITRE_MAPPING.md` | Mapping MITRE ATT&CK v14 completo |
-| `docs/progress/PROGRESS.md` | Diario de sesiones + 45 técnicas dominadas |
+| `docs/progress/PROGRESS.md` | Diario de sesiones + 56 técnicas dominadas |
 | `docs/progress/CHANGELOG.md` | Historial completo de cambios |
 
 ---

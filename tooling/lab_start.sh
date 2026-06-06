@@ -109,11 +109,24 @@ check_targets() {
     for target in "${TARGETS[@]}"; do
         IP="${target%%:*}"
         NAME="${target##*:}"
-        if nmap -sn -n --unprivileged "$IP" 2>/dev/null | grep -q "Host is up"; then
-            ok "$NAME ($IP) — accesible ✅"
+
+        # Workstations: usar nxc smb (ICMP bloqueado por firewall tras reinicio)
+        # DCs y servidores Linux: usar nmap ping
+        if [[ "$NAME" == WKSTN* ]] || [[ "$NAME" == PC* ]]; then
+            if nxc smb "$IP" 2>/dev/null | grep -q "SMB"; then
+                ok "$NAME ($IP) — accesible via SMB ✅"
+            else
+                err "$NAME ($IP) — NO responde ❌ — ¿VM encendida? ¿Firewall?"
+                err "  Fix: netsh advfirewall firewall add rule name="SMB Allow" protocol=TCP dir=in localport=445 action=allow"
+                all_ok=false
+            fi
         else
-            err "$NAME ($IP) — NO responde ❌ — ¿VM encendida?"
-            all_ok=false
+            if nmap -sn -n --unprivileged "$IP" 2>/dev/null | grep -q "Host is up"; then
+                ok "$NAME ($IP) — accesible ✅"
+            else
+                err "$NAME ($IP) — NO responde ❌ — ¿VM encendida?"
+                all_ok=false
+            fi
         fi
     done
 

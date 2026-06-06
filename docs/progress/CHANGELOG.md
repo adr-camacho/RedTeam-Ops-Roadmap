@@ -4,47 +4,64 @@
 > Tipos: `ADD` | `UPDATE` | `FIX` | `REFACTOR` | `DOCS`
 
 
-## [2026-06-03] — Análisis completo del repo + mejoras calidad
+## [2026-06-05] — DC-01 rebuild WS2025 + Setup completo + Reorganizacion repo
 
-### ADD — Visual
-- `docs/assets/virtualbox_lab_environment.png` — captura VirtualBox todas las VMs corriendo con nombres descriptivos
+### INFRA — DC-01 rebuild Windows Server 2025
+- DC-01 reconstruido con Windows Server 2025 (Build 26100+)
+- Razon: WS2022 Build 20348.558 incompatible con Windows LAPS nativo
+- SQL Server 2022 Express instalado via GUI (instalacion silenciosa bloquea PS con RAM < 12GB)
+- ADCS instalado: CA AtackCorp-CA + Web Enrollment en http://DC-01/certsrv
+- Windows LAPS nativo configurado (Update-LapsADSchema + GPO LAPS-Policy)
+- Defender configurado con exclusiones controladas (C:\Temp, C:\Tools, C:\CorporateData)
+- WKSTN-01 re-unida al dominio tras rebuild DC-01
+- Forest Trusts reconfigurados via .NET DirectoryServices (netdom /quarantine falla en WS2025)
+- SID Filtering OFF en corp.local y ext.local confirmado
 
-### UPDATE — README global
-- Badges actualizados: 62 TTPs, ~155h, 6/15 Labs
-- Lab-06 marcado como completado con sección de fases y TTPs
-- Tabla MITRE Coverage: 10 nuevas técnicas Lab-06 añadidas
-- Árbol de estructura: Lab-06 actualizado
+### ADD — Scripts provisioning nuevos (con fixes aplicados)
+- `setup/DC-01/01_promover_controlador_de_dominio_atackcorp.ps1` — v2.0
+- `setup/DC-01/02_crear_usuarios_ous_atackcorp.ps1` — v2.1 (fix contrasenas sql_svc/iis_svc)
+- `setup/DC-01/03_configurar_acls_delegaciones_atackcorp.ps1` — v2.1
+- `setup/DC-01/10_configurar_forest_trusts_sid_filtering.ps1` — v2.0 (.NET rewrite)
+- `setup/DC-01/12_configurar_windows_laps_atackcorp.ps1` — nuevo
+- `setup/DC-01/13_instalar_adcs_ca_atackcorp.ps1` — nuevo
+- `setup/DC-01/14_configurar_defender_exclusiones_atackcorp.ps1` — nuevo
+- `setup/DC-02/01_configurar_dominio_corp_local.ps1` — v2.0 (-Server, SID dinamico)
+- `setup/DC-04/01_configurar_dominio_ext_local.ps1` — v2.0 (*S-1-1-0 fix)
+- `setup/WKSTN-01/01_configurar_workstation_wkstn01_atackcorp.ps1` — v3.0 (WellKnownSidType, firewall)
+- `setup/WKSTN-02/01_configurar_workstation_wkstn02_corp.ps1` — v2.0
 
-### PENDIENTE — Scripts provisioning (próxima sesión)
-- `06_wkstn01_fixed.ps1` — añadir reglas firewall ICMP, SMB, WMI, Remote Scheduled Tasks
-- `07_setup_DC02_Corp.ps1` — añadir creación de C:\Temp
-- `09_setup_DC04_Ext.ps1` — reemplazar "Everyone" por SID *S-1-1-0 en New-SmbShare
-- `CrownJewels-Lab06-BlackPolicy.ps1` — reemplazar nombre de grupo por SID en Enterprise-Strategy
+### REFACTOR — Reorganizacion setup/ por maquina
+- Nueva estructura: setup/{DC-01,DC-02,DC-03,DC-04,WKSTN-01,WKSTN-02,CrownJewels}/
+- CrownJewels Labs 01-15 centralizados en setup/CrownJewels/
+- Scripts con nombres descriptivos en lugar de numerados
+- Eliminada carpeta setup/provisioning/ (sustituida por nueva estructura)
 
----
+### ADD — Docs nuevos
+- `docs/operations/RULES_OF_ENGAGEMENT.md` — marco operacional y scope del Red Team Lab
+- `setup/README.md` — guion completo con orden de ejecucion por maquina v3.0
 
-## [2026-06-02] — Lab-06 BLACK POLICY Fase 05 — C2 + Cleanup + COMPLETADO
+### UPDATE — Docs
+- `docs/reference/CREDENTIALS.md` — v2.0: todas las credenciales actualizadas
+  - DC-02/03/04 Administrador: Admin1234! -> NuevaPassword2026!
+  - SQL Server sa: Sa_Admin2024! (nuevo)
+  - sql_svc: SQLSvc2024! (unificado patron corporativo)
+  - fin.garcia: Finanzas2024! -> Finance2024! (patron corporativo)
+  - GPOs relevantes documentados
+- `docs/reference/LAB_INFRASTRUCTURE.md` — DC-01 OS actualizado a WS2025
+- `README.md` — tabla VMs actualizada con WS2025
 
-### ADD — Lab-06 Fase 05
-- `Lab-06/docs/execution/c2_sliver.md` — C2 Sliver beacons WKSTN-01 + DC-02
-- `Lab-06/docs/execution/cleanup_opsec.md` — artefactos eliminados, Defender reactivado
-- `Lab-06/docs/execution/lateral_movement.md` — movimientos laterales completos Lab-06
-- `Lab-06/loot/IPO_strategy_2026.txt` — Crown Jewel TOP SECRET exfiltrado
-- `Lab-06/screenshots/FASE-05-C2-Cleanup/` — 4 capturas
+### FIX — Lecciones tecnicas documentadas
+- WS2025: New-ADTrust no existe -> usar .NET DirectoryServices
+- WS2025: netdom /quarantine falla -> usar SetSidFilteringStatus
+- WS2025: Update-LapsADSchema funciona correctamente
+- Windows 11 23H2+: LAPS legacy CSE bloqueado -> Windows LAPS nativo
+- SQL Server instalacion silenciosa bloquea PS con RAM < 12GB -> usar GUI o tarea SYSTEM
+- C:\Temp SID *S-1-1-0 falla en WS2025 -> usar WellKnownSidType.WorldSid
+- DC-03 debe estar encendido para extender schema AD (Schema FSMO)
+- DNS Conditional Forwarders necesarios antes de crear Forest Trusts
 
-### UPDATE — Docs Lab-06 COMPLETADO
-- `OPERATION_BLACK_POLICY.md` — todas las fases completadas, todos los Crown Jewels
-- `README.md` — Lab-06 completado, 5/5 fases, badges brightgreen
-- `docs/analysis/lessons_learned.md` — L-01 a L-11 Fases 01-02
-- `docs/analysis/mitigations.md` — Fases 01-02 con Event IDs y SIGMA rules
-
-### ADD — Docs referencia
-- `docs/reference/CREDENTIALS.md` — nuevo: todas las credenciales del entorno de lab
-- `docs/assets/virtualbox_lab_environment.png` — entorno VirtualBox real corriendo
-
-### FIX — Infraestructura Fase 05
-- C:\Temp no existe en DC-02 → creado manualmente (pendiente script 07)
-- Enterprise-Strategy share falla con nombre de grupo en multi-forest → SID directo
+### ADD — CrownJewels ejecutados
+- Labs 01-07 CrownJewels ejecutados en nuevo DC-01 WS2025
 
 ---
 

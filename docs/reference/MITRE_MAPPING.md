@@ -186,12 +186,18 @@
 - Cross-forest Kerberoasting requiere TGT previo (impacket-getTGT + KRB5CCNAME)
 - `New-SmbShare -ReadAccess "Everyone"` falla en Windows Server en español → usar SID `*S-1-1-0`
 
-#### Lab-07 — SHADOW VAULT ⏳ Pendiente
+#### Lab-07 — SHADOW VAULT 🔄 En Progreso
 
 | Táctica | Técnica | Sub-técnica | ID | Lab | Herramienta | Estado |
 |---------|---------|-------------|-----|-----|-------------|--------|
 | Credential Access | OS Credential Dumping | LSASS Memory | T1003.001 | Lab-07 | nanodump | ⏳ |
 | Credential Access | Unsecured Credentials | DPAPI | T1555 | Lab-07 | SharpDPAPI | ⏳ |
+| Credential Access | Unsecured Credentials | Credentials in Registry | T1552.002 | Lab-07 | cmdkey / Windows Credential Manager | ⏳ |
+| Credential Access | Steal/Forge Auth Certs | — | T1649 | Lab-07 | Shadow Credentials — pywhisker | ⏳ |
+| Discovery | Password Policy Discovery | — | T1201 | Lab-07 | nxc ldap -M laps | ⏳ |
+| Discovery | Remote System Discovery | — | T1018 | Lab-07 | Get-LapsADPassword | ⏳ |
+| Privilege Escalation | Valid Accounts | Local Accounts | T1078.003 | Lab-07 | LAPS admin local WKSTN-01 | ⏳ |
+| Lateral Movement | Remote Services | SMB / Windows Admin Shares | T1021.002 | Lab-07 | smbclient con LAPS pass | ⏳ |
 
 ---
 
