@@ -15,8 +15,8 @@
 ```
 
 [![Estado](https://img.shields.io/badge/Estado-En%20Progreso-orange?style=for-the-badge)](.)
-[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-56-brightgreen?style=for-the-badge)](.)
-[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E142h-purple?style=for-the-badge)](.)
+[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-61-brightgreen?style=for-the-badge)](.)
+[![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E143h-purple?style=for-the-badge)](.)
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-black?style=for-the-badge)](https://attack.mitre.org)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet?style=for-the-badge)](.)
 [![Licencia](https://img.shields.io/badge/Uso-Educativo-green?style=for-the-badge)](.)
@@ -91,7 +91,7 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 
 | Host | IP | OS | RAM | Rol |
 |---|---|---|---|---|
-| DC-01 | 10.0.2.10 | Windows Server 2025 | 4GB | Domain Controller — atackcorp.local + ADCS + Windows LAPS |
+| DC-01 | 10.0.2.10 | Windows Server 2025 | 22GB | Domain Controller — atackcorp.local + ADCS + Windows LAPS |
 | DC-02 | 10.0.2.11 | Windows Server 2022 | 3GB | Domain Controller — corp.local (Forest 2) |
 | DC-03 | 10.0.2.13 | Windows Server 2022 | 3GB | Domain Controller — child.atackcorp.local |
 | DC-04 | 10.0.2.14 | Windows Server 2022 | 2GB | Domain Controller — ext.local (Forest 3) |
@@ -352,7 +352,7 @@ Red-Team_Labs/
 │   │   ├── THREAT_MODEL.md                  # Modelo de amenaza del entorno
 │   │   └── WRITEUP_TEMPLATE.md              # Plantilla para nuevos labs
 │   ├── progress/
-│   │   ├── PROGRESS.md                      # Diario de sesiones + 56 técnicas dominadas
+│   │   ├── PROGRESS.md                      # Diario de sesiones + 61 técnicas dominadas
 │   │   └── CHANGELOG.md                     # Historial de cambios del repo
 │   └── reference/
 │       ├── ARSENAL.md                        # Arsenal completo con rutas y versiones
@@ -589,7 +589,7 @@ bash tooling/arsenal_setup.sh
 | Privilege Escalation | RBCD S4U2Proxy | T1558.001 | Lab-05 | ✅ |
 | Credential Access | Shadow Credentials | T1556 | Lab-05 | ✅ |
 | Credential Access | Silver Ticket | T1558.002 | Lab-05 | ✅ |
-| Credential Access | Diamond Ticket | T1558.001 | Lab-05 | ✅ |
+| Credential Access | Diamond Ticket | T1558.001 | Lab-05 |  ✅ |
 
 ---
 
@@ -604,7 +604,7 @@ bash tooling/arsenal_setup.sh
 | `docs/reference/ARSENAL.md` | Arsenal completo con rutas y versiones |
 | `docs/reference/LAB_INFRASTRUCTURE.md` | Infraestructura detallada de cada lab |
 | `docs/reference/MITRE_MAPPING.md` | Mapping MITRE ATT&CK v14 completo |
-| `docs/progress/PROGRESS.md` | Diario de sesiones + 56 técnicas dominadas |
+| `docs/progress/PROGRESS.md` | Diario de sesiones + 61 técnicas dominadas |
 | `docs/progress/CHANGELOG.md` | Historial completo de cambios |
 
 ---

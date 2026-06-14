@@ -32,8 +32,8 @@
 |-----|--------|-------------|-----------|-------|---------|
 | Lab-04: Iron Forest | ✅ Completado | 28/05/2026 | 29/05/2026 | ~20h | ✅ Completo |
 | Lab-05: Silver Chain | ✅ Completado | 30/05/2026 | 30/05/2026 | ~20h | ✅ Completo |
-| Lab-06: Black Policy | ⏳ Pendiente | — | — | — | — |
-| Lab-07: Shadow Vault | ⏳ Pendiente | — | — | — | — |
+| Lab-06: Black Policy | ✅ Completado | ~25h | SID History, Cross-Forest, GPO Abuse | APT28 | Junio 2026 |
+| Lab-07: Shadow Vault | ✅ Completado | ~8h | LAPS, DPAPI, Shadow Credentials, C2 | APT28 | Junio 2026 |
 
 ### 🔴 Phase-03 — Red Team & Evasión
 
