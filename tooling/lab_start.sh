@@ -1,7 +1,7 @@
 #!/bin/bash
 # ============================================================
 #  RED TEAM OPS ROADMAP — Lab Start Script
-#  Autor: Adrian Camacho | Version: 2.0 | Junio 2026
+#  Autor: Adrian Camacho | Version: 2.1 | Junio 2026
 #  Uso: ./lab_start.sh [lab-number]
 #  Ejemplo: ./lab_start.sh 07
 #
@@ -10,6 +10,8 @@
 #    - Verificacion WKSTN usa nxc smb en lugar de nmap ICMP
 #      (Windows 11 bloquea ICMP tras reinicio)
 #    - bloodyad añadido a herramientas comunes
+# Changelog v2.1:
+#    - Lab-08 GHOST SIGNAL añadido
 # ============================================================
 
 RED='\033[0;31m'
@@ -96,11 +98,17 @@ lab_config() {
             CRED_INICIAL="helpdesk.ruiz : Helpdesk2024!"
             VECTORES="LAPS → LAPSToolkit → contrasena admin local | DPAPI → SharpDPAPI → credenciales cifradas | Shadow Credentials → LSASS dump sin Mimikatz"
             ;;
+        "08")
+            LAB_NAME="GHOST SIGNAL — EDR Evasion (Lazarus Group)"
+            TARGETS=("10.0.2.10:DC-01" "10.0.2.8:WKSTN-01")
+            NEEDS_LIGOLO=false
+            SLIVER_PORT=8443
+            CRED_INICIAL="helpdesk.ruiz : Helpdesk2024!"
+            VECTORES="AMSI Bypass in-memory → Process Injection → Direct Syscalls → Sliver sleep obfuscation"
+            ;;
         *)
             err "Lab no reconocido: $LAB"
-            echo "    Labs disponibles: 01, 02, 03, 04, 05, 06, 07"
-            exit 1
-            ;;
+            echo "    Labs disponibles: 01, 02, 03, 04, 05, 06, 07, 08"
     esac
 }
 
@@ -243,6 +251,11 @@ check_tools() {
             command -v certipy-ad &>/dev/null && ok "certipy-ad ✅" || err "certipy-ad ❌"
             [ -f "/opt/redteam/windows/LAPSToolkit.ps1" ] && ok "LAPSToolkit ✅" || err "LAPSToolkit ❌"
             command -v ldeep &>/dev/null && ok "ldeep ✅" || err "ldeep ❌"
+            ;;
+        "08")
+            command -v sliver &>/dev/null && ok "sliver ✅" || err "sliver ❌"
+            python3 -c "import donut" 2>/dev/null && ok "donut ✅" || err "donut ❌ (pip install donut-shellcode)"
+            [ -f "/opt/redteam/SysWhispers3/SysWhispers3.py" ] && ok "SysWhispers3 ✅" || err "SysWhispers3 ❌"
             ;;
     esac
 }
