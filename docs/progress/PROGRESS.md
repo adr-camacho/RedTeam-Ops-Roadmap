@@ -9,10 +9,11 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Última actualización | 31/05/2026 |
-| Fase actual | Phase-02: AD Avanzado (infraestructura CRTO completa — Lab-06 en curso) |
-| Horas totales invertidas | ~121h |
-| Fase actual | Phase-02: AD Avanzado (Lab-05 completado) |
+| Última actualización | 18/06/2026 |
+| Plan vigente | ROADMAP v3.0 — 18 labs alineados a CRTO (`docs/design/ROADMAP.md`) |
+| Labs completados | 7 / 18 |
+| Fase actual | Phase-02 cerrada · próximo: Phase-03 Lab-08 (Black Beacon) |
+| Horas totales invertidas | ~143h |
 
 ---
 
@@ -32,26 +33,29 @@
 |-----|--------|-------------|-----------|-------|---------|
 | Lab-04: Iron Forest | ✅ Completado | 28/05/2026 | 29/05/2026 | ~20h | ✅ Completo |
 | Lab-05: Silver Chain | ✅ Completado | 30/05/2026 | 30/05/2026 | ~20h | ✅ Completo |
-| Lab-06: Black Policy | ✅ Completado | ~25h | SID History, Cross-Forest, GPO Abuse | APT28 | Junio 2026 |
-| Lab-07: Shadow Vault | ✅ Completado | ~8h | LAPS, DPAPI, Shadow Credentials, C2 | APT28 | Junio 2026 |
+| Lab-06: Black Policy | ✅ Completado | 01/06/2026 | 01/06/2026 | ~25h | ✅ Completo |
+| Lab-07: Shadow Vault | ✅ Completado | 06/06/2026 | 06/06/2026 | ~8h | ✅ Completo |
 
-### 🔴 Phase-03 — Red Team & Evasión
+### 🔴 Phase-03 — Red Team Operations (C2, host, evasión)
 
-| Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
-|-----|--------|-------------|-----------|-------|---------|
-| Lab-08: Ghost Signal (Lazarus) | ⏳ Pendiente | — | — | — | — |
-| Lab-09: First Contact (Lazarus) | ⏳ Pendiente | — | — | — | — |
-| Lab-10: Dark Current (Lazarus) | ⏳ Pendiente | — | — | — | — |
-| Lab-11: Deep Holo (Lazarus) | ⏳ Pendiente | — | — | — | — |
+| Lab | Estado | Bloque CRTO | Horas | Writeup |
+|-----|--------|-------------|-------|---------|
+| Lab-08: Black Beacon | ⏳ Pendiente | C2 / modelo operador | — | — |
+| Lab-09: First Contact | ⏳ Pendiente | Initial Access & Foothold | — | — |
+| Lab-10: Deep Root | ⏳ Pendiente | Host Persistence & PrivEsc | — | — |
+| Lab-11: Ghost Signal | ⏳ Pendiente | Evasión I — Defender/AMSI/ETW | — | — |
+| Lab-12: Iron Veil | ⏳ Pendiente | Evasión II — AppLocker/CLM/LOLBAS | — | — |
 
-### 🏴 Phase-04 — Simulación Real
+### 🏴 Phase-04 — Enterprise & Exam (maestría AD, C2 avanzado, capstone)
 
-| Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
-|-----|--------|-------------|-----------|-------|---------|
-| Lab-12: Red Dante (APT10) | ⏳ Pendiente | — | — | — | — |
-| Lab-13: Deep Water (APT10) | ⏳ Pendiente | — | — | — | — |
-| Lab-14: Azure Breach (APT10) | ⏳ Pendiente | — | — | — | — |
-| Lab-15: Operation Zephyr (APT10) | ⏳ Pendiente | — | — | — | — |
+| Lab | Estado | Bloque CRTO | Horas | Writeup |
+|-----|--------|-------------|-------|---------|
+| Lab-13: Linked Shadows | ⏳ Pendiente | MS SQL Servers | — | — |
+| Lab-14: Golden Throne | ⏳ Pendiente | Domain Dominance & Persistence | — | — |
+| Lab-15: Forest Reign | ⏳ Pendiente | Forest & Domain Trusts | — | — |
+| Lab-16: Custom Arsenal | ⏳ Pendiente | Extending the C2 (BOFs/Malleable/Aggressor) | — | — |
+| Lab-17: Silent Exit | ⏳ Pendiente | Data Exfiltration & Reporting | — | — |
+| Lab-18: Final Verdict | ⏳ Pendiente | Capstone — Exam Simulation | — | — |
 
 ---
 

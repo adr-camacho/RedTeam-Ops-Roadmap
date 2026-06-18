@@ -11,7 +11,7 @@
 
 ```
   [ Active Directory Adversary Emulation — APT29 · APT41 · APT28 · Lazarus · APT10 ]
-  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 7/15 Labs · 61 TTPs ]
+  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 7/18 Labs · 61 TTPs ]
 ```
 
 [![Estado](https://img.shields.io/badge/Estado-En%20Progreso-orange?style=for-the-badge)](.)
@@ -106,13 +106,14 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 
 ## 🗺️ Roadmap Completo
 
-El roadmap emula **5 grupos APT reales** a través de **4 Fases** y **15 Labs**.
+El roadmap está **alineado al temario CRTO** y recorre **4 Fases** y **18 Labs** (7 completados). La piel
+APT es cosmética: el alcance de cada lab lo fija el temario. Fuente de verdad: [`docs/design/ROADMAP.md`](docs/design/ROADMAP.md).
 
 ```
 PHASE-01 ── APT29 + APT41 ──► Fundamentos AD, Kerberos, ADCS, Pivotaje
 PHASE-02 ── APT28          ──► AD Avanzado, WriteDACL, DCSync, Credential Hunting
-PHASE-03 ── Lazarus Group  ──► EDR Evasion, C2 avanzado, Initial Access real
-PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, Azure AD
+PHASE-03 ── Lazarus Group  ──► C2, Operativa de Host, Evasión (Defender/AMSI/AppLocker)
+PHASE-04 ── APT10          ──► MSSQL, Domain Dominance, Trusts, C2 avanzado, Capstone
 ```
 
 ---
@@ -134,23 +135,26 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 | Lab-06 | 📋 **BLACK POLICY** | APT28 (Fancy Bear) | ✅ Completado ~25h | SID History Injection, Cross-Forest Trust, GPO Abuse, DSInternals |
 | Lab-07 | 🔒 **SHADOW VAULT** | APT28 (Fancy Bear) | ✅ Completado ~8h | LAPS abuse, DPAPI extraction, Shadow Credentials, C2 Sliver |
 
-### 🔴 Phase-03 — Red Team & Evasión de Defensas
+### 🔴 Phase-03 — Red Team Operations (C2, host, evasión)
 
-| # | Operación | Adversario | Estado | Técnicas planificadas |
+| # | Operación | Adversario | Estado | Bloque CRTO |
 |---|---|---|---|---|
-| Lab-08 | 👁️ **GHOST SIGNAL** | Lazarus Group | ⏳ Pendiente | AMSI bypass in-memory, Process injection, Direct syscalls |
-| Lab-09 | 📡 **FIRST CONTACT** | Lazarus Group | ⏳ Pendiente | Password spraying, HTML Smuggling, VBA macros |
-| Lab-10 | ⚡ **DARK CURRENT** | Lazarus Group | ⏳ Pendiente | Havoc C2, Sleep obfuscation, BOFs |
-| Lab-11 | 🕳️ **DEEP HOLO** | Lazarus Group | ⏳ Pendiente | Simulación multicapa, EDR evasion real |
+| Lab-08 | 📶 **BLACK BEACON** | Lazarus Group | ⏳ Pendiente | C2 / modelo operador (listeners, beacons, OPSEC) |
+| Lab-09 | 📡 **FIRST CONTACT** | Lazarus Group | ⏳ Pendiente | Initial Access & Foothold (recon, compromise, host recon) |
+| Lab-10 | 🌱 **DEEP ROOT** | Lazarus Group | ⏳ Pendiente | Host Persistence & Privilege Escalation |
+| Lab-11 | 👁️ **GHOST SIGNAL** | Lazarus Group | ⏳ Pendiente | Evasión I — Defender / AMSI / ETW |
+| Lab-12 | 🛡️ **IRON VEIL** | Lazarus Group | ⏳ Pendiente | Evasión II — AppLocker / CLM / LOLBAS |
 
-### 🏴 Phase-04 — Enterprise Simulation
+### 🏴 Phase-04 — Enterprise & Exam (maestría AD, C2 avanzado, capstone)
 
-| # | Operación | Adversario | Estado | Técnicas planificadas |
+| # | Operación | Adversario | Estado | Bloque CRTO |
 |---|---|---|---|---|
-| Lab-12 | 🔥 **RED DANTE** | APT10 (Stone Panda) | ⏳ Pendiente | Red masiva mixta, persistencia multicapa, exfiltración |
-| Lab-13 | 🌊 **DEEP WATER** | APT10 (Stone Panda) | ⏳ Pendiente | Forest Trusts avanzados, preparación CRTO |
-| Lab-14 | ☁️ **AZURE BREACH** | APT10 (Stone Panda) | ⏳ Pendiente | Azure AD / Entra ID, Cloud-to-OnPremise |
-| Lab-15 | 🌪️ **OPERATION ZEPHYR** | APT10 (Stone Panda) | ⏳ Pendiente | Supply chain, simulación final CRTO |
+| Lab-13 | 🔗 **LINKED SHADOWS** | APT10 (Stone Panda) | ⏳ Pendiente | MS SQL Servers (linked servers, escalada, lateral) |
+| Lab-14 | 👑 **GOLDEN THRONE** | APT10 (Stone Panda) | ⏳ Pendiente | Domain Dominance & Persistence (Golden/Silver/Diamond, forged certs) |
+| Lab-15 | 🌲 **FOREST REIGN** | APT10 (Stone Panda) | ⏳ Pendiente | Forest & Domain Trusts (cross-forest, SID history/filtering) |
+| Lab-16 | 🧰 **CUSTOM ARSENAL** | APT10 (Stone Panda) | ⏳ Pendiente | Extending the C2 (BOFs, Malleable C2, Aggressor) |
+| Lab-17 | 🚪 **SILENT EXIT** | APT10 (Stone Panda) | ⏳ Pendiente | Data Exfiltration & Reporting / OPSEC |
+| Lab-18 | ⚖️ **FINAL VERDICT** | APT10 (Stone Panda) | ⏳ Pendiente | Capstone — Exam Simulation (Defender ON, por objetivos) |
 
 ---
 
@@ -325,13 +329,13 @@ PHASE-04 ── APT10          ──► Enterprise Simulation, Forest Trusts, A
 
 ## 🔜 Próximo objetivo
 
-**Lab-08 — GHOST SIGNAL · Lazarus Group**
+**Lab-08 — BLACK BEACON · C2 Foundations**
 
 | Campo | Detalle |
 |-------|---------|
-| Técnicas | AMSI Bypass, EDR Evasion, Process Injection, Direct Syscalls, BYOD |
-| Objetivo | Operar en entorno con Defender activo sin deshabilitar Tamper Protection |
-| Adversario | Lazarus Group — TTP de evasión avanzada |
+| Bloque CRTO | Command & Control — listeners, beacons, staging, OPSEC |
+| Objetivo | Construir el modelo operador de C2 y la equivalencia CS↔Sliver |
+| Adversario | Lazarus Group (piel cosmética; el alcance lo fija el temario) |
 
 ## 📂 Estructura del Repositorio
 
@@ -342,7 +346,12 @@ Red-Team_Labs/
 │
 ├── docs/
 │   ├── design/
-│   │   └── DESIGN.md                        # Filosofía, adversary emulation, roadmap v2.0
+│   │   ├── DESIGN.md                        # Filosofía, adversary emulation, roadmap v3.0
+│   │   └── ROADMAP.md                       # Plan canónico 18 labs (fuente de verdad)
+│   ├── standards/
+│   │   └── REPOSITORY_STANDARDS.md          # Estándar del producto + Definition of Done
+│   ├── learning/
+│   │   └── STUDY_GUIDE.md                   # Guía de estudio + autoevaluación CRTO
 │   ├── detection/
 │   │   └── DETECTION_RULES.md               # Reglas SIGMA y Event IDs por técnica
 │   ├── operations/
@@ -380,10 +389,12 @@ Red-Team_Labs/
 │   ├── README.md                            # Guia completa de aprovisionamiento
 │   └── screenshots/                         # Evidencia del setup del entorno
 │
-├── tooling/                                 # Scripts de setup del arsenal Kali
+├── tooling/                                 # Scripts de setup del arsenal Kali + mantenimiento
 │   ├── arsenal_setup.sh
 │   ├── lab_start.sh
-│   └── lab_stop.sh
+│   ├── lab_stop.sh
+│   ├── scaffold-v3.ps1                      # Reestructura el repo al ROADMAP v3.0 (Windows)
+│   └── scaffold-v3.sh                       # Reestructura el repo al ROADMAP v3.0 (Linux)
 │
 ├── Phase-01-Fundamentals/
 │   ├── Lab-01-Ghost-Forest/    ✅ 13 fases · ~40h · APT29
@@ -397,16 +408,19 @@ Red-Team_Labs/
 │   └── Lab-07-Shadow-Vault/    ✅ Completado · ~8h · APT28
 │
 ├── Phase-03-Red-Team-Operations/
-│   ├── Lab-08-Ghost-Signals/   ⏳ Pendiente · Lazarus
-│   ├── Lab-09-First-Contact/   ⏳ Pendiente · Lazarus
-│   ├── Lab-10-Dark-Current/    ⏳ Pendiente · Lazarus
-│   └── Lab-11-Deep-Holo/       ⏳ Pendiente · Lazarus
+│   ├── Lab-08-Black-Beacon/    ⏳ Pendiente · C2 Foundations
+│   ├── Lab-09-First-Contact/   ⏳ Pendiente · Initial Access
+│   ├── Lab-10-Deep-Root/       ⏳ Pendiente · Persistence & PrivEsc
+│   ├── Lab-11-Ghost-Signal/    ⏳ Pendiente · Evasión I (Defender/AMSI)
+│   └── Lab-12-Iron-Veil/       ⏳ Pendiente · Evasión II (AppLocker/CLM)
 │
 └── Phase-04-Enterprise-Simulation/
-    ├── Lab-12-Red-Dante/        ⏳ Pendiente · APT10
-    ├── Lab-13-Deep-Water/       ⏳ Pendiente · APT10
-    ├── Lab-14-Azure-Breach/     ⏳ Pendiente · APT10
-    └── Lab-15-Operation-Zephyr/ ⏳ Pendiente · APT10
+    ├── Lab-13-Linked-Shadows/  ⏳ Pendiente · MS SQL Servers
+    ├── Lab-14-Golden-Throne/   ⏳ Pendiente · Domain Dominance
+    ├── Lab-15-Forest-Reign/    ⏳ Pendiente · Forest & Trusts
+    ├── Lab-16-Custom-Arsenal/  ⏳ Pendiente · Extending the C2
+    ├── Lab-17-Silent-Exit/     ⏳ Pendiente · Exfil & Reporting
+    └── Lab-18-Final-Verdict/   ⏳ Pendiente · Capstone (Exam Sim)
 ```
 
 **Cada lab completado contiene:**

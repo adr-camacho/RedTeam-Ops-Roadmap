@@ -1,38 +1,18 @@
-# 🔴 Lab-09: FIRST CONTACT
+﻿# Lab-09 - First-Contact - Initial Access & Foothold
 
-![Status](https://img.shields.io/badge/Status-Design%20Phase-lightgrey)
-![Phase](https://img.shields.io/badge/Phase-0003-blue)
-![Adversary](https://img.shields.io/badge/Adversary-Lazarus%20Group-darkred)
+> Fase: `Phase-03-Red-Team-Operations` - Estado: Pendiente - Roadmap: [`docs/design/ROADMAP.md`](../../docs/design/ROADMAP.md)
 
-> ⚠️ **Design Phase** — Lab planificado, pendiente de ejecución. La documentación de ejecución se generará al completar el lab.
+## Objetivo
+Obtener y estabilizar el primer beacon y leer el host (situational awareness) antes de actuar.
 
----
+## Que cubre (temario CRTO)
+External Recon - Initial Compromise - Host Recon
 
-## 🎯 Resumen
+## Que prepara
+Aunque el examen es assumed-breach, controlar acceso inicial y recon de host evita quemar el foothold.
 
-| Campo | Detalle |
-|-------|---------|
-| **Nombre de operación** | FIRST CONTACT |
-| **Adversario simulado** | Lazarus Group |
-| **Técnicas principales** | Password spraying, HTML Smuggling, VBA macros, Initial Access real |
-| **Estado** | ⏳ Design Phase |
-| **Prerequisito** | Labs anteriores completados |
+## Valor didactico en el examen
+Saber que mirar nada mas caer (privilegios, defensas, software) marca la primera hora del examen.
 
----
-
-## 📋 Técnicas planificadas
-
-- Password spraying
-- HTML Smuggling
-- VBA macros
-- Initial Access real
-
----
-
-## 📂 Documentación
-
-*Se generará al ejecutar el lab.*
-
----
-
-*FIRST CONTACT — Adrián Camacho | Entorno de laboratorio — Únicamente con fines educativos*
+## Estructura
+`docs/theory` - `docs/detection` - `docs/execution` - `docs/analysis` - `docs/report` - `loot` - `nmap` - `screenshots` - `setup`
