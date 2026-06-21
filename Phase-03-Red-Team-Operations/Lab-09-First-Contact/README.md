@@ -1,6 +1,6 @@
-﻿# Lab-09 - First-Contact - Initial Access & Foothold
+# Lab-09 - First-Contact - Initial Access & Foothold
 
-> Fase: `Phase-03-Red-Team-Operations` - Estado: Pendiente - Roadmap: [`docs/design/ROADMAP.md`](../../docs/design/ROADMAP.md)
+> Fase: `Phase-03-Red-Team-Operations` - Estado: Pendiente - Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
 
 ## Objetivo
 Obtener y estabilizar el primer beacon y leer el host (situational awareness) antes de actuar.

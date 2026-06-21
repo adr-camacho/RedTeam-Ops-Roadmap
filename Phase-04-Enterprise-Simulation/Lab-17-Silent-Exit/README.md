@@ -1,6 +1,6 @@
-﻿# Lab-17 - Silent-Exit - Exfiltration & Reporting
+# Lab-17 - Silent-Exit - Exfiltration & Reporting
 
-> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/design/ROADMAP.md`](../../docs/design/ROADMAP.md)
+> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
 
 ## Objetivo
 Localizar el valor, sacarlo y cerrar el engagement con un reporte profesional.

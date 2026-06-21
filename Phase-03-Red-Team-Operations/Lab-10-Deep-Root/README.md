@@ -1,6 +1,6 @@
-﻿# Lab-10 - Deep-Root - Host Persistence & PrivEsc
+# Lab-10 - Deep-Root - Host Persistence & PrivEsc
 
-> Fase: `Phase-03-Red-Team-Operations` - Estado: Pendiente - Roadmap: [`docs/design/ROADMAP.md`](../../docs/design/ROADMAP.md)
+> Fase: `Phase-03-Red-Team-Operations` - Estado: Pendiente - Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
 
 ## Objetivo
 Persistencia de host (run keys, servicios, tareas, COM) y escalada local (UAC, servicios, token).

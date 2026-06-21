@@ -1,6 +1,6 @@
-﻿# Lab-15 - Forest-Reign - Forest & Trust Abuse
+# Lab-15 - Forest-Reign - Forest & Trust Abuse
 
-> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/design/ROADMAP.md`](../../docs/design/ROADMAP.md)
+> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
 
 ## Objetivo
 Saltar entre dominios y forests abusando de trusts.

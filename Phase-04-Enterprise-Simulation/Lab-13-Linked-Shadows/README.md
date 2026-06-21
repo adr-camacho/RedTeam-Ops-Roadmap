@@ -1,6 +1,6 @@
-﻿# Lab-13 - Linked-Shadows - MS SQL Server Attacks
+# Lab-13 - Linked-Shadows - MS SQL Server Attacks
 
-> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/design/ROADMAP.md`](../../docs/design/ROADMAP.md)
+> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
 
 ## Objetivo
 Enumerar y abusar de MSSQL: linked servers, ejecucion de comandos y movimiento lateral via SQL.

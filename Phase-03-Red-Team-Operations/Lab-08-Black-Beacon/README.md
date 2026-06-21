@@ -1,7 +1,7 @@
-﻿# Lab-08 · Black Beacon — C2 Foundations
+# Lab-08 · Black Beacon — C2 Foundations
 
 > Fase: `Phase-03-Red-Team-Operations` · Estado: ⏳ En progreso (theory + detection completos)  
-> Roadmap: [`docs/design/ROADMAP.md`](../../docs/design/ROADMAP.md)
+> Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
 
 ---
 

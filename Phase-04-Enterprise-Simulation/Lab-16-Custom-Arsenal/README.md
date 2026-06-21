@@ -1,6 +1,6 @@
-﻿# Lab-16 - Custom-Arsenal - Extending the C2
+# Lab-16 - Custom-Arsenal - Extending the C2
 
-> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/design/ROADMAP.md`](../../docs/design/ROADMAP.md)
+> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
 
 ## Objetivo
 Adaptar el C2 a OPSEC (perfiles Malleable) y automatizar tasking (Aggressor); concepto de BOFs.

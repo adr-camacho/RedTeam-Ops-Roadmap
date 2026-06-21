@@ -1,6 +1,6 @@
-﻿# Lab-12 - Iron-Veil - Evasion II - App Control
+# Lab-12 - Iron-Veil - Evasion II - App Control
 
-> Fase: `Phase-03-Red-Team-Operations` - Estado: Pendiente - Roadmap: [`docs/design/ROADMAP.md`](../../docs/design/ROADMAP.md)
+> Fase: `Phase-03-Red-Team-Operations` - Estado: Pendiente - Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
 
 ## Objetivo
 Ejecucion bajo whitelisting y CLM; rutas permitidas, LOLBAS y su deteccion.

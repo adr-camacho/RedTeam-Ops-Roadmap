@@ -1,6 +1,6 @@
-﻿# Lab-18 - Final-Verdict - Capstone - Exam Simulation
+# Lab-18 - Final-Verdict - Capstone - Exam Simulation
 
-> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/design/ROADMAP.md`](../../docs/design/ROADMAP.md)
+> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
 
 ## Objetivo
 Simulacion de examen de extremo a extremo en condiciones reales.

@@ -34,7 +34,7 @@
 ## 🔎 Detección y blue team
 
 - **Sysinternals — Sysmon** — telemetría de endpoint; base de muchas reglas de detección.
-- **SIGMA (SigmaHQ)** — formato estándar de reglas de detección; ver `docs/detection/DETECTION_RULES.md`.
+- **SIGMA (SigmaHQ)** — formato estándar de reglas de detección; ver `docs/reference/DETECTION_LIBRARY.md`.
 - **MITRE ATT&CK — Detections & Data Sources** — qué telemetría observa cada técnica.
 - **Repositorios de reglas (Elastic, Splunk Security Content)** — ejemplos de detecciones por comportamiento.
 

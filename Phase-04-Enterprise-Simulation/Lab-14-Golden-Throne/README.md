@@ -1,6 +1,6 @@
-﻿# Lab-14 - Golden-Throne - Domain Dominance & Persistence
+# Lab-14 - Golden-Throne - Domain Dominance & Persistence
 
-> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/design/ROADMAP.md`](../../docs/design/ROADMAP.md)
+> Fase: `Phase-04-Enterprise-Simulation` - Estado: Pendiente - Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
 
 ## Objetivo
 Dominio total y persistencia que sobrevive a resets de credenciales.

@@ -107,7 +107,7 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 ## 🗺️ Roadmap Completo
 
 El roadmap está **alineado al temario CRTO** y recorre **4 Fases** y **18 Labs** (7 completados). La piel
-APT es cosmética: el alcance de cada lab lo fija el temario. Fuente de verdad: [`docs/design/ROADMAP.md`](docs/design/ROADMAP.md).
+APT es cosmética: el alcance de cada lab lo fija el temario. Fuente de verdad: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ```
 PHASE-01 ── APT29 + APT41 ──► Fundamentos AD, Kerberos, ADCS, Pivotaje
@@ -349,11 +349,11 @@ Red-Team_Labs/
 │   │   ├── DESIGN.md                        # Filosofía, adversary emulation, roadmap v3.0
 │   │   └── ROADMAP.md                       # Plan canónico 18 labs (fuente de verdad)
 │   ├── standards/
-│   │   └── REPOSITORY_STANDARDS.md          # Estándar del producto + Definition of Done
+│   │   └── STANDARDS.md          # Estándar del producto + Definition of Done
 │   ├── learning/
 │   │   └── STUDY_GUIDE.md                   # Guía de estudio + autoevaluación CRTO
 │   ├── detection/
-│   │   └── DETECTION_RULES.md               # Reglas SIGMA y Event IDs por técnica
+│   │   └── DETECTION_LIBRARY.md               # Reglas SIGMA y Event IDs por técnica
 │   ├── operations/
 │   │   ├── ENGAGEMENT_CHECKLIST.md          # Checklist pre/durante/post operación
 │   │   ├── METHODOLOGY.md                   # Proceso operacional estándar
@@ -611,15 +611,15 @@ bash tooling/arsenal_setup.sh
 
 | Documento | Descripción |
 |---|---|
-| `docs/design/DESIGN.md` | Filosofía, adversary emulation, roadmap v2.0 |
-| `docs/detection/DETECTION_RULES.md` | Reglas SIGMA y Event IDs por técnica |
+| `docs/DESIGN.md` | Filosofía, adversary emulation, roadmap v2.0 |
+| `docs/reference/DETECTION_LIBRARY.md` | Reglas SIGMA y Event IDs por técnica |
 | `docs/operations/ENGAGEMENT_CHECKLIST.md` | Checklist pre/durante/post operación |
 | `docs/operations/OPSEC_NOTES.md` | 17 secciones de OPSEC operacional |
 | `docs/reference/ARSENAL.md` | Arsenal completo con rutas y versiones |
 | `docs/reference/LAB_INFRASTRUCTURE.md` | Infraestructura detallada de cada lab |
 | `docs/reference/MITRE_MAPPING.md` | Mapping MITRE ATT&CK v14 completo |
-| `docs/progress/PROGRESS.md` | Diario de sesiones + 61 técnicas dominadas |
-| `docs/progress/CHANGELOG.md` | Historial completo de cambios |
+| `docs/PROGRESS.md` | Diario de sesiones + 61 técnicas dominadas |
+| `docs/CHANGELOG.md` | Historial completo de cambios |
 
 ---
 
