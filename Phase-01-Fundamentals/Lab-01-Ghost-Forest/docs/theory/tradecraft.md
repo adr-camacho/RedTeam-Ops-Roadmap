@@ -200,7 +200,7 @@ Las cuentas de servicio suelen tener contraseñas:
 | **Hash tipo** | `$krb5asrep$23$` | `$krb5tgs$23$` |
 | **Detectabilidad** | Menor | Mayor (TGS-REQ por cuenta no habitual) |
 
-### Targeted Kerberoasting (Fase 13 de este lab)
+### Targeted Kerberoasting (se ejecuta en profundidad en Lab-04 · ACL abuse)
 
 Con **GenericWrite** sobre una cuenta, podemos añadirle un SPN arbitrario y convertirla en objetivo de Kerberoasting bajo demanda. Esto permite atacar cuentas que normalmente no serían Kerberoasteables.
 

@@ -11,11 +11,11 @@
 
 ```
   [ Active Directory Adversary Emulation — APT29 · APT41 · APT28 · Lazarus · APT10 ]
-  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 7/18 Labs · 61 TTPs ]
+  [ CRTO Preparation · Sliver C2 · MITRE ATT&CK v14 · 7/18 Labs · 56 técnicas MITRE ]
 ```
 
 [![Estado](https://img.shields.io/badge/Estado-En%20Progreso-orange?style=for-the-badge)](.)
-[![TTPs](https://img.shields.io/badge/TTPs%20Dominadas-61-brightgreen?style=for-the-badge)](.)
+[![TTPs](https://img.shields.io/badge/T%C3%A9cnicas%20MITRE-56-brightgreen?style=for-the-badge)](.)
 [![Horas](https://img.shields.io/badge/Horas%20invertidas-%7E143h-purple?style=for-the-badge)](.)
 [![MITRE](https://img.shields.io/badge/Framework-MITRE%20ATT%26CK%20v14-black?style=for-the-badge)](https://attack.mitre.org)
 [![C2](https://img.shields.io/badge/C2-Sliver%20%7C%20Havoc-blueviolet?style=for-the-badge)](.)
@@ -107,7 +107,7 @@ Este repositorio documenta mi preparación para la certificación **CRTO (Certif
 ## 🗺️ Roadmap Completo
 
 El roadmap está **alineado al temario CRTO** y recorre **4 Fases** y **18 Labs** (7 completados). La piel
-APT es cosmética: el alcance de cada lab lo fija el temario. Fuente de verdad: [`docs/ROADMAP.md`](docs/ROADMAP.md).
+APT es cosmética: el alcance de cada lab lo fija el temario. Fuente de verdad: [`docs/design/ROADMAP.md`](docs/design/ROADMAP.md).
 
 ```
 PHASE-01 ── APT29 + APT41 ──► Fundamentos AD, Kerberos, ADCS, Pivotaje
@@ -349,11 +349,11 @@ Red-Team_Labs/
 │   │   ├── DESIGN.md                        # Filosofía, adversary emulation, roadmap v3.0
 │   │   └── ROADMAP.md                       # Plan canónico 18 labs (fuente de verdad)
 │   ├── standards/
-│   │   └── STANDARDS.md          # Estándar del producto + Definition of Done
+│   │   └── REPOSITORY_STANDARDS.md          # Estándar del producto + Definition of Done
 │   ├── learning/
 │   │   └── STUDY_GUIDE.md                   # Guía de estudio + autoevaluación CRTO
 │   ├── detection/
-│   │   └── DETECTION_LIBRARY.md               # Reglas SIGMA y Event IDs por técnica
+│   │   └── DETECTION_RULES.md               # Reglas SIGMA y Event IDs por técnica
 │   ├── operations/
 │   │   ├── ENGAGEMENT_CHECKLIST.md          # Checklist pre/durante/post operación
 │   │   ├── METHODOLOGY.md                   # Proceso operacional estándar
@@ -361,7 +361,7 @@ Red-Team_Labs/
 │   │   ├── THREAT_MODEL.md                  # Modelo de amenaza del entorno
 │   │   └── WRITEUP_TEMPLATE.md              # Plantilla para nuevos labs
 │   ├── progress/
-│   │   ├── PROGRESS.md                      # Diario de sesiones + 61 técnicas dominadas
+│   │   ├── PROGRESS.md                      # Diario de sesiones + técnicas dominadas por lab
 │   │   └── CHANGELOG.md                     # Historial de cambios del repo
 │   └── reference/
 │       ├── ARSENAL.md                        # Arsenal completo con rutas y versiones
@@ -385,7 +385,7 @@ Red-Team_Labs/
 │   ├── DC-04/                               # Scripts DC-04 (ext.local)
 │   ├── WKSTN-01/                            # Scripts WKSTN-01
 │   ├── WKSTN-02/                            # Scripts WKSTN-02
-│   ├── CrownJewels/                         # Crown Jewels Labs 01-15
+│   ├── CrownJewels/                         # Crown Jewels Labs 01-07 (completados)
 │   ├── README.md                            # Guia completa de aprovisionamiento
 │   └── screenshots/                         # Evidencia del setup del entorno
 │
@@ -604,6 +604,11 @@ bash tooling/arsenal_setup.sh
 | Credential Access | Shadow Credentials | T1556 | Lab-05 | ✅ |
 | Credential Access | Silver Ticket | T1558.002 | Lab-05 | ✅ |
 | Credential Access | Diamond Ticket | T1558.001 | Lab-05 |  ✅ |
+| Privilege Escalation | SID History Injection | T1134.005 | Lab-06 | ✅ |
+| Lateral Movement | Cross-Forest Trust Abuse | T1482 | Lab-06 | ✅ |
+| Credential Access | LAPS Password Disclosure | T1201 | Lab-07 | ✅ |
+| Credential Access | DPAPI Credential Extraction | T1555.004 | Lab-07 | ✅ |
+| Credential Access | Shadow Credentials (PKINIT) | T1649 | Lab-07 | ✅ |
 
 ---
 
@@ -611,15 +616,15 @@ bash tooling/arsenal_setup.sh
 
 | Documento | Descripción |
 |---|---|
-| `docs/DESIGN.md` | Filosofía, adversary emulation, roadmap v2.0 |
-| `docs/reference/DETECTION_LIBRARY.md` | Reglas SIGMA y Event IDs por técnica |
+| `docs/design/DESIGN.md` | Filosofía, adversary emulation, roadmap v2.0 |
+| `docs/detection/DETECTION_RULES.md` | Reglas SIGMA y Event IDs por técnica |
 | `docs/operations/ENGAGEMENT_CHECKLIST.md` | Checklist pre/durante/post operación |
 | `docs/operations/OPSEC_NOTES.md` | 17 secciones de OPSEC operacional |
 | `docs/reference/ARSENAL.md` | Arsenal completo con rutas y versiones |
 | `docs/reference/LAB_INFRASTRUCTURE.md` | Infraestructura detallada de cada lab |
 | `docs/reference/MITRE_MAPPING.md` | Mapping MITRE ATT&CK v14 completo |
-| `docs/PROGRESS.md` | Diario de sesiones + 61 técnicas dominadas |
-| `docs/CHANGELOG.md` | Historial completo de cambios |
+| `docs/progress/PROGRESS.md` | Diario de sesiones + técnicas dominadas por lab |
+| `docs/progress/CHANGELOG.md` | Historial completo de cambios |
 
 ---
 

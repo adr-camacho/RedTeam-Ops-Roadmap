@@ -32,7 +32,6 @@ APT29 es un actor de amenaza persistente avanzada atribuido al Servicio de Intel
 | **C2 encubierto** | Sliver con perfil HTTPS para mimetizarse con tráfico legítimo |
 | **Movimiento lateral sigiloso** | Pass-the-Ticket en lugar de Pass-the-Hash para reducir ruido en logs |
 | **Persistencia mediante tickets** | Golden Ticket para acceso persistente sin dependencia de contraseñas |
-| **Escalada mediante delegaciones** | Abuso de Unconstrained/Constrained Delegation |
 
 ### TTPs de referencia (MITRE)
 - [G0016 — APT29](https://attack.mitre.org/groups/G0016/)
@@ -225,54 +224,7 @@ La operación sigue la cadena de ataque completa de APT29, estructurada sobre MI
 
 ---
 
-
----
-
-### FASE 11 — Unconstrained + Constrained Delegation
-**Táctica MITRE:** TA0006 — Credential Access  
-**Objetivo:** Abusar de configuraciones de delegación para obtener TGTs de usuarios privilegiados.
-
-| # | Técnica | ID MITRE | Herramienta | Estado |
-|---|---------|----------|-------------|--------|
-| 11.1 | Unconstrained Delegation — sql_svc | T1558.001 | Rubeus monitor | ✅ |
-| 11.2 | Forzar autenticación DC (SpoolSample/PetitPotam) | T1187 | PetitPotam | ✅ |
-| 11.3 | Extraer TGT del DC desde memoria sql_svc | T1558.001 | Rubeus dump | ✅ |
-| 11.4 | Constrained Delegation — iis_svc (S4U2Proxy) | T1558.001 | Rubeus s4u | ✅ |
-| 11.5 | Obtener TGS como Administrador → MSSQLSvc/DC-01 | T1558.001 | impacket getST | ✅ |
-
-**Criterio de éxito:** TGT del DC obtenido via Unconstrained + TGS DA via Constrained.
-
----
-
-### FASE 12 — GPO Abuse
-**Táctica MITRE:** TA0004 — Privilege Escalation  
-**Objetivo:** Abusar de permisos FullControl de helpdesk.ruiz sobre IT-Baseline GPO para ejecutar código como SYSTEM en equipos del OU IT.
-
-| # | Técnica | ID MITRE | Herramienta | Estado |
-|---|---------|----------|-------------|--------|
-| 12.1 | Identificar GPO con permisos abusables | T1484.001 | Get-GPPermission | ✅ |
-| 12.2 | Escribir ScheduledTasks.xml en SYSVOL | T1484.001 | PowerShell directo | ✅ |
-| 12.3 | Añadir tarea inmediata a la GPO | T1053.005 | XML en SYSVOL | ✅ |
-| 12.4 | Forzar gpupdate en WKSTN-01 | T1484.001 | gpupdate /force | ✅ |
-| 12.5 | helpdesk.ruiz → Admin local WKSTN-01 | T1484.001 | net localgroup | ✅ |
-
-**Criterio de éxito:** Ejecución de código como SYSTEM via GPO en equipos del OU IT.
-
----
-
-### FASE 13 — ACL Abuse (GenericWrite)
-**Táctica MITRE:** TA0004 — Privilege Escalation  
-**Objetivo:** fin.garcia tiene GenericWrite sobre sql_svc — añadir SPN para Kerberoastear sql_svc y obtener su contraseña, luego abusar de sql_svc (Unconstrained Delegation).
-
-| # | Técnica | ID MITRE | Herramienta | Estado |
-|---|---------|----------|-------------|--------|
-| 13.1 | Identificar GenericWrite de fin.garcia sobre sql_svc | T1222 | dacledit | ✅ |
-| 13.2 | Añadir SPN a sql_svc (targeted Kerberoasting) | T1558.003 | bloodyAD | ✅ |
-| 13.3 | Kerberoastear sql_svc con nuevo SPN | T1558.003 | GetUserSPNs | ✅ |
-| 13.4 | Crackear hash TGS de sql_svc | T1110.002 | John + wordlist OSINT | ✅ |
-| 13.5 | sql_svc comprometida → Unconstrained Delegation → DA | T1558.001 | impacket | ✅ |
-
-**Criterio de éxito:** Domain Admin via cadena fin.garcia → GenericWrite → SPN → Kerberoast → sql_svc → Unconstrained Delegation.
+> **Nota:** Las Fases 11-13 (delegación, GPO abuse, ACL abuse) se han reubicado a su lab de fundamento — **Lab-05 / Lab-06 / Lab-04**. Esta operación concluye en la Fase 10 (Domain Admin).
 
 
 ---
@@ -298,15 +250,6 @@ La operación sigue la cadena de ataque completa de APT29, estructurada sobre MI
 | 9 | `15_golden_ticket.png` | Golden Ticket forjado |
 | 10 | `16_dcsync.png` | DCSync — todos los hashes |
 | 10 | `17_domain_admin.png` | Shell como Domain Admin |
-| 11 | `fase11-01-unconstrained-monitor.png` | Rubeus monitor en sql_svc |
-| 11 | `fase11-02-dc-tgt-captured.png` | TGT del DC capturado |
-| 11 | `fase11-03-constrained-s4u.png` | TGS DA via S4U2Proxy |
-| 12 | `fase12-01-gpo-permissions.png` | helpdesk.ruiz FullControl IT-Baseline |
-| 12 | `fase12-02-gpo-task-added.png` | Tarea inmediata añadida a GPO |
-| 12 | `fase12-03-gpo-system-rce.png` | Ejecución SYSTEM via GPO |
-| 13 | `fase13-01-genericwrite-bloodhound.png` | fin.garcia GenericWrite en BloodHound |
-| 13 | `fase13-02-spn-added.png` | SPN añadido a sql_svc |
-| 13 | `fase13-03-kerberoast-sqlsvc.png` | TGS sql_svc crackeado |
 
 ---
 

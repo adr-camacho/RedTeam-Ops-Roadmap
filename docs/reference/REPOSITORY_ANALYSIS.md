@@ -1,4 +1,4 @@
-# 📊 REPOSITORY ANALYSIS — RedTeam-Ops-Roadmap
+# 📊 REPOSITORY_ANALYSIS — RedTeam-Ops-Roadmap
 ## Análisis exhaustivo, arquitectura, estado actual y roadmap
 
 **Versión:** 1.0 | **Fecha:** 17/06/2026 | **Autor:** Claude (análisis) + Adrián Camacho (proyecto)
@@ -73,8 +73,8 @@ Red-Team_Labs/
 ├── Phase-04-Enterprise-Simulation/  ⏳ PENDIENTE (Labs 12-15)
 ├── docs/                            📚 DOCUMENTACIÓN GLOBAL
 │   ├── REPOSITORY_ANALYSIS.md       ← TÚ ESTÁS AQUÍ
-│   ├── DESIGN.md             Filosofía + principios + roadmap
-│   ├── reference/DETECTION_LIBRARY.md SIGMA rules + Event IDs
+│   ├── design/DESIGN.md             Filosofía + principios + roadmap
+│   ├── detection/DETECTION_RULES.md SIGMA rules + Event IDs
 │   ├── operations/                  Checklists operacionales
 │   ├── reference/                   Arsenal, infraestructura, MITRE mapping
 │   └── progress/                    Diario de sesiones + changelog
@@ -490,7 +490,7 @@ Este proyecto actualmente es de un autor. Las mejoras planificadas incluyen:
 
 - **DESIGN.md** — Filosofía completa y roadmap v2.1
 - **README.md** — Visión general y estado actual
-- **docs/PROGRESS.md** — Diario de sesiones
+- **docs/progress/PROGRESS.md** — Diario de sesiones
 - **docs/reference/ARSENAL.md** — Herramientas completas
 - **docs/reference/MITRE_MAPPING.md** — Coverage MITRE detallado
 

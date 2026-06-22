@@ -260,7 +260,7 @@ with open('/tmp/dc01.ccache', 'wb') as f:
     f.write(base64.b64decode(ticket))
 ```
 
-**Lección:** Las limitaciones de WinRM afectan a múltiples técnicas (Potato attacks en Fase 8, ptt en Fase 11). Para operaciones que requieren manipulación de tokens Kerberos, usar sesiones RDP o consola directa, o trabajar desde Kali con impacket.
+**Lección:** Las limitaciones de WinRM afectan a múltiples técnicas (Potato attacks en Fase 8; pass-the-ticket por delegación se trata en Lab-05). Para operaciones que requieren manipulación de tokens Kerberos, usar sesiones RDP o consola directa, o trabajar desde Kali con impacket.
 
 ---
 

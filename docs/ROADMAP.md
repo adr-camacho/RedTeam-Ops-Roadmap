@@ -5,7 +5,7 @@
 > repetir el plan, para evitar desincronización.
 >
 > Objetivo: preparación del examen **Red Team Ops (CRTO)** cubriendo el temario en profundidad.
-> Ubicación: `docs/ROADMAP.md` · Fecha: 18/06/2026
+> Ubicación: `docs/design/ROADMAP.md` · Fecha: 18/06/2026
 
 ---
 
@@ -77,6 +77,8 @@ a la cobertura del temario.
 
 ## 5. Matriz de cobertura CRTO
 
+> **Matriz detallada y defendible (fuente de verdad de cobertura):** [`CRTO_COVERAGE.md`](CRTO_COVERAGE.md) — módulo CRTO → lab, tipo (fundamento/integración), huecos y solapes.
+
 | Bloque CRTO | Lab(s) | Estado |
 |---|---|---|
 | C2 / Cobalt Strike (modelo operador) | 01/02/07 (Sliver), 08 | 🟡→🟢 |
@@ -122,8 +124,8 @@ a la cobertura del temario.
 
 ## 7. Gobernanza de documentación
 
-- **`docs/ROADMAP.md`** (este doc) — fuente de verdad del plan y la cobertura.
-- **`docs/DESIGN.md`** — filosofía, metodología, arquitectura (mantiene historial de versiones).
+- **`docs/design/ROADMAP.md`** (este doc) — fuente de verdad del plan y la cobertura.
+- **`docs/design/DESIGN.md`** — filosofía, metodología, arquitectura (mantiene historial de versiones).
 - **`PROGRESS.md`** — estado vivo por lab y diario de sesiones; referencia este roadmap.
 - **`README.md`** — overview; su sección de roadmap enlaza aquí, no la duplica.
 - **`docs/reference/MITRE_MAPPING.md`** — TTPs por lab.

@@ -14,8 +14,8 @@
 | **Phase-01** | Lab-02 | APT41 / Double Dragon | China (MSS) | Espionaje + económica | Web RCE, pivotaje agresivo, implantes multicapa |
 | **Phase-01** | Lab-03 | APT29 / Cozy Bear | Rusia (SVR) | Espionaje, persistencia | ADCS Abuse, certificate persistence, NTLM relay |
 | **Phase-02** | IRON FOREST, SILVER CHAIN, BLACK POLICY, SHADOW VAULT | APT28 / Fancy Bear | Rusia (GRU) | Espionaje, sabotaje | ACL Abuse, DCSync, Delegation, GPO Abuse |
-| **Phase-03** | GHOST SIGNAL, FIRST CONTACT, DARK CURRENT, DEEP HOLO | Lazarus Group | Corea del Norte (RGB) | Espionaje + financiera | EDR Evasion, AMSI Bypass, C2 avanzado |
-| **Phase-04** | RED DANTE, DEEP WATER, AZURE BREACH, OPERATION ZEPHYR | APT10 / Stone Panda | China (MSS) | Espionaje, supply chain | Forest Trusts, exfiltración masiva, Pro Labs |
+| **Phase-03** | Labs 08–12 (Black Beacon, First Contact, Deep Root, Ghost Signal, Iron Veil) | Lazarus Group | Corea del Norte (RGB) | Espionaje + financiera | EDR Evasion, AMSI Bypass, C2 avanzado |
+| **Phase-04** | Labs 13–18 (Linked Shadows, Golden Throne, Forest Reign, Custom Arsenal, Silent Exit, Final Verdict) | APT10 / Stone Panda | China (MSS) | Espionaje, supply chain | Forest Trusts, exfiltración masiva, capstone |
 
 > **Referencia:** [MITRE ATT&CK Groups](https://attack.mitre.org/groups/)
 
@@ -28,8 +28,8 @@
 | **APT29** (Lab-01, Lab-03) | Maestría en Kerberos abuse, ADCS y Living-off-the-Land — el perfil canónico para entornos AD |
 | **APT41** (Lab-02) | Especialización en explotación web + pivotaje de red — encaja con el vector Webmin y Ligolo-ng |
 | **APT28** (Lab-04/05/06/07) | ACL Abuse, DCSync, Delegation y GPO Abuse son TTPs documentadas en campañas de Fancy Bear |
-| **Lazarus** (Lab-08/09/10/11) | Grupo de referencia para evasión de EDR, obfuscación y C2 avanzado |
-| **APT10** (Lab-12/13/14/15) | Campañas de supply chain y compromiso de infraestructuras complejas con Forest Trusts |
+| **Lazarus** (Lab-08–12) | Grupo de referencia para evasión de EDR, obfuscación y C2 avanzado |
+| **APT10** (Lab-13–18) | Campañas de supply chain y compromiso de infraestructuras complejas con Forest Trusts |
 
 ---
 
@@ -206,8 +206,10 @@
 | **Sub-técnicas mapeadas** | 29 |
 | **Tácticas MITRE cubiertas** | 11 / 14 |
 | **Adversarios emulados** | 5 (APT29, APT41, APT28, Lazarus, APT10) |
-| **Labs completados** | 5 / 15 |
+| **Labs completados** | 7 / 18 |
 | **Técnicas ejecutadas** | 56 / 59 |
+
+> ⚠ **Pendiente (P1):** las tablas detalladas de técnicas de **Lab-06** y **Lab-07** aún no están integradas en este mapeo. El recuento (56) cubre el mapeo de Labs 01–05 más los resúmenes de 06/07; al hacer el retrofit, la cifra se recalcula desde aquí como fuente única.
 
 ### Tácticas cubiertas
 
@@ -243,4 +245,4 @@
 
 ---
 
-*Última actualización: Mayo 2026 — Lab-05 SILVER CHAIN (APT28 RBCD/Shadow Creds/Silver+Diamond Ticket) añadido — Adrián Camacho*
+*Última actualización: 19/06/2026 — Labs 01–07 completados (Lab-07 SHADOW VAULT: LAPS/DPAPI/Shadow Credentials). Pendiente (P1): integrar tablas detalladas Lab-06/07. — Adrián Camacho*

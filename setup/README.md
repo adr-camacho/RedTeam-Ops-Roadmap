@@ -44,7 +44,7 @@ setup/
 ├── DC-04/          Scripts para DC-04 (ext.local)
 ├── WKSTN-01/       Scripts para WKSTN-01
 ├── WKSTN-02/       Scripts para WKSTN-02
-├── CrownJewels/    Crown Jewels Labs 01-15
+├── CrownJewels/    Crown Jewels Labs 01-07 (completados)
 └── README.md       Esta guia
 ```
 
@@ -196,8 +196,8 @@ Ejecutar en DC-01 antes del lab correspondiente:
 # Labs 04-07
 .\setup\CrownJewels\CrownJewels-Lab04-IronForest.ps1
 .\setup\CrownJewels\CrownJewels-Lab05-SilverChain.ps1
-.\setup\CrownJewels\CrownJewels-Lab06-BlackPolicy_v2.ps1
-.\setup\CrownJewels\CrownJewels-Lab07-ShadowVault_clean.ps1
+.\setup\CrownJewels\CrownJewels-Lab06-BlackPolicy.ps1
+.\setup\CrownJewels\CrownJewels-Lab07-ShadowVault.ps1
 ```
 
 ---
