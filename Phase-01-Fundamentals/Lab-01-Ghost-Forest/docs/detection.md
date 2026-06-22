@@ -1,13 +1,13 @@
-# Mitigations & Detection — Operación GHOST FOREST
-## Lab-01: Attacktive Directory — Guía Defensiva
-**Operación:** GHOST FOREST | **Adversario:** APT29 | **Framework:** MITRE ATT&CK v14  
-**Fecha:** 13/05/2026 | **Perspectiva:** Blue Team / Defensive Security
+# Detection — Lab-01 Ghost Forest
 
----
+> **Capability:** primera kill-chain AD (AS-REP/Kerberoasting → DCSync → DA).
+> **Operación:** GHOST FOREST · **Adversario:** APT29 · **Perspectiva:** Blue Team / Purple.
+> **Clase base (herencia):** reglas SIGMA consolidadas y transversales en
+> [`../../docs/reference/DETECTION_LIBRARY.md`](../../docs/reference/DETECTION_LIBRARY.md) — fuente de verdad del
+> texto de las reglas. Aquí, la detección **específica de esta operación**, por técnica y en orden de kill-chain.
 
-## Introducción
-
-Este documento recoge las medidas de detección y mitigación para cada técnica ejecutada durante la Operación GHOST FOREST. El objetivo es proporcionar una visión completa del ciclo ofensivo-defensivo, documentando los Event IDs relevantes, reglas de detección y hardening recomendado para cada vector explotado.
+Para cada técnica: **telemetría** (Event IDs) · **detección** (regla) · **hardening** · y al final el puente de
+**limitaciones y evasión** hacia los labs de Phase-03.
 
 ---
 
@@ -362,6 +362,25 @@ Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" `
 
 ---
 
+---
+
+## Limitaciones y evasión (puente a Phase-03)
+
+Toda la detección anterior asume **defensas activas y sin evadir** — es la pasada "off". Un operador real se
+enfrenta a la pasada "on", y cada detección de arriba tiene su evasión, que se practica en los labs de evasión:
+
+| Detección de este lab | Cómo se evade | Se trata en |
+|-----------------------|---------------|-------------|
+| AS-REP/Kerberoasting por RC4 (0x17) | Solicitar tickets AES (0x12) para no destacar | Lab-11 (evasión) |
+| DCSync por Event 4662 (replicación) | Timing, origen desde un DC legítimo comprometido | Lab-11/12 |
+| Defender deshabilitado (5001/5010) | No tocar Tamper Protection: AMSI/ETW bypass en memoria | Lab-11 (Defender/AMSI) |
+| Beacon HTTPS periódico | Malleable C2, jitter alto, perfiles legítimos | Lab-08/11 |
+
+> Esta tabla materializa el modelo "off, then on" del `LEARNING_PATH.md`: aquí ves la técnica con la defensa
+> despierta; allí, cómo operarla sin que te vea.
+
+---
+
 ## Resumen de Hardening Prioritario
 
 ```
@@ -392,3 +411,7 @@ PRIORIDAD MEDIA
 17. EDR con detección de beacons
 18. Fine-Grained Password Policies para cuentas privilegiadas
 ```
+
+---
+
+*Detection · Lab-01 Ghost Forest · hereda de DETECTION_LIBRARY.md (anatomía v3.1)*

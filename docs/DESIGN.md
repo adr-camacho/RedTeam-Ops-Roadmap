@@ -155,6 +155,24 @@ Resumen de fases (detalle en ROADMAP):
 
 ---
 
+## Principios de diseño de software aplicados
+
+El repo aplica deliberadamente principios de ingeniería de software donde el problema que resuelven existe de
+verdad. No es decoración: da a un revisor un vocabulario para entender *por qué* está estructurado así.
+
+- **Single Responsibility (SRP).** Un lab = una capability. Si "qué me capacita" no cabe en una frase, se parte.
+- **Open/Closed.** El repo se **extiende** (nuevo lab, nuevo APT) **sin modificar** lo existente: se estampa la anatomía con `scaffold-v3`, no se tocan labs previos.
+- **Dependency Inversion.** Los labs dependen de **abstracciones** (perfil de adversario, `ARSENAL`, `LAB_INFRASTRUCTURE`), no de copias concretas — es la herencia con fuente única.
+- **Template Method.** La anatomía del lab es una plantilla de estructura fija con pasos rellenados por cada lab.
+- **Composite.** Jerarquía uniforme técnica → módulo → lab → phase → repo (ver `LEARNING_PATH.md`).
+- **Facade.** El `README` de cada lab y el `docs/` aplanado son fachadas: una entrada simple que oculta complejidad (principio "mando a distancia").
+
+> Se evita el *cargo cult*: no se importan patrones de runtime (Singleton, Factory, Observer…) ni arquitecturas de
+> ejecución, porque un repositorio estático no tiene el problema que resuelven. Su intención (fuente única, capas,
+> bajo acoplamiento) ya está cubierta. Los **tests** sí entran como `doc-lint`, porque la deriva es un problema real.
+
+---
+
 ## 5. Lecciones de Diseño
 
 ### Evil-WinRM — Limitaciones token de red

@@ -239,8 +239,21 @@ Este apartado **da credibilidad** al repo y delimita su alcance como producto se
 - Sincronizar README/PROGRESS y cerrar `GLOSSARY.md` / `REFERENCES.md`.
 
 **P2 — después**
-- `scaffold-v3` genera la anatomía v3.1 exacta · doc-lint en CI.
+- `scaffold-v3` genera la anatomía v3.1 exacta.
+- **doc-lint como suite de tests** (elevado): tests de estructura (DoD), integridad referencial (sin enlaces rotos), consistencia (contadores ↔ fuente de verdad), convención (naming) y herencia (cada `emulation.md` enlaza a un perfil existente).
 - Construir Labs 08–18 al estándar (Lazarus / APT10), con objective-based ops y reporting.
+
+**P3 — credibilidad y mantenibilidad** *(registrado; no urgente)*
+- Afirmaciones defensivas con **fecha de validación + fuente** (KB/CVE/build) — su mayor activo de credibilidad.
+- **Threat model del repo como producto público** (no solo del entorno de lab): posicionamiento ético explícito.
+- **Trazabilidad bidireccional** capability ↔ examen (índice navegable temario→lab y viceversa).
+- **Estado de madurez por lab** (borrador / completo / validado-v3.1 + fecha).
+- Sección **"Cómo usar este repositorio"** (rutas por perfil: estudiante / reclutador / red teamer).
+
+**Herencia — extensiones aprobadas** *(aplicar al construir)*
+- Heredar (clase base → especialización): infra (`LAB_INFRASTRUCTURE`), arsenal (`ARSENAL`), telemetría base (`DETECTION_LIBRARY`), tabla maestra CS↔Sliver, OPSEC genérico (`OPSEC_NOTES`).
+- Límite anti-indirección: heredar lo estable e idéntico; mantener local lo pedagógico y específico.
+- Principios de software nombrados en `DESIGN.md` solo donde aportan intención real (SRP, Open/Closed, DIP, Template Method, Composite, Facade).
 
 ---
 
