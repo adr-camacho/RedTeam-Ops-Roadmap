@@ -47,7 +47,7 @@ loot/*.out
 # ── Outputs de herramientas ───────────────────────────────────
 # BloodHound data (puede contener info sensible del dominio)
 *.zip
-BloodHound_*
+BloodHound_*.json
 *_computers.json
 *_users.json
 *_groups.json
