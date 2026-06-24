@@ -1,11 +1,14 @@
 # 🔴 Lab-02: Silent Bridge — Pivotaje Avanzado con Ligolo-ng
 
-![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
+![Status](https://img.shields.io/badge/Status-Validado%20v3.1-brightgreen)
 ![Platform](https://img.shields.io/badge/Platform-Lab%20Propio-red)
 ![Phase](https://img.shields.io/badge/Phase-01%20Fundamentals-blue)
 ![Adversary](https://img.shields.io/badge/Adversary-APT41%20Double%20Dragon-darkred)
 ![Focus](https://img.shields.io/badge/Focus-Pivoting%20%7C%20Network%20Segmentation-purple)
 ![MITRE](https://img.shields.io/badge/MITRE%20ATT%26CK-T1572%20%7C%20T1190%20%7C%20T1090-red)
+
+**Capability (eje didáctico):** Acceso vía exploit de aplicación expuesta → pivoting (tunneling) → session passing / relay C2.  
+**Docs:** [technique](docs/technique.md) · [emulation](docs/emulation.md) · [detection](docs/detection.md)
 
 ---
 
@@ -78,13 +81,17 @@ Operación de pivotaje en red segmentada de tres nodos, emulando las TTPs de **A
 | Documento | Descripción | Estado |
 |-----------|-------------|--------|
 | [OPERATION_SILENT_BRIDGE.md](./OPERATION_SILENT_BRIDGE.md) | Plan completo de la operación | ✅ |
-| [infrastructure_setup.md](./docs/infrastructure_setup.md) | Topología, vectores y configuración | ✅ |
-| [enumeration_log.md](./docs/enumeration_log.md) | Fases 1 y 4 — recon externo e interno | ✅ |
-| [exploitation.md](./docs/exploitation.md) | Fase 2 — CVE-2019-12840 Webmin RCE | ✅ |
-| [pivoting.md](./docs/pivoting.md) | Fase 3 — Ligolo-ng setup y túnel | ✅ |
-| [post-exploitation.md](./docs/post-exploitation.md) | Fase 5 — Lateral Movement al PC | ✅ |
-| [c2_sliver.md](./docs/c2_sliver.md) | Fase 6 — Beacon en red interna | ✅ |
-| [persistence.md](./docs/persistence.md) | Fase 7 — Persistencia y objetivo | ✅ |
+| [technique.md](./docs/technique.md) | Concepto, internals, MITRE, CS↔Sliver, OPSEC | ✅ |
+| [emulation.md](./docs/emulation.md) | Emulation plan — especialización APT41 | ✅ |
+| [detection.md](./docs/detection.md) | Blue Team: detección por vector + evasión | ✅ |
+| [lessons.md](./docs/lessons.md) | Lecciones técnicas con causa raíz | ✅ |
+| **execution/** — operator log paso a paso | | |
+| [infrastructure_setup.md](./docs/execution/infrastructure_setup.md) | Topología, vectores y configuración | ✅ |
+| [enumeration_log.md](./docs/execution/enumeration_log.md) | Fases 1 y 4 — recon externo e interno | ✅ |
+| [exploitation.md](./docs/execution/exploitation.md) | Fase 2 — CVE-2019-12840 Webmin RCE | ✅ |
+| [pivoting.md](./docs/execution/pivoting.md) | Fase 3 — Ligolo-ng setup y túnel | ✅ |
+| [c2_sliver.md](./docs/execution/c2_sliver.md) | Fase 6 — Beacon en red interna | ✅ |
+| [persistence.md](./docs/execution/persistence.md) | Fase 7 — Persistencia y objetivo | ✅ |
 
 ---
 

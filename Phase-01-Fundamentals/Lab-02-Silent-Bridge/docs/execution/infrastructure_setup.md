@@ -4,6 +4,25 @@
 **Operador:** Adrián Camacho | **Fecha:** —  
 **Repositorio:** github.com/adr-camacho/RedTeam-Ops-Roadmap
 
+
+> **Módulo M0 · Ruta: `[setup]`**
+>
+> **Objetivo único:** Entorno segmentado (DMZ + red interna) con Webmin vulnerable sembrado.
+>
+> **Prerequisito real:** ninguno.
+>
+> **Habilita:** que exista un objetivo expuesto que enumerar (M1).
+>
+> **TTP:** — (provisión)
+>
+> ### Mapa de la operación (cadena de pivoting)
+> ```
+> M0 setup → M1 recon-ext → M2 Webmin RCE → M3 pivot (Ligolo) → [M1 recon-int] → M4 C2 interno → M5 persistencia+objetivo
+> ```
+> **Lectura:** a diferencia de Lab-01 (DAG con ramas), Lab-02 es una **cadena lineal**: cada salto depende del
+> anterior. En pivoting no puedes saltarte un eslabón — sin foothold no hay túnel, sin túnel no hay red interna.
+> Todo es **ruta crítica**; no hay ramas opcionales.
+
 ---
 
 ## 1. Topología de Red

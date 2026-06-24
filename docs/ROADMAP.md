@@ -37,7 +37,7 @@ a la cobertura del temario.
 | Lab | Título | Bloque CRTO | Estado |
 |-----|--------|-------------|--------|
 | 01 | Ghost Forest | Kerberos roasting → DCSync → DA (1ª kill-chain) | ✅ v3.1 |
-| 02 | Silent Bridge | Web RCE, Pivoting, Session Passing | ✅ |
+| 02 | Silent Bridge | Web RCE → pivoting (Ligolo) → relay C2 | ✅ v3.1 |
 | 03 | Dark Gate | ADCS (ESC1/4/8), NTLM relay, cert persistence | ✅ |
 | 04 | Iron Forest | Discretionary ACLs, Domain Recon, OverPtH | ✅ |
 | 05 | Silver Chain | (validar: Silver tickets / persistencia) | ✅ |

@@ -4,6 +4,17 @@
 **Operador:** Adrián Camacho | **Fecha:** 14/05/2026  
 **Objetivo:** Túnel TLS hacia red interna `10.0.3.0/24` a través de PROD
 
+
+> **Módulo M3 · Ruta: `[crítica]`**
+>
+> **Objetivo único:** Túnel Ligolo-ng → acceso a la red interna no enrutable.
+>
+> **Prerequisito real:** M2 (foothold en PROD).
+>
+> **Habilita:** alcance al segmento interno — habilita recon interno (M1) y C2 (M4).
+>
+> **TTP:** T1572 · T1090
+
 ---
 
 ## FASE 3 — Pivoting: Ligolo-ng v0.7.5

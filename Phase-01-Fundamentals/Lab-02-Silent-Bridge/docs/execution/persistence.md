@@ -4,6 +4,17 @@
 **Operador:** Adrián Camacho | **Fecha:** 15/05/2026  
 **Objetivo:** Persistencia en PC-01 + credential dump + prueba de compromiso final
 
+
+> **Módulo M5 · Ruta: `[crítica]`**
+>
+> **Objetivo único:** Persistencia + objetivo (volcado SAM, credenciales del objetivo).
+>
+> **Prerequisito real:** M4 (C2 / acceso interno establecido).
+>
+> **Habilita:** objetivo cumplido — compromiso del activo interno.
+>
+> **TTP:** T1053.005 · T1003.002
+
 ---
 
 ## FASE 7 — Persistence & Objective Completion
@@ -45,7 +56,7 @@ Modo de inicio de sesión: Solo interactivo
 
 ### 7.2 — Persistence: Registry Run Key
 **Técnica MITRE:** T1547.001 — Boot or Logon Autostart: Registry Run Keys  
-> 📸 Captura: incluida en `fase7-01-persistence-established.png`
+> 📸 Captura: incluida en `fase07-01-persistence-established.png`
 
 ```powershell
 reg add "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" \

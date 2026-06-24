@@ -4,6 +4,17 @@
 **Operador:** Adrián Camacho | **Fecha:** 15/05/2026  
 **Objetivo:** Beacon Sliver activo en PC-01 — C2 a través del túnel Ligolo-ng
 
+
+> **Módulo M4 · Ruta: `[crítica]`**
+>
+> **Objetivo único:** Beacon Sliver en la red interna vía relay a través de PROD.
+>
+> **Prerequisito real:** M3 (acceso a red interna).
+>
+> **Habilita:** control interactivo dentro del segmento interno (→M5).
+>
+> **TTP:** T1071.001 · T1573.002 · T1090.003
+
 ---
 
 ## FASE 6 — C2 Establishment: Sliver v1.7.3

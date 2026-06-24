@@ -5,6 +5,17 @@
 **Objetivo Fase 1:** PROD (10.0.2.200) — superficie de ataque externa  
 **Objetivo Fase 4:** Red interna — GIT (10.0.3.150) + PC-01 Windows (10.0.3.7)
 
+
+> **Módulo M1 · Ruta: `[crítica]`**
+>
+> **Objetivo único:** Recon externo (Fase 1) e interno (Fase 4, tras el pivote).
+>
+> **Prerequisito real:** M0 para el externo · M3 para el interno.
+>
+> **Habilita:** identifica Webmin expuesto (→M2) y mapea la red interna (→M4).
+>
+> **TTP:** T1046 · T1135 · T1590
+
 ---
 
 ## FASE 1 — Reconnaissance externo
