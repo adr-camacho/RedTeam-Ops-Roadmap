@@ -1,5 +1,8 @@
-# BloodHound — Metodología y Análisis
-## Operación GHOST FOREST — atackcorp.local
+# BloodHound — Metodología de análisis de rutas de ataque (referencia)
+
+> **Referencia transversal del repositorio.** Metodología de uso de BloodHound/SharpHound para descubrir y explotar
+> rutas de ataque en AD (ACL edges, Kerberos, delegación, trusts). Múltiples labs la referencian en lugar de
+> duplicarla. Ejemplos originales sobre la operación GHOST FOREST (atackcorp.local).
 
 **Operación:** GHOST FOREST | **Adversario:** APT29 | **Framework:** MITRE ATT&CK v14  
 **Fecha:** 19/05/2026 | **Operador:** Adrián Camacho  
