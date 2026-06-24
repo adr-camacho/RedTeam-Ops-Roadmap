@@ -4,6 +4,17 @@
 **Operador:** Adrián Camacho | **Fecha:** 13/05/2026  
 **Objetivo:** WKSTN-01 (10.0.2.8) — atackcorp.local
 
+
+> **Módulo M4 · Ruta: `[rama: host]`**
+>
+> **Objetivo único:** Moverse a WKSTN-01 y establecer canal C2 (Sliver).
+>
+> **Prerequisito real:** M2 (credenciales DA) — **no** el objetivo final.
+>
+> **Habilita:** presencia en WKSTN-01 + canal C2 → M5.
+>
+> **TTP:** T1021.006 · T1550.002 · T1071.001 · T1573.002
+
 ---
 
 ## FASE 6 — Lateral Movement: WKSTN-01

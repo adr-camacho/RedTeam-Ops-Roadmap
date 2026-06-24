@@ -4,6 +4,17 @@
 **Operador:** Adrián Camacho | **Fecha:** 12/05/2026  
 **Objetivo:** DC-01 (10.0.2.10) — atackcorp.local
 
+
+> **Módulo M1 · Ruta: `[crítica]`**
+>
+> **Objetivo único:** Mapear DC-01: usuarios, SPNs y cuentas sin pre-autenticación.
+>
+> **Prerequisito real:** M0 (entorno operativo).
+>
+> **Habilita:** identifica `backup_svc` (sin pre-auth) y los SPNs roasteables → M2.
+>
+> **TTP:** T1087.002 · T1135 · T1018 · T1046 · T1069.002
+
 ---
 
 ## 1.1 — Network Service Discovery

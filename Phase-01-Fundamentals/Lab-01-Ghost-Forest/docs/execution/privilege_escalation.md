@@ -4,6 +4,17 @@
 **Operador:** Adrián Camacho | **Fecha:** 13/05/2026  
 **Objetivo:** WKSTN-01 (10.0.2.8) — NT AUTHORITY\SYSTEM
 
+
+> **Módulo M5 · Ruta: `[rama: host]`**
+>
+> **Objetivo único:** Escalar a NT AUTHORITY\SYSTEM en WKSTN-01.
+>
+> **Prerequisito real:** M4 (foothold en WKSTN-01).
+>
+> **Habilita:** control total del host — **rama host, no requerida para el objetivo de dominio**.
+>
+> **TTP:** T1134.001 · T1543.003
+
 ---
 
 ## Contexto táctico

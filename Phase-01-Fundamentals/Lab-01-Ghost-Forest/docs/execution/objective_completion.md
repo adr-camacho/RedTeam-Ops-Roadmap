@@ -4,6 +4,17 @@
 **Operador:** Adrián Camacho | **Fecha:** 13/05/2026  
 **Objetivo:** Shell interactiva como Administrador en DC-01
 
+
+> **Módulo M7 · Ruta: `[crítica]`**
+>
+> **Objetivo único:** DCSync del `Administrador` → Pass-the-Hash → shell interactiva en DC-01.
+>
+> **Prerequisito real:** DA de M2 — **hermano de M6**, no depende de él.
+>
+> **Habilita:** objetivo cumplido (crown jewels).
+>
+> **TTP:** T1003.006 · T1550.002
+
 ---
 
 ## Contexto táctico

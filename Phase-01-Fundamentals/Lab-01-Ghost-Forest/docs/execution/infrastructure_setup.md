@@ -4,6 +4,29 @@
 **Operador:** Adrián Camacho | **Fecha:** 12/05/2026  
 **Repositorio:** github.com/adr-camacho/RedTeam-Ops-Roadmap
 
+
+> **Módulo M0 · Ruta: `[setup]`**
+>
+> **Objetivo único:** Entorno operativo (7 VMs, trusts) con las vulnerabilidades sembradas.
+>
+> **Prerequisito real:** ninguno.
+>
+> **Habilita:** que exista un objetivo que enumerar (M1).
+>
+> **TTP:** — (provisión; no es ATT&CK)
+>
+> ### Mapa de la operación (grafo de dependencias)
+> ```
+> M0 setup → M1 recon → M2 exploitation ───────────────────► M7 objetivo (shell DC-01)   [RUTA CRÍTICA]
+>                         (aquí se gana el Domain Admin)  │
+>                                                         ├─► M3 post-expl: confirma DA + Kerberoast   [enriquecimiento]
+>                                                         ├─► M4 lateral → M5 SYSTEM (WKSTN-01)         [rama: host]
+>                                                         └─► M6 persistence: Golden Ticket (falla PAC) [rama: persistencia]
+> ```
+> **Lectura:** el dominio se gana en **M2**, no al final. M4-M5 (host) y M6 (persistencia) **no están en la ruta
+> crítica** al objetivo — son ramas que demuestran amplitud de integración. M6 y M7 son **hermanos**: ambos parten
+> del DA de M2, ninguno depende del otro.
+
 ---
 
 ## 1. Topología de Red

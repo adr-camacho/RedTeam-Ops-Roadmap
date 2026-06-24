@@ -4,6 +4,17 @@
 **Operador:** Adrián Camacho | **Fecha:** 13/05/2026  
 **Objetivo:** Persistencia mediante Golden Ticket — atackcorp.local
 
+
+> **Módulo M6 · Ruta: `[rama: persistencia]`**
+>
+> **Objetivo único:** DCSync de `krbtgt` → forjar Golden Ticket (y documentar por qué **falla** ante PAC validation).
+>
+> **Prerequisito real:** DA de M2 — **hermano de M7**, no depende de él.
+>
+> **Habilita:** lección de persistencia frente a defensa moderna.
+>
+> **TTP:** T1003.006 · T1558.001
+
 ---
 
 ## Contexto táctico
