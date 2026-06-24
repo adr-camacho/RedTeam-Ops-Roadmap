@@ -32,7 +32,7 @@
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
 | Lab-04: Iron Forest | ✅ Validado v3.1 | 28/05/2026 | 29/05/2026 | ~20h | ✅ Referencia |
-| Lab-05: Silver Chain | ✅ Completado | 30/05/2026 | 30/05/2026 | ~20h | ✅ Completo |
+| Lab-05: Silver Chain | ✅ Validado v3.1 | 30/05/2026 | 30/05/2026 | ~20h | ✅ Referencia |
 | Lab-06: Black Policy | ✅ Completado | 01/06/2026 | 01/06/2026 | ~25h | ✅ Completo |
 | Lab-07: Shadow Vault | ✅ Completado | 06/06/2026 | 06/06/2026 | ~8h | ✅ Completo |
 

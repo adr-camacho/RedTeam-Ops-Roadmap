@@ -40,7 +40,7 @@ a la cobertura del temario.
 | 02 | Silent Bridge | Web RCE → pivoting (Ligolo) → relay C2 | ✅ v3.1 |
 | 03 | Dark Gate | ADCS ESC1/4/8 → cert abuse → DA + persistencia | ✅ v3.1 |
 | 04 | Iron Forest | ACL abuse (WriteDACL/GenericWrite) → DCSync; cred hunting, ADIDNS | ✅ v3.1 |
-| 05 | Silver Chain | (validar: Silver tickets / persistencia) | ✅ |
+| 05 | Silver Chain | Delegación (RBCD/Shadow Creds) + forja Silver/Diamond | ✅ v3.1 |
 | 06 | Black Policy | Group Policy, SID History, Cross-Forest | ✅ |
 | 07 | Shadow Vault | LAPS, DPAPI, Shadow Credentials | ✅ |
 | 08 | C2 Foundations | C2, CS Primer, listeners, beacons, OPSEC | ⏳ |
