@@ -1,29 +1,13 @@
-# Tradecraft — Operación GHOST FOREST
-## Lab-01: Fundamentos de Active Directory Attacks
+# Technique — Lab-01 Ghost Forest
 
-**Operación:** GHOST FOREST | **Adversario:** APT29 | **Nivel:** Fundamentals  
-**Autor:** Adrián Camacho | **Versión:** 1.0 | **Fecha:** Mayo 2026
-
----
-
-## Índice
-
-1. [Active Directory — Arquitectura y modelo de confianza](#1-active-directory)
-2. [Kerberos — El protocolo de autenticación de AD](#2-kerberos)
-3. [AS-REP Roasting — Por qué funciona](#3-as-rep-roasting)
-4. [Kerberoasting — Por qué funciona](#4-kerberoasting)
-5. [Pass-the-Hash y Pass-the-Ticket](#5-pass-the-hash-y-pass-the-ticket)
-6. [DCSync — Replicación como arma](#6-dcsync)
-7. [Delegation Abuse — Unconstrained y Constrained](#7-delegation-abuse)
-8. [GPO Abuse — Group Policy como vector](#8-gpo-abuse)
-9. [ACL Abuse — Permisos AD como attack path](#9-acl-abuse)
-10. [BloodHound — Teoría del grafo aplicada a AD](#10-bloodhound)
-11. [Golden Ticket — Por qué falla en entornos modernos](#11-golden-ticket)
-12. [OPSEC — Principios para operar en AD](#12-opsec)
+> **Capability (eje didáctico):** Primera kill-chain AD limpia — AS-REP/Kerberoasting → DCSync → Domain Admin.
+> **Bloque CRTO:** Kerberos Authentication · Credential Theft (AS-REP, Kerberoasting, DCSync).
+> **Adversario (escenario):** APT29 — ver [`emulation.md`](emulation.md).
 
 ---
 
 ## 1. Active Directory — Arquitectura y modelo de confianza
+
 
 ### ¿Qué es Active Directory?
 
@@ -69,6 +53,7 @@ Como atacante, el objetivo es siempre **Tier 0**. El camino suele ir de Tier 2 �
 ---
 
 ## 2. Kerberos — El protocolo de autenticación de AD
+
 
 Kerberos es el protocolo de autenticación principal de AD desde Windows 2000. Entenderlo a fondo es imprescindible — la mayoría de los ataques AD abusan de Kerberos.
 
@@ -126,6 +111,7 @@ Este es el fundamento del **AS-REP Roasting**.
 
 ## 3. AS-REP Roasting — Por qué funciona
 
+
 ### Condición necesaria
 
 La cuenta objetivo debe tener habilitado `DONT_REQUIRE_PREAUTH` en `userAccountControl`. Este atributo existe por compatibilidad con sistemas legados que no soportaban pre-autenticación.
@@ -167,6 +153,7 @@ El `$23$` indica RC4-HMAC — el cifrado más débil y el más fácil de crackea
 ---
 
 ## 4. Kerberoasting — Por qué funciona
+
 
 ### Condición necesaria
 
@@ -218,6 +205,7 @@ GenericWrite → Set servicePrincipalName → TGS-REQ → crack offline
 
 ## 5. Pass-the-Hash y Pass-the-Ticket
 
+
 ### Pass-the-Hash (PtH)
 
 Windows almacena las contraseñas como hashes NT en SAM (local) o NTDS.dit (AD). El protocolo NTLM acepta directamente el hash NT para autenticación — **no necesita la contraseña en claro**.
@@ -256,6 +244,7 @@ hash NT → solicitar TGT al KDC (usando el hash como credencial) → TGT → au
 
 ## 6. DCSync — Replicación como arma
 
+
 ### Fundamento técnico
 
 Los Domain Controllers replican entre sí los datos de AD usando el protocolo **MS-DRSR (Directory Replication Service Remote Protocol)**. El mecanismo principal es **DRSGetNCChanges** — una función que devuelve todos los cambios desde una fecha dada, incluyendo hashes de contraseñas.
@@ -283,197 +272,74 @@ Con el hash de `krbtgt` se pueden forjar **Golden Tickets** — TGTs válidos pa
 
 ---
 
-## 7. Delegation Abuse — Unconstrained y Constrained
+## Comandos de referencia
 
-### ¿Por qué existe la delegación Kerberos?
+> El operator log paso a paso vive en `execution/`. Aquí, los comandos núcleo de cada técnica.
 
-Escenario legítimo: un usuario se autentica en un servidor web (IIS). El servidor web necesita acceder a SQL Server **en nombre del usuario**. Para ello necesita un mecanismo que le permita obtener tickets de servicio actuando como el usuario.
-
-### Unconstrained Delegation
-
-**Cómo funciona:**
-Cuando un usuario se autentica contra una cuenta con Unconstrained Delegation, el KDC incluye el TGT del usuario en el TGS que envía. La cuenta de servicio recibe y puede usar ese TGT para suplantar al usuario en **cualquier servicio**.
-
-```
-Usuario → [TGS + TGT del usuario] → Cuenta con UC Delegation
-                                          ↓
-                              Usa el TGT para acceder a cualquier recurso
-```
-
-**Por qué es peligroso:**
-Si un atacante compromete una cuenta con UC Delegation y fuerza a un Domain Controller a autenticarse (PetitPotam, SpoolSample), obtiene el TGT del DC$ y puede ejecutar DCSync.
-
-**`userAccountControl: 524800`** = `NORMAL_ACCOUNT (0x200)` + `TRUSTED_FOR_DELEGATION (0x80000)`
-
-### Constrained Delegation
-
-**Cómo funciona:**
-La delegación solo puede usarse hacia SPNs específicos definidos en `msDS-AllowedToDelegateTo`. Usa el protocolo **S4U** (Service for User):
-
-- **S4U2Self**: La cuenta obtiene un TGS para sí misma en nombre de cualquier usuario (sin necesitar el TGT del usuario)
-- **S4U2Proxy**: Usa ese TGS para solicitar un TGS hacia el SPN destino en nombre del usuario
-
-```
-iis_svc → S4U2Self: TGS para Administrador @ iis_svc
-        → S4U2Proxy: TGS para Administrador @ MSSQLSvc/dc01:1433
-```
-
-**`userAccountControl: 16777728`** = `NORMAL_ACCOUNT (0x200)` + `TRUSTED_TO_AUTH_FOR_DELEGATION (0x1000000)`
-
-**Por qué S4U2Self es peligroso:**
-Permite impersonar a cualquier usuario, incluyendo Administrador, sin necesitar sus credenciales ni su TGT. Solo necesitas comprometer la cuenta con Constrained Delegation.
-
-### Resource-Based Constrained Delegation (RBCD)
-
-La delegación se configura en el **recurso destino** (no en la cuenta de origen). Si un atacante tiene `GenericWrite` sobre un objeto computer, puede configurarlo para que acepte delegación desde cualquier cuenta que controle. Se cubre en Lab-05.
-
----
-
-## 8. GPO Abuse — Group Policy como vector
-
-### ¿Qué es una GPO?
-
-Una Group Policy Object es un conjunto de configuraciones que se aplica automáticamente a todos los objetos (equipos y usuarios) en el scope de una OU. Controla desde el fondo de escritorio hasta la instalación de software, scripts de inicio y tareas programadas.
-
-### La estructura en SYSVOL
-
-Cada GPO tiene una representación en SYSVOL:
-
-```
-\\dominio\SYSVOL\dominio\Policies\{GUID-GPO}\
-    Machine\
-        Preferences\
-            ScheduledTasks\
-                ScheduledTasks.xml   ← aquí van las tareas inmediatas
-        Scripts\
-    User\
-```
-
-Cualquier objeto con `GpoEditDeleteModifySecurity` puede escribir en esta ruta directamente, sin necesitar la consola GPMC.
-
-### Tareas inmediatas (ImmediateTaskV2)
-
-Las tareas en GPO Preferences se ejecutan como `NT AUTHORITY\SYSTEM` cuando la GPO se aplica. Una tarea inmediata se ejecuta una sola vez, la próxima vez que el equipo procesa la política.
-
-```xml
-<ImmediateTaskV2 ... runAs="NT AUTHORITY\System" logonType="S4U">
-    <Actions>
-        <Exec>
-            <Command>cmd.exe</Command>
-            <Arguments>/c net localgroup Administrators DOMINIO\usuario /add</Arguments>
-        </Exec>
-    </Actions>
-</ImmediateTaskV2>
-```
-
-### Por qué es poderoso
-
-El código se ejecuta como SYSTEM en **todos los equipos del scope** de la GPO. Un `gpupdate /force` lo activa inmediatamente. El proceso padre es `svchost.exe` — completamente legítimo.
-
-### Permisos GPO relevantes para atacantes
-
-| Permiso | Qué permite |
-|---------|-------------|
-| `GpoEditDeleteModifySecurity` | Modificar contenido, borrar, cambiar permisos |
-| `GpoEdit` | Solo modificar contenido |
-| `GpoApply` | Recibir la GPO (usuarios/equipos normales) |
-
----
-
-## 9. ACL Abuse — Permisos AD como attack path
-
-### ¿Qué son las ACLs en AD?
-
-Cada objeto en AD tiene una DACL (Discretionary Access Control List) compuesta de ACEs (Access Control Entries). Cada ACE define qué puede hacer un principal (usuario/grupo) sobre ese objeto.
-
-### Los permisos más abusables
-
-| Permiso | GUID | Qué permite | Ataque |
-|---------|------|-------------|--------|
-| `GenericAll` | — | Control total sobre el objeto | Cambiar contraseña, añadir SPNs, etc. |
-| `GenericWrite` | — | Modificar atributos no protegidos | Targeted Kerberoasting, Shadow Credentials |
-| `WriteProperty` | — | Modificar atributos específicos | Depende del atributo |
-| `WriteDACL` | — | Modificar la DACL del objeto | Añadirse permisos de DCSync |
-| `WriteOwner` | — | Cambiar el propietario del objeto | Tomar control total |
-| `ForceChangePassword` | ab721a53-... | Cambiar contraseña sin conocer la actual | Comprometer la cuenta directamente |
-| `AllExtendedRights` | — | Todos los derechos extendidos | DCSync, ForceChangePassword |
-| `DS-Replication-Get-Changes-All` | 1131f6ad-... | Replicar hashes de contraseñas | DCSync |
-
-### ¿Por qué existen permisos tan peligrosos?
-
-AD fue diseñado para ser flexible en la delegación de administración. Un admin de RRHH puede tener permisos para resetear contraseñas de usuarios de su OU. Un sistema de backup puede necesitar permisos de lectura extendida. Estos permisos se acumulan con el tiempo y raramente se auditan.
-
-### GenericWrite sobre una cuenta de usuario — Por qué permite Kerberoasting
-
-`GenericWrite` incluye el derecho a escribir en `servicePrincipalName`. Añadir un SPN a una cuenta hace que el KDC emita TGS para esa cuenta, cifrados con su hash NT. Esos TGS son crackeables offline.
-
-### WriteDACL — La escalada más peligrosa
-
-Con `WriteDACL` sobre el objeto dominio se pueden añadir los permisos:
-- `DS-Replication-Get-Changes`
-- `DS-Replication-Get-Changes-All`
-
-Con esos permisos → DCSync → todos los hashes del dominio → DA.
-
-### Cómo enumerar ACLs
+### AS-REP Roasting
 
 ```bash
-# Desde Kali
-impacket-dacledit atackcorp.local/usuario:password -action read -target objetivo -dc-ip IP
+# Con PowerView
+Get-DomainUser -UACFilter DONT_REQ_PREAUTH
 
-# Desde Windows (PowerView)
-Get-ObjectAcl -SamAccountName "sql_svc" -ResolveGUIDs | Where-Object {$_.ActiveDirectoryRights -match "Write"}
+# Resultado: lista de usuarios donde PreAuthNotRequired=True
 ```
+
+```bash
+# Con Impacket GetNPUsers.py
+python3 GetNPUsers.py -dc-ip 10.0.2.10 -usersfile users.txt ATACKCORP/ -format john -outputfile hashes.txt
+
+# Crack con John
+john --wordlist=wordlist.txt hashes.txt
+```
+
+### Kerberoasting
+
+```bash
+# Enumerar SPNs
+python3 GetUserSPNs.py -dc-ip 10.0.2.10 ATACKCORP/user:pass
+
+# Pedir TGS y guardar
+python3 GetUserSPNs.py -dc-ip 10.0.2.10 ATACKCORP/user:pass -request
+
+# Crack
+hashcat -m 13100 tgs.txt wordlist.txt
+```
+
+### DCSync
+
+```bash
+# Con Impacket secretsdump.py (desde cuenta con permisos Replicate)
+python3 secretsdump.py -dc-ip 10.0.2.10 ATACKCORP/admin:pass@10.0.2.10
+
+# Output: todos los hashes, incluyendo krbtgt
+```
+
+## Equivalencia CS ↔ Sliver
+
+| Operación | Cobalt Strike | Sliver | Notas |
+|-----------|---|---|---|
+| **AS-REP Roasting** | Impacket via CS | `GetNPUsers.py` (Sliver shell) | Ambos usan Impacket |
+| **Kerberoasting** | `shell GetUserSPNs.py` | `GetUserSPNs.py` | Mismo comando |
+| **DCSync** | `dcsync` (builtin CS) | `shell secretsdump.py` | CS integrado; Sliver via Python |
+| **Crack hashes** | John/Hashcat | John/Hashcat | Same tools |
+| **Pass-the-Hash** | `pth` command | `pth` equivalent | Different syntax |
 
 ---
 
-## 10. BloodHound — Teoría del grafo aplicada a AD
+## MITRE ATT&CK
 
-### ¿Por qué un grafo?
-
-AD es fundamentalmente una red de relaciones entre objetos. `fin.garcia` tiene `GenericWrite` sobre `sql_svc`, que tiene `TrustedForDelegation`, que permite capturar TGTs del DC, que permiten DCSync. Esta cadena es un **grafo dirigido** — exactamente lo que BloodHound modela.
-
-### Componentes
-
-**Neo4j** — Base de datos de grafos que almacena nodos (usuarios, grupos, equipos) y aristas (relaciones: MemberOf, GenericWrite, HasSession, etc.)
-
-**SharpHound/bloodhound-python** — Collectors que recopilan datos del dominio vía LDAP y los convierten a JSON para importar en Neo4j.
-
-**BloodHound UI** — Interfaz que permite visualizar el grafo y ejecutar queries predefinidas.
-
-### Las queries más importantes
-
-| Query | Qué encuentra |
-|-------|---------------|
-| Shortest Paths to DA | El camino más corto desde cualquier nodo hasta DA |
-| Find All DA Principals | Quién es DA directamente o por herencia |
-| Find Principals with DCSync Rights | Quién puede ejecutar DCSync |
-| Shortest Paths from Kerberoastable Users | Qué puedes hacer si crackeas un hash TGS |
-| Find AS-REP Roastable Users | Cuentas sin pre-autenticación |
-
-### Cypher — El lenguaje de consulta
-
-```cypher
-// Caminos desde fin.garcia hasta DA
-MATCH p=shortestPath(
-  (u:User {name:"FIN.GARCIA@ATACKCORP.LOCAL"})-[*1..10]->
-  (g:Group {name:"ADMINS. DEL DOMINIO@ATACKCORP.LOCAL"})
-)
-RETURN p
-```
-
-### bloodhound-python vs SharpHound
-
-| | bloodhound-python | SharpHound |
-|--|-------------------|------------|
-| Ejecución | Desde Kali (LDAP remoto) | En el objetivo (Windows) |
-| ACLs de GPOs | ❌ No recolecta | ✅ Completo |
-| Paths ADCS | ❌ No | ✅ Sí |
-| OPSEC | ✅ Alto (solo tráfico LDAP) | ⚠️ Medio (binario en disco) |
+| Táctica | Técnica | ID | Lab-01 |
+|---------|---------|----|----|
+| Credential Access | OS Credential Dumping | T1003.006 | DCSync |
+| Credential Access | Steal or Forge Kerberos Tickets | T1558 | Kerberoasting, AS-REP |
+| Lateral Movement | Use Alternate Authentication Material | T1550 | Pass-the-Hash, Pass-the-Ticket |
+| Persistence | Forged Web Credentials | T1606 | Golden Ticket |
 
 ---
 
-## 11. Golden Ticket — Por qué falla en entornos modernos
+## Golden Ticket — Por qué falla en entornos modernos
+
 
 ### Fundamento
 
@@ -507,7 +373,8 @@ Windows Server 2016+ implementa **PAC Validation** — el servicio de destino co
 
 ---
 
-## 12. OPSEC — Principios para operar en AD
+## Tradecraft & OPSEC — Principios para operar en AD
+
 
 ### Regla 1: Kali antes que Windows
 
@@ -548,7 +415,36 @@ Antes de subir Mimikatz, intentar con `reg save HKLM\SAM`. Antes de subir PowerV
 
 ---
 
+### OPSEC por técnica
+
+### AS-REP Roasting
+- **Sigiloso:** Solicitudes TGT sin preauth son normales (usuarios sin smartcard)
+- **Riesgo:** Volume de requests anómalo es detectable
+
+### Kerberoasting
+- **Sigiloso:** Cualquier usuario puede pedir TGS (comportamiento normal)
+- **Riesgo:** Múltiples TGS para mismo SPN en poco tiempo → sospechoso
+
+### DCSync
+- **Sigiloso:** Si tienes permisos legítimos, es invisible
+- **Riesgo:** Sin permisos, replication requests generan alertas (Event 4662, Replication Change Notification)
+
+---
+
+## Key Takeaways
+
+1. **Kerberos no es magia:** Es un sistema de tickets intercambiables. Hashes = poder.
+2. **PreAuthNotRequired es peligro:** AS-REP es crackeabilidad garantizada.
+3. **Cualquier usuario puede Kerberoast:** No necesitas privilegios, solo autenticación.
+4. **DCSync = game over:** Krbtgt hash permite Golden Tickets, persistencia indefinida.
+5. **Equivalencia CS/Sliver:** Mismas herramientas (Impacket), sintaxis diferente.
+
+---
+
+*Theory · Lab-01 Ghost Forest · Kerberos Foundation*
+
 ## Referencias
+
 
 - [MS-KILE: Kerberos Protocol Extensions](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-kile)
 - [MS-DRSR: Directory Replication Service Remote Protocol](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-drsr)
@@ -561,3 +457,7 @@ Antes de subir Mimikatz, intentar con `reg save HKLM\SAM`. Antes de subir PowerV
 
 *Operación GHOST FOREST — Adrián Camacho | Mayo 2026*  
 *Entorno de laboratorio — Únicamente con fines educativos*
+
+---
+
+*Technique · Lab-01 Ghost Forest · fusión theory+tradecraft (anatomía v3.1)*
