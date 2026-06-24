@@ -3,6 +3,17 @@
 **Operación:** DARK GATE | **Adversario:** APT29 | **Framework:** MITRE ATT&CK v14  
 **Operador:** Adrián Camacho | **Fecha:** 17/05/2026
 
+
+> **Módulo M6 · Ruta: `[crítica]`**
+>
+> **Objetivo único:** Golden Certificate (persistencia que sobrevive a IR) + objetivo final.
+>
+> **Prerequisito real:** M5 / privilegio de ESC.
+>
+> **Habilita:** objetivo cumplido; persistencia duradera vía certificado.
+>
+> **TTP:** T1649 (Golden Cert) · T1556
+
 ---
 
 ## FASE 6 — Certificate-Based Persistence

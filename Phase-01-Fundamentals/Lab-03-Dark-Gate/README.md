@@ -1,11 +1,14 @@
 # 🔴 Lab-03: ADCS Abuse — Dark Gate
 
-![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
+![Status](https://img.shields.io/badge/Status-Validado%20v3.1-brightgreen)
 ![Platform](https://img.shields.io/badge/Platform-Lab%20Propio%20(DC--01%20reutilizado)-red)
 ![Phase](https://img.shields.io/badge/Phase-01%20Fundamentals-blue)
 ![Adversary](https://img.shields.io/badge/Adversary-APT29%20Cozy%20Bear-darkred)
 ![Focus](https://img.shields.io/badge/Focus-ADCS%20Abuse%20%7C%20ESC1%20%7C%20ESC4%20%7C%20ESC8-purple)
 ![MITRE](https://img.shields.io/badge/MITRE%20ATT%26CK-T1649%20%7C%20T1557%20%7C%20T1222-red)
+
+**Capability (eje didáctico):** Abuso de ADCS (ESC1/4/8) → forja/abuso de certificados → Domain Admin y persistencia.  
+**Docs:** [technique](docs/technique.md) · [emulation](docs/emulation.md) · [detection](docs/detection.md)
 
 ---
 
@@ -75,15 +78,18 @@ Operación de abuso de **Active Directory Certificate Services (ADCS)** emulando
 | Documento | Descripción | Estado |
 |-----------|-------------|--------|
 | [OPERATION_DARK_GATE.md](./OPERATION_DARK_GATE.md) | Plan completo — todas las fases | ✅ |
-| [infrastructure_setup.md](./docs/infrastructure_setup.md) | ADCS setup + ESC1/ESC4/ESC8 | ✅ |
-| [enumeration_log.md](./docs/enumeration_log.md) | Fase 1 — Certipy find | ✅ |
-| [exploitation_esc1.md](./docs/exploitation_esc1.md) | Fase 2 — ESC1 kill chain | ✅ |
-| [exploitation_esc4.md](./docs/exploitation_esc4.md) | Fase 3 — ESC4 + restauración OPSEC | ✅ |
-| [exploitation_esc8.md](./docs/exploitation_esc8.md) | Fase 4 — ESC8 identificado + KB5005413 | ✅ |
-| [c2_sliver.md](./docs/c2_sliver.md) | Fase 5 — CLINICAL_CHAIRMAN + 3 beacons | ✅ |
-| [persistence.md](./docs/persistence.md) | Fase 6 — cert persistence + kill chain | ✅ |
-| [lessons_learned.md](./docs/lessons_learned.md) | 10 lecciones + tabla ESC1-ESC11 | ✅ |
-| [mitigations.md](./docs/mitigations.md) | Blue Team + SIGMA + CRL/OCSP | ✅ |
+| [technique.md](./docs/technique.md) | Concepto, ESC1/4/8, PKINIT, CS↔Sliver, MITRE, OPSEC | ✅ |
+| [emulation.md](./docs/emulation.md) | Emulation plan — especialización APT29 | ✅ |
+| [detection.md](./docs/detection.md) | Blue Team: detección ADCS + SIGMA + evasión | ✅ |
+| [lessons.md](./docs/lessons.md) | Lecciones + tabla ESC1-ESC11 | ✅ |
+| **execution/** — operator log paso a paso | | |
+| [infrastructure_setup.md](./docs/execution/infrastructure_setup.md) | ADCS setup + ESC1/ESC4/ESC8 | ✅ |
+| [enumeration_log.md](./docs/execution/enumeration_log.md) | Fase 1 — Certipy find | ✅ |
+| [exploitation_esc1.md](./docs/execution/exploitation_esc1.md) | Fase 2 — ESC1 kill chain | ✅ |
+| [exploitation_esc4.md](./docs/execution/exploitation_esc4.md) | Fase 3 — ESC4 + restauración OPSEC | ✅ |
+| [exploitation_esc8.md](./docs/execution/exploitation_esc8.md) | Fase 4 — ESC8 + KB5005413 | ✅ |
+| [c2_sliver.md](./docs/execution/c2_sliver.md) | Fase 5 — C2 beacons en DC-01 | ✅ |
+| [persistence.md](./docs/execution/persistence.md) | Fase 6 — cert persistence + objetivo | ✅ |
 
 ---
 

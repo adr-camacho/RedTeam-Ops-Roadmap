@@ -3,6 +3,17 @@
 **Operación:** DARK GATE | **Adversario:** APT29 | **Framework:** MITRE ATT&CK v14  
 **Operador:** Adrián Camacho | **Fecha:** 17/05/2026
 
+
+> **Módulo M5 · Ruta: `[crítica]`**
+>
+> **Objetivo único:** Beacon Sliver en DC-01 con el privilegio obtenido.
+>
+> **Prerequisito real:** privilegio de cualquier ESC (M2 o M3).
+>
+> **Habilita:** control interactivo del DC → habilita persistencia (M6).
+>
+> **TTP:** T1071.001 · T1573.002
+
 ---
 
 ## FASE 5 — C2 Establishment: Sliver v1.7.3

@@ -38,7 +38,7 @@ a la cobertura del temario.
 |-----|--------|-------------|--------|
 | 01 | Ghost Forest | Kerberos roasting → DCSync → DA (1ª kill-chain) | ✅ v3.1 |
 | 02 | Silent Bridge | Web RCE → pivoting (Ligolo) → relay C2 | ✅ v3.1 |
-| 03 | Dark Gate | ADCS (ESC1/4/8), NTLM relay, cert persistence | ✅ |
+| 03 | Dark Gate | ADCS ESC1/4/8 → cert abuse → DA + persistencia | ✅ v3.1 |
 | 04 | Iron Forest | Discretionary ACLs, Domain Recon, OverPtH | ✅ |
 | 05 | Silver Chain | (validar: Silver tickets / persistencia) | ✅ |
 | 06 | Black Policy | Group Policy, SID History, Cross-Forest | ✅ |

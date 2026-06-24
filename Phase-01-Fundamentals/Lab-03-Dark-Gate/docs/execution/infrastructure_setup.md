@@ -5,6 +5,27 @@
 **Operador:** Adrián Camacho | **Fecha:** 16/05/2026  
 **Repositorio:** github.com/adr-camacho/RedTeam-Ops-Roadmap
 
+
+> **Módulo M0 · Ruta: `[setup]`**
+>
+> **Objetivo único:** Entorno con ADCS y plantillas vulnerables (ESC1/4/8) sembradas.
+>
+> **Prerequisito real:** ninguno.
+>
+> **Habilita:** que existan plantillas vulnerables que enumerar (M1).
+>
+> **TTP:** — (provisión)
+>
+> ### Mapa de la operación (ESCs como rutas alternativas)
+> ```
+> M0 setup → M1 recon (Certipy) → ┌─ M2 ESC1 (SAN → Administrator) ─┐
+>                                  ├─ M3 ESC4 (template mod → DA)    ─┼─→ M5 C2 → M6 persistencia+objetivo
+>                                  └─ M4 ESC8 (NTLM relay → BLOQUEADO KB5005413)
+> ```
+> **Lectura:** las tres ESC son **rutas alternativas al mismo privilegio** — basta una para escalar. No es una
+> cadena (Lab-02) ni ramas-side-quest (Lab-01): son **caminos distintos a lo alto de la misma colina**. ESC8 queda
+> documentada como **bloqueada** (KB5005413/EPA), que es en sí una lección de defensa moderna.
+
 ---
 
 ## 1. Topología de Red

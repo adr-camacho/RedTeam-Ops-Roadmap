@@ -1,25 +1,13 @@
-# Tradecraft — Operación DARK GATE
-## Lab-03: Active Directory Certificate Services (ADCS) Attacks
+# Technique — Lab-03 Dark Gate
 
-**Operación:** DARK GATE | **Adversario:** APT29 | **Nivel:** Fundamentals  
-**Autor:** Adrián Camacho | **Versión:** 1.0 | **Fecha:** Mayo 2026
-
----
-
-## Índice
-
-1. [PKI y ADCS — Infraestructura de clave pública en AD](#1-pki-y-adcs)
-2. [Certificados en Kerberos — PKINIT](#2-certificados-en-kerberos)
-3. [ESC1 — Subject Alternative Name abuse](#3-esc1)
-4. [ESC4 — Template modification](#4-esc4)
-5. [ESC8 — NTLM Relay to ADCS (identificado)](#5-esc8)
-6. [Persistencia via certificados — Por qué es tan peligrosa](#6-persistencia-via-certificados)
-7. [Certipy — La herramienta definitiva para ADCS](#7-certipy)
-8. [Defensa y detección de ataques ADCS](#8-defensa-y-detección)
+> **Capability (eje didáctico):** Abuso de ADCS — ESC1 / ESC4 / ESC8 → forja/abuso de certificados → Domain Admin y persistencia.
+> **Bloque CRTO:** Active Directory Certificate Services (ADCS).
+> **Adversario (escenario):** APT29 — forja de confianza; ver [`emulation.md`](emulation.md).
 
 ---
 
 ## 1. PKI y ADCS — Infraestructura de clave pública en AD
+
 
 ### ¿Qué es ADCS?
 
@@ -52,6 +40,7 @@ Donde se almacenan los certificados en Windows: `certmgr.msc` para usuarios, `ce
 ---
 
 ## 2. Certificados en Kerberos — PKINIT
+
 
 ### ¿Qué es PKINIT?
 
@@ -86,6 +75,7 @@ Esto permite usar el hash NT con PTH incluso sin conocer la contraseña.
 ---
 
 ## 3. ESC1 — Subject Alternative Name abuse
+
 
 ### La vulnerabilidad
 
@@ -131,6 +121,7 @@ certipy auth -pfx Administrador.pfx -dc-ip IP
 ---
 
 ## 4. ESC4 — Template modification
+
 
 ### La vulnerabilidad
 
@@ -180,6 +171,7 @@ certipy template -u usuario@dominio -p password -dc-ip IP \
 
 ## 5. ESC8 — NTLM Relay to ADCS
 
+
 ### La vulnerabilidad
 
 El endpoint HTTP de ADCS (`/certsrv/certfnsh.asp`) acepta autenticación NTLM. Si se puede forzar a un Domain Controller a autenticarse via NTLM hacia este endpoint, se puede obtener un certificado en nombre del DC.
@@ -218,6 +210,7 @@ ESC8 fue **identificado** como vulnerable pero no ejecutado completamente en est
 
 ## 6. Persistencia via certificados — Por qué es tan peligrosa
 
+
 ### El problema de la persistencia tradicional
 
 Los mecanismos de persistencia tradicionales (tareas programadas, claves de registro, servicios) son detectados y eliminados por los equipos de IR (Incident Response) durante la respuesta a incidentes.
@@ -252,6 +245,7 @@ Este es un patrón real documentado en operaciones de APT29 — el actor obtiene
 ---
 
 ## 7. Certipy — La herramienta definitiva para ADCS
+
 
 ### ¿Qué es Certipy?
 
@@ -299,66 +293,56 @@ Certificate Templates
 
 ---
 
-## 8. Defensa y detección de ataques ADCS
+## Equivalencia CS ↔ Sliver
 
-### Hardening de ADCS
-
-**1. Auditar plantillas de certificado**
-```powershell
-# Listar plantillas con CT_FLAG_ENROLLEE_SUPPLIES_SUBJECT
-certutil -v -template | findstr "msPKI-Certificate-Name-Flag"
-```
-
-**2. Deshabilitar SAN en plantillas de autenticación**
-- Quitar `CT_FLAG_ENROLLEE_SUPPLIES_SUBJECT` de todas las plantillas usadas para autenticación de usuarios
-
-**3. Requerir aprobación del CA Manager**
-- Para plantillas sensibles, activar "CA certificate manager approval"
-
-**4. Deshabilitar inscripción web HTTP**
-- O habilitar EPA (Extended Protection for Authentication)
-
-**5. Monitorizar certificados emitidos**
-- Alertar cuando se emite un certificado con SAN diferente al solicitante
-- Alertar cuando se modifica una plantilla de certificado
-
-### Event IDs relevantes
-
-| Event ID | Log | Descripción |
-|----------|-----|-------------|
-| 4886 | Security (CA) | Certificado emitido |
-| 4887 | Security (CA) | Certificado emitido con modificaciones |
-| 4899 | Security (CA) | Plantilla de certificado actualizada |
-| 4900 | Security (CA) | Permisos de plantilla modificados |
-
-### Regla SIGMA para ESC1
-
-```yaml
-title: ADCS Certificate Request with Different SAN
-detection:
-  selection:
-    EventID: 4886
-    LogSource: 'Microsoft-Windows-Security-Auditing'
-  condition:
-    # SAN en el certificado difiere del usuario solicitante
-    # Requiere correlación con el solicitante
-  falsepositives:
-    - Administración legítima de certificados
-```
-
-### PKI Health Check
-
-```powershell
-# Verificar salud de la CA
-certutil -verify -urlfetch CA-CERT.crt
-
-# Listar certificados emitidos recientemente
-certutil -view -restrict "NotBefore>=01/01/2026" -out "RequesterName,SubjectAltName,NotAfter"
-```
+| Operación | Cobalt Strike | Sliver | Notas |
+|-----------|---|---|---|
+| **ADCS Enum** | Certify.exe (BOF) | `certipy find` | Sliver vía shell |
+| **Cert Request** | Certify.exe request | `certipy req` | External tool |
+| **PKINIT** | Rubeus.exe pkinit | `gettgtpkinit.py` | External tool, same concept |
+| **Use Certificate** | TGT vía ticket | Export `KRB5CCNAME` | Same result |
 
 ---
 
+## MITRE ATT&CK
+
+| Táctica | Técnica | ID | Lab-03 |
+|---------|---------|----|----|
+| Credential Access | Forge Web Credentials | T1606.002 | Certificate forgery |
+| Lateral Movement | Exploitation of Trusted Relationship | T1550.003 | Use certificate for auth |
+| Persistence | Create Account | T1136 | Certificate-based persistence |
+
+---
+
+## Tradecraft & OPSEC
+
+### ESC1 Exploitation
+- **Riesgo:** Certificate request logs (Event 4886)
+- **Mitigación:** Solicitar durante horario de trabajo (imita usuarios normales)
+
+### PKINIT Usage
+- **Riesgo:** Kerberos pre-auth con certificado es anómalo
+- **Mitigación:** Certificate temporal, borrar logs de auditoría después
+
+### Golden Certificates
+- **Riesgo:** CA compromise es catastrophic
+- **Mitigación:** None → detección es prioridad
+
+---
+
+## Key Takeaways
+
+1. **ADCS es PKI real:** Certificados son tan válidos como contraseñas.
+2. **Misconfiguration = RCE:** ESC1-8 son bien conocidas, pero aún comunes.
+3. **Certificates = Persistence:** Válido por años, no se invalida con cambios.
+4. **Golden Certificates = Game Over:** CA compromise permite persistencia indefinida.
+
+---
+
+*Theory · Lab-03 Dark Gate · ADCS Exploitation*
+
 ## Referencias
+
 
 - [SpecterOps — Certified Pre-Owned (whitepaper original)](https://posts.specterops.io/certified-pre-owned-d95910965cd2)
 - [Certipy GitHub](https://github.com/ly4k/Certipy)
@@ -370,3 +354,7 @@ certutil -view -restrict "NotBefore>=01/01/2026" -out "RequesterName,SubjectAltN
 
 *Operación DARK GATE — Adrián Camacho | Mayo 2026*  
 *Entorno de laboratorio — Únicamente con fines educativos*
+
+---
+
+*Technique · Lab-03 Dark Gate · fusión theory+tradecraft (anatomía v3.1)*

@@ -1,4 +1,13 @@
-# Mitigations — Operación DARK GATE
+# Detection — Lab-03 Dark Gate
+
+> **Capability:** abuso de ADCS (ESC1/4/8) → certificados de autenticación.
+> **Operación:** DARK GATE · **Adversario:** APT29 · **Perspectiva:** Blue Team / Purple.
+> **Clase base (herencia):** reglas SIGMA consolidadas en
+> [`../../docs/reference/DETECTION_LIBRARY.md`](../../docs/reference/DETECTION_LIBRARY.md). Aquí, la detección
+> específica de los ataques ADCS de esta operación.
+
+---
+
 ## Lab-03: ADCS Abuse — Perspectiva Blue Team
 **Operación:** DARK GATE | **Adversario:** APT29 | **Framework:** MITRE ATT&CK v14  
 **Operador:** Adrián Camacho | **Fecha:** 17/05/2026
@@ -150,3 +159,82 @@ certipy-ad find \
 ---
 
 *Operación DARK GATE — Adrián Camacho | Mayo 2026*
+
+---
+
+## Limitaciones y evasión (puente a Phase-03)
+
+| Detección de este lab | Cómo se evade | Se trata en |
+|-----------------------|---------------|-------------|
+| Emisión de certificado anómala (Event 4886/4887) | Plantilla legítima, horario laboral, identidad plausible | Lab-11 |
+| PKINIT con certificado recién emitido | Usar certificado de larga validez (Golden Certificate) | Lab-11 |
+| NTLM relay a ADCS HTTP (ESC8) | Ya bloqueado por KB5005413 (EPA) — buscar endpoints sin parche | n/a (mitigado) |
+| Certipy en el endpoint | Operar desde host de relay, no tocar la CA directamente | Lab-11 |
+
+> Modelo "off, then on" del `LEARNING_PATH.md`: aquí la técnica con la defensa despierta.
+
+
+---
+
+## Defensa y detección de ADCS (de tradecraft)
+
+### Hardening de ADCS
+
+**1. Auditar plantillas de certificado**
+```powershell
+# Listar plantillas con CT_FLAG_ENROLLEE_SUPPLIES_SUBJECT
+certutil -v -template | findstr "msPKI-Certificate-Name-Flag"
+```
+
+**2. Deshabilitar SAN en plantillas de autenticación**
+- Quitar `CT_FLAG_ENROLLEE_SUPPLIES_SUBJECT` de todas las plantillas usadas para autenticación de usuarios
+
+**3. Requerir aprobación del CA Manager**
+- Para plantillas sensibles, activar "CA certificate manager approval"
+
+**4. Deshabilitar inscripción web HTTP**
+- O habilitar EPA (Extended Protection for Authentication)
+
+**5. Monitorizar certificados emitidos**
+- Alertar cuando se emite un certificado con SAN diferente al solicitante
+- Alertar cuando se modifica una plantilla de certificado
+
+### Event IDs relevantes
+
+| Event ID | Log | Descripción |
+|----------|-----|-------------|
+| 4886 | Security (CA) | Certificado emitido |
+| 4887 | Security (CA) | Certificado emitido con modificaciones |
+| 4899 | Security (CA) | Plantilla de certificado actualizada |
+| 4900 | Security (CA) | Permisos de plantilla modificados |
+
+### Regla SIGMA para ESC1
+
+```yaml
+title: ADCS Certificate Request with Different SAN
+detection:
+  selection:
+    EventID: 4886
+    LogSource: 'Microsoft-Windows-Security-Auditing'
+  condition:
+    # SAN en el certificado difiere del usuario solicitante
+    # Requiere correlación con el solicitante
+  falsepositives:
+    - Administración legítima de certificados
+```
+
+### PKI Health Check
+
+```powershell
+# Verificar salud de la CA
+certutil -verify -urlfetch CA-CERT.crt
+
+# Listar certificados emitidos recientemente
+certutil -view -restrict "NotBefore>=01/01/2026" -out "RequesterName,SubjectAltName,NotAfter"
+```
+
+---
+
+---
+
+*Detection · Lab-03 Dark Gate · hereda de DETECTION_LIBRARY.md (anatomía v3.1)*

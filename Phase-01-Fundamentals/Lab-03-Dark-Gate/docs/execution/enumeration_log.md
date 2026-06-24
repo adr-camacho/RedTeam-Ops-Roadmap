@@ -3,6 +3,17 @@
 **Operación:** DARK GATE | **Adversario:** APT29 | **Framework:** MITRE ATT&CK v14  
 **Operador:** Adrián Camacho | **Fecha:** 17/05/2026
 
+
+> **Módulo M1 · Ruta: `[crítica]`**
+>
+> **Objetivo único:** Recon de ADCS con Certipy → identificar plantillas vulnerables.
+>
+> **Prerequisito real:** M0.
+>
+> **Habilita:** revela qué ESC son explotables (→ M2/M3/M4).
+>
+> **TTP:** T1649 (recon) · T1087.002
+
 ---
 
 ## FASE 1 — ADCS Reconnaissance

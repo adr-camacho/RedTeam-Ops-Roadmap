@@ -25,7 +25,7 @@
 |-----|--------|-------------|-----------|-------|---------|
 | Lab-01: Ghost Forest | ✅ Validado v3.1 | 09/05/2026 | 20/05/2026 | ~40h | ✅ Referencia |
 | Lab-02: Silent Bridge | ✅ Validado v3.1 | 13/05/2026 | 15/05/2026 | ~18h | ✅ Referencia |
-| Lab-03: Dark Gate | ✅ Completado | 16/05/2026 | 17/05/2026 | ~16h | ✅ Completo |
+| Lab-03: Dark Gate | ✅ Validado v3.1 | 16/05/2026 | 17/05/2026 | ~16h | ✅ Referencia |
 
 ### 🟡 Phase-02 — AD Avanzado
 
