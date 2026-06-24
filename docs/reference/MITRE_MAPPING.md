@@ -61,6 +61,8 @@
 | Command & Control | Encrypted Channel | Asymmetric Cryptography | T1573.002 | Sliver mTLS | ✅ |
 | Command & Control | Develop Capabilities | Malware | T1587.001 | Sliver generate | ✅ |
 | Credential Access | OS Credential Dumping | DCSync | T1003.006 | Impacket secretsdump | ✅ |
+| Persistence | Steal/Forge Kerberos Tickets | Golden Ticket | T1558.001 | Forjado — falla PAC validation | ⚠️ |
+| Credential Access | OS Credential Dumping | DCSync | T1003.006 | Impacket secretsdump | ✅ |
 | Persistence | Steal/Forge Kerberos Tickets | Golden Ticket | T1558.001 | Impacket ticketer | 🔄 |
 | Privilege Escalation | Access Token Manipulation | Token Impersonation | T1134.001 | PrintSpoofer | 🔄 |
 | Credential Access | Steal/Forge Kerberos Tickets | Unconstrained Delegation | T1558.001 | Rubeus + PetitPotam | ✅ |
@@ -118,6 +120,8 @@
 | Defense Evasion | Impair Defenses | Disable/Modify Tools | T1562.001 | Set-MpPreference | ✅ |
 | Command & Control | Ingress Tool Transfer | — | T1105 | Evil-WinRM upload | ✅ |
 | Command & Control | Develop Capabilities | Malware | T1587.001 | Sliver generate | ✅ |
+| Credential Access | OS Credential Dumping | DCSync | T1003.006 | Impacket secretsdump | ✅ |
+| Persistence | Steal/Forge Kerberos Tickets | Golden Ticket | T1558.001 | Forjado — falla PAC validation | ⚠️ |
 | Execution | User Execution | Malicious File | T1204.002 | Start-Process -Hidden | ✅ |
 | Command & Control | Application Layer Protocol | Web Protocols | T1071.001 | Sliver HTTPS | ✅ |
 | Command & Control | Encrypted Channel | Asymmetric Cryptography | T1573.002 | Sliver mTLS | ✅ |

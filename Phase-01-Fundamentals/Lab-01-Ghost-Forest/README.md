@@ -1,9 +1,11 @@
 # 🔴 Lab-01: Ghost Forest
 ## Operación GHOST FOREST — APT29 Emulation
 
-**Fase:** Phase-01 Fundamentals | **Dificultad:** Media-Alta | **Estado:** ✅ Completado  
+**Fase:** Phase-01 Fundamentals | **Dificultad:** Media-Alta | **Estado:** ✅ Validado v3.1  
 **Fecha:** 09/05/2026 → 20/05/2026 | **Tiempo invertido:** ~40h  
-**Adversario simulado:** APT29 (Cozy Bear) | **Framework:** MITRE ATT&CK v14
+**Adversario simulado:** APT29 (Cozy Bear) | **Framework:** MITRE ATT&CK v14  
+**Capability (eje didáctico):** Primera kill-chain AD limpia — AS-REP/Kerberoasting → DCSync → Domain Admin  
+**Docs:** [technique](docs/technique.md) · [emulation](docs/emulation.md) · [detection](docs/detection.md)
 
 ---
 
@@ -136,6 +138,11 @@ atackcorp\Administrador — Domain Admin — DC-01 comprometido 🏆
 
 | Documento | Descripción |
 |-----------|-------------|
+| [technique.md](docs/technique.md) | Concepto, internals, MITRE, CS↔Sliver, OPSEC |
+| [emulation.md](docs/emulation.md) | Emulation plan — especialización del perfil APT29 |
+| [detection.md](docs/detection.md) | Blue Team: telemetría, SIGMA, hardening y evasión |
+| [lessons.md](docs/lessons.md) | Lecciones técnicas con causa raíz |
+| **execution/** — operator log paso a paso | |
 | [infrastructure_setup.md](docs/execution/infrastructure_setup.md) | Entorno, vectores inyectados y script de setup |
 | [enumeration_log.md](docs/execution/enumeration_log.md) | Fase 1: Reconnaissance |
 | [exploitation.md](docs/execution/exploitation.md) | Fases 2-3: AS-REP Roasting + foothold |
@@ -144,9 +151,6 @@ atackcorp\Administrador — Domain Admin — DC-01 comprometido 🏆
 | [privilege_escalation.md](docs/execution/privilege_escalation.md) | Fase 8: LPE WKSTN-01 |
 | [persistence.md](docs/execution/persistence.md) | Fase 9: Golden Ticket |
 | [objective_completion.md](docs/execution/objective_completion.md) | Fase 10: DCSync + Pass-the-Hash |
-| [mitigations.md](docs/analysis/mitigations.md) | Blue Team: detección, SIGMA rules, hardening |
-| [lessons_learned.md](docs/analysis/lessons_learned.md) | 19 lecciones técnicas con causa raíz |
-| [tradecraft.md](docs/theory/tradecraft.md) | Teoría y TTPs — APT29 adversary emulation |
 
 ---
 
@@ -158,7 +162,7 @@ atackcorp\Administrador — Domain Admin — DC-01 comprometido 🏆
 4. **Golden Ticket rechazado en WS2022** — PAC Validation reforzada en Windows Server 2022. Usar Diamond Ticket o Pass-the-Hash como alternativa.
 5. **IP estática Kali via NetworkManager** — `ip addr add` no persiste. Usar `nmcli con add` para configuración permanente.
 
-> 📄 Lecciones completas: [lessons_learned.md](docs/analysis/lessons_learned.md)
+> 📄 Lecciones completas: [lessons.md](docs/lessons.md)
 
 ---
 

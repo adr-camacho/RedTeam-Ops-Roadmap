@@ -10,7 +10,7 @@
 | Métrica | Valor |
 |---------|-------|
 | Última actualización | 18/06/2026 |
-| Plan vigente | ROADMAP v3.0 — 18 labs alineados a CRTO (`docs/ROADMAP.md`) |
+| Plan vigente | ROADMAP v3.0 — 18 labs alineados a CRTO (`docs/design/ROADMAP.md`) |
 | Labs completados | 7 / 18 |
 | Fase actual | Phase-02 cerrada · próximo: Phase-03 Lab-08 (Black Beacon) |
 | Horas totales invertidas | ~143h |
@@ -23,7 +23,7 @@
 
 | Lab | Estado | Fecha inicio | Fecha fin | Horas | Writeup |
 |-----|--------|-------------|-----------|-------|---------|
-| Lab-01: Ghost Forest | ✅ Completado | 09/05/2026 | 20/05/2026 | ~40h | ✅ Completo |
+| Lab-01: Ghost Forest | ✅ Validado v3.1 | 09/05/2026 | 20/05/2026 | ~40h | ✅ Referencia |
 | Lab-02: Silent Bridge | ✅ Completado | 13/05/2026 | 15/05/2026 | ~18h | ✅ Completo |
 | Lab-03: Dark Gate | ✅ Completado | 16/05/2026 | 17/05/2026 | ~16h | ✅ Completo |
 
