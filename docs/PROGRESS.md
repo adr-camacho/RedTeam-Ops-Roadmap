@@ -34,7 +34,7 @@
 | Lab-04: Iron Forest | ✅ Validado v3.1 | 28/05/2026 | 29/05/2026 | ~20h | ✅ Referencia |
 | Lab-05: Silver Chain | ✅ Validado v3.1 | 30/05/2026 | 30/05/2026 | ~20h | ✅ Referencia |
 | Lab-06: Black Policy | ✅ Validado v3.1 | 01/06/2026 | 01/06/2026 | ~25h | ✅ Referencia |
-| Lab-07: Shadow Vault | ✅ Completado | 06/06/2026 | 06/06/2026 | ~8h | ✅ Completo |
+| Lab-07: Shadow Vault | ✅ Validado v3.1 | 06/06/2026 | 06/06/2026 | ~8h | ✅ Referencia |
 
 ### 🔴 Phase-03 — Red Team Operations (C2, host, evasión)
 

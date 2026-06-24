@@ -42,7 +42,7 @@ a la cobertura del temario.
 | 04 | Iron Forest | ACL abuse (WriteDACL/GenericWrite) → DCSync; cred hunting, ADIDNS | ✅ v3.1 |
 | 05 | Silver Chain | Delegación (RBCD/Shadow Creds) + forja Silver/Diamond | ✅ v3.1 |
 | 06 | Black Policy | GPO abuse cross-forest + SID History + Forest Trusts | ✅ v3.1 |
-| 07 | Shadow Vault | LAPS, DPAPI, Shadow Credentials | ✅ |
+| 07 | Shadow Vault | Credential theft: LAPS/DPAPI/LSASS/Shadow Creds (endpoint 23H2) | ✅ v3.1 |
 | 08 | C2 Foundations | C2, CS Primer, listeners, beacons, OPSEC | ⏳ |
 | 09 | Initial Access & Foothold | External Recon, Initial Compromise, Host Recon | ⏳ |
 | 10 | Host Persistence & PrivEsc | Host Persistence, Host Privilege Escalation | ⏳ |
