@@ -1,4 +1,14 @@
-# Theory — C2 Foundations (Black Beacon)
+# Technique — Lab-08 Black Beacon
+
+> **Capability (eje didáctico):** Fundamentos de C2 — modelo de operador, listeners, payloads staged/stageless, OPSEC, equivalencia Cobalt Strike ↔ Sliver.
+> **Bloque CRTO:** Command & Control (el sistema nervioso de toda la operación).
+> **Arquetipo:** Concepto / Tradecraft — la práctica del kit es del curso CRTO; aquí se construye el **porqué**.
+> **Adversario (escenario):** Lazarus Group — ver [`emulation.md`](emulation.md).
+
+> Este lab no es una intrusión: es **montar y entender tu infraestructura de operador**. La secuencia de construcción paso a paso vive en `execution/`.
+
+---
+
 
 > **Lab-08 · C2 Foundations**  
 > Bloque CRTO: Command & Control · Modelo de operador Cobalt Strike  
@@ -243,13 +253,6 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 
 ---
 
-## 8. Próximos Pasos (Labs 09+)
-
-- **Lab-09:** Delivery de payload (phishing, web RCE) y obtención del primer beacon
-- **Lab-10:** Persistencia local del beacon (para que sobreviva reinicio)
-- **Lab-11:** Evasión Defender/AMSI mientras beacon comunica
-- **Lab-12+:** Movimiento lateral y escalada de dominio **vía comandos del beacon**
-
 ---
 
-*Theory · Lab-08 Black Beacon · 18/06/2026*
+*Technique · Lab-08 Black Beacon · fundamentos de C2 (anatomía v3.1, arquetipo concepto)*

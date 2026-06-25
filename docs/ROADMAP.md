@@ -43,7 +43,7 @@ a la cobertura del temario.
 | 05 | Silver Chain | Delegación (RBCD/Shadow Creds) + forja Silver/Diamond | ✅ v3.1 |
 | 06 | Black Policy | GPO abuse cross-forest + SID History + Forest Trusts | ✅ v3.1 |
 | 07 | Shadow Vault | Credential theft: LAPS/DPAPI/LSASS/Shadow Creds (endpoint 23H2) | ✅ v3.1 |
-| 08 | C2 Foundations | C2, CS Primer, listeners, beacons, OPSEC | ⏳ |
+| 08 | Black Beacon · C2 Foundations | C2, listeners, staged/stageless, OPSEC, CS↔Sliver | ✅ v3.1 (concepto) |
 | 09 | Initial Access & Foothold | External Recon, Initial Compromise, Host Recon | ⏳ |
 | 10 | Host Persistence & PrivEsc | Host Persistence, Host Privilege Escalation | ⏳ |
 | 11 | Evasión I — Defender/AMSI/ETW | AV/AMSI evasion, Artifact/Resource Kit | ⏳ |

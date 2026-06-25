@@ -3,6 +3,15 @@
 > Bloque CRTO: Ejecución e implantación  
 > Concepto: Ejecutar payload en WKSTN-01, obtener beacon
 
+
+> **Paso 4 de 6 · Secuencia de construcción**
+>
+> **Objetivo del paso:** Ejecutar el payload y adquirir la primera baliza en el objetivo.
+>
+> **Prerequisito:** Paso 3 (payload generado).
+>
+> **Habilita:** operar la baliza (Paso 5).
+
 ---
 
 ## 🎯 Objetivo

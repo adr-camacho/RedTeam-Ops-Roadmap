@@ -3,6 +3,15 @@
 > Bloque CRTO: Detección  
 > Concepto: Reactivar Defender, observar telemetría
 
+
+> **Paso 6 de 6 · Secuencia de construcción**
+>
+> **Objetivo del paso:** Observar la telemetría del C2 con Defender ON: qué ve el defensor.
+>
+> **Prerequisito:** Paso 5 (baliza operativa).
+>
+> **Habilita:** cierra el lab; puente a detection.md y a la evasión de Lab-11.
+
 ---
 
 ## 🎯 Objetivo

@@ -1,4 +1,13 @@
-# Detection — C2 (Black Beacon)
+# Detection — Lab-08 Black Beacon
+
+> **Capability:** detección de infraestructura y tráfico C2 (perspectiva del defensor).
+> **Arquetipo:** Concepto · **Adversario:** Lazarus · **Perspectiva:** Blue Team / Purple.
+> **Clase base (herencia):** [`../../docs/reference/DETECTION_LIBRARY.md`](../../docs/reference/DETECTION_LIBRARY.md).
+
+> Aquí está el otro lado del espejo: si `technique.md` enseña a montar el C2, esto enseña **cómo lo caza un defensor**. Operar bien exige conocer ambos.
+
+---
+
 
 > **Lab-08 · C2 Foundations**  
 > Enfoque: Blue team. Cómo detecta un defensor que hay un C2 activo, cómo caza sesiones, qué telemetría observa.  
@@ -368,3 +377,7 @@ Un defensor busca estos **indicadores concretos:**
 ---
 
 *Detection · Lab-08 Black Beacon · 18/06/2026*
+
+---
+
+*Detection · Lab-08 Black Beacon · hereda de DETECTION_LIBRARY.md (anatomía v3.1)*

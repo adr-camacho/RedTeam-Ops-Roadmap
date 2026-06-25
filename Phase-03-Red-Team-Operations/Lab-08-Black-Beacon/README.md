@@ -1,7 +1,15 @@
 # Lab-08 · Black Beacon — C2 Foundations
 
-> Fase: `Phase-03-Red-Team-Operations` · Estado: ⏳ En progreso (theory + detection completos)  
-> Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
+![Status](https://img.shields.io/badge/Status-Concepto%20v3.1-brightgreen)
+![Phase](https://img.shields.io/badge/Phase-03-blue)
+![Adversary](https://img.shields.io/badge/Adversary-Lazarus%20Group-darkred)
+![Arquetipo](https://img.shields.io/badge/Arquetipo-Concepto%2FTradecraft-555)
+
+> Fase: `Phase-03-Red-Team-Operations` · Roadmap: [`docs/ROADMAP.md`](../../docs/ROADMAP.md)
+
+**Capability (eje didáctico):** Fundamentos de C2 — modelo de operador, listeners, payloads staged/stageless, OPSEC, CS↔Sliver.
+**Arquetipo:** Concepto / Tradecraft — el contenido (technique·emulation·detection·lessons) es entregable completo; `execution/` es la **secuencia de construcción** del kit que ejecutas en tu lab / curso CRTO.
+**Docs:** [technique](docs/technique.md) · [emulation](docs/emulation.md) · [detection](docs/detection.md) · [lessons](docs/lessons.md) · adversario: [Lazarus](../../docs/adversaries/Lazarus.md)
 
 ---
 
@@ -58,14 +66,16 @@ Una vez que sabes levantar un C2 con Defender activo, tareas como priv-esc, late
 
 ## 📋 Estado de completitud
 
+Arquetipo **concepto**: el contenido didáctico está completo; la operativa es una guía de construcción a ejecutar.
+
 | Componente | Estado | Notas |
 |-----------|--------|-------|
-| `README.md` (ficha) | ✅ | Este archivo |
-| `theory.md` | ✅ | 8 secciones, 280+ líneas. Modelo C2, tipos listener, OPSEC, tabla CS↔Sliver |
-| `detection.md` | ✅ | 10 secciones, 320+ líneas. Cómo detecta EDR, Event IDs, OPSEC implications |
-| `execution/` (6 fases) | ⏳ | Pendiente: levantar Sliver, listeners, payloads, telemetría |
-| `lessons_learned.md` | ⏳ | Pendiente: llenar tras ejecutar |
-| `OPERATION_BLACK_BEACON.md` | ⏳ | Pendiente: reporte final |
+| `docs/technique.md` | ✅ | Modelo C2, listeners, staged/stageless, OPSEC, tabla CS↔Sliver |
+| `docs/emulation.md` | ✅ | Framing Lazarus (C2 propio, rotación infra) + tabla de honestidad técnica |
+| `docs/detection.md` | ✅ | JA3/JARM, beaconing, anomalías de proceso, Sysmon, Sigma/KQL |
+| `docs/lessons.md` | ✅ | Lecciones del bloque |
+| `docs/execution/` (Paso 1-6) | 🔧 | Secuencia de construcción del kit — se ejecuta en tu lab |
+| `report/OPERATION_BLACK_BEACON.md` | 🔧 | Reporte tras montar el kit |
 
 ---
 
@@ -85,17 +95,18 @@ Aquí documentamos el **por qué** y el **cómo se detecta**, no el binario evas
 Lab-08-Black-Beacon/
 ├── README.md                                    # Este archivo
 ├── docs/
-│   ├── theory/theory.md                        # ✅ Modelo C2, listeners, OPSEC, CS↔Sliver
-│   ├── detection/detection.md                  # ✅ Detección EDR, Event IDs, telemetría
-│   ├── execution/
-│   │   ├── fase-01-team-server.md              # ⏳ Levantar Sliver
-│   │   ├── fase-02-listener-https.md           # ⏳ Crear listener HTTPS
-│   │   ├── fase-03-payloads.md                 # ⏳ Staged vs stageless
-│   │   ├── fase-04-ejecucion.md                # ⏳ Payload → beacon
-│   │   ├── fase-05-operativa-basica.md         # ⏳ Comandos, sleep/jitter
-│   │   └── fase-06-telemetria.md               # ⏳ Observar con Defender ON
-│   ├── analysis/lessons_learned.md             # ⏳ Lecciones del lab
-│   └── report/OPERATION_BLACK_BEACON.md        # ⏳ Reporte final
+│   ├── technique.md                            # ✅ Modelo C2, listeners, OPSEC, CS↔Sliver
+│   ├── emulation.md                            # ✅ Framing Lazarus + honestidad técnica
+│   ├── detection.md                            # ✅ Detección EDR, Event IDs, telemetría
+│   ├── lessons.md                              # ✅ Lecciones del bloque
+│   ├── execution/                              # 🔧 Secuencia de construcción (Paso 1-6)
+│   │   ├── team_server.md                      #    Paso 1 · levantar el team server
+│   │   ├── listener_http.md                    #    Paso 2 · listener HTTPS
+│   │   ├── payloads.md                         #    Paso 3 · staged vs stageless
+│   │   ├── execution.md                        #    Paso 4 · payload → baliza
+│   │   ├── basic_operability.md                #    Paso 5 · operativa + OPSEC
+│   │   └── telemetry.md                        #    Paso 6 · telemetría (Defender ON)
+│   └── report/OPERATION_BLACK_BEACON.md        # 🔧 Reporte tras montar el kit
 ├── loot/                                       # Credenciales, hashes, datos extraídos
 ├── nmap/                                       # Resultados de escaneo
 ├── screenshots/FASE-0X-*/                      # Capturas anotadas
@@ -106,7 +117,7 @@ Lab-08-Black-Beacon/
 
 ## 🎬 Próximos pasos
 
-1. **Leer `theory.md`** — entender modelo C2, listeners, staged/stageless, OPSEC
+1. **Leer `technique.md`** — entender modelo C2, listeners, staged/stageless, OPSEC
 2. **Leer `detection.md`** — entender cómo se detecta, qué telemetría se genera
 3. **Ejecutar fases 01-06** — levantar Sliver, crear listeners, payloads, beacon
 4. **Documentar en `execution/`** — cada fase con capturas + comentarios

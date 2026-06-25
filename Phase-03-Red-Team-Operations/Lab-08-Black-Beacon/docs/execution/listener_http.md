@@ -3,6 +3,15 @@
 > Bloque CRTO: Listeners  
 > Concepto: Crear un listener HTTPS que acepte conexiones de beacons
 
+
+> **Paso 2 de 6 · Secuencia de construcción**
+>
+> **Objetivo del paso:** Configurar un listener HTTPS: el canal por el que la baliza habla con el team server.
+>
+> **Prerequisito:** Paso 1 (team server activo).
+>
+> **Habilita:** generar payloads que apunten a este listener (Paso 3).
+
 ---
 
 ## 🎯 Objetivo

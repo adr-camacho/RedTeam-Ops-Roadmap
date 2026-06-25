@@ -3,6 +3,15 @@
 > Bloque CRTO: Operativa base y OPSEC  
 > Concepto: Ajustar sleep/jitter, ejecutar comandos
 
+
+> **Paso 5 de 6 · Secuencia de construcción**
+>
+> **Objetivo del paso:** Operatividad básica de la baliza + afinado OPSEC (sleep, jitter, profiling).
+>
+> **Prerequisito:** Paso 4 (baliza activa).
+>
+> **Habilita:** observar la telemetría que genera (Paso 6).
+
 ---
 
 ## 🎯 Objetivo

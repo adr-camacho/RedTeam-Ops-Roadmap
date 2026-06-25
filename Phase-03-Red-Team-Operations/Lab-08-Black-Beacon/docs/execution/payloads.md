@@ -3,6 +3,15 @@
 > Bloque CRTO: Payloads  
 > Concepto: Generar stager y stageless, entender diferencias
 
+
+> **Paso 3 de 6 · Secuencia de construcción**
+>
+> **Objetivo del paso:** Generar payloads staged vs stageless y entender cuándo usar cada uno.
+>
+> **Prerequisito:** Paso 2 (listener al que apuntar).
+>
+> **Habilita:** ejecutar el payload para obtener baliza (Paso 4).
+
 ---
 
 ## 🎯 Objetivo

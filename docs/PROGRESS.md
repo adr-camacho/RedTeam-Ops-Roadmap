@@ -12,7 +12,7 @@
 | Última actualización | 18/06/2026 |
 | Plan vigente | ROADMAP v3.0 — 18 labs alineados a CRTO (`docs/design/ROADMAP.md`) |
 | Labs completados | 7 / 18 |
-| Fase actual | Phase-02 cerrada · próximo: Phase-03 Lab-08 (Black Beacon) |
+| Fase actual | Phase-03 en autoría · Lab-08 Black Beacon (concepto) validado v3.1 |
 | Horas totales invertidas | ~143h |
 
 ---
@@ -40,7 +40,7 @@
 
 | Lab | Estado | Bloque CRTO | Horas | Writeup |
 |-----|--------|-------------|-------|---------|
-| Lab-08: Black Beacon | ⏳ Pendiente | C2 / modelo operador | — | — |
+| Lab-08: Black Beacon | ✅ Concepto v3.1 | C2 / modelo operador | — | — |
 | Lab-09: First Contact | ⏳ Pendiente | Initial Access & Foothold | — | — |
 | Lab-10: Deep Root | ⏳ Pendiente | Host Persistence & PrivEsc | — | — |
 | Lab-11: Ghost Signal | ⏳ Pendiente | Evasión I — Defender/AMSI/ETW | — | — |
