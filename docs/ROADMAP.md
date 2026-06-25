@@ -45,7 +45,7 @@ a la cobertura del temario.
 | 07 | Shadow Vault | Credential theft: LAPS/DPAPI/LSASS/Shadow Creds (endpoint 23H2) | ✅ v3.1 |
 | 08 | Black Beacon · C2 Foundations | C2, listeners, staged/stageless, OPSEC, CS↔Sliver | ✅ v3.1 (concepto) |
 | 09 | First Contact · Situational Awareness | Host recon, postura defensiva, árbol de decisión 1ª hora | ✅ v3.1 (concepto) |
-| 10 | Host Persistence & PrivEsc | Host Persistence, Host Privilege Escalation | ⏳ |
+| 10 | Deep Root · Host Persist & PrivEsc | Token abuse, servicios, UAC; Run/Task/Service/COM/WMI | ✅ v3.1 (plan) |
 | 11 | Evasión I — Defender/AMSI/ETW | AV/AMSI evasion, Artifact/Resource Kit | ⏳ |
 | 12 | Evasión II — App Control | AppLocker, CLM, LOLBAS | ⏳ |
 | 13 | MS SQL Server Attacks | MSSQL enum, linked servers, escalada | ⏳ |
