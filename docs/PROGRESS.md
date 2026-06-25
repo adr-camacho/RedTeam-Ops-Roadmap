@@ -41,7 +41,7 @@
 | Lab | Estado | Bloque CRTO | Horas | Writeup |
 |-----|--------|-------------|-------|---------|
 | Lab-08: Black Beacon | ✅ Concepto v3.1 | C2 / modelo operador | — | — |
-| Lab-09: First Contact | ⏳ Pendiente | Initial Access & Foothold | — | — |
+| Lab-09: First Contact | ✅ Concepto v3.1 | Situational Awareness & Host Recon | — | — |
 | Lab-10: Deep Root | ⏳ Pendiente | Host Persistence & PrivEsc | — | — |
 | Lab-11: Ghost Signal | ⏳ Pendiente | Evasión I — Defender/AMSI/ETW | — | — |
 | Lab-12: Iron Veil | ⏳ Pendiente | Evasión II — AppLocker/CLM/LOLBAS | — | — |
