@@ -50,7 +50,7 @@ a la cobertura del temario.
 | 12 | Iron Veil · Evasion II | AppLocker/CLM/LOLBAS, lógica de whitelisting | ✅ v3.1 (concepto) |
 | 13 | Linked Shadows · MSSQL | Enum, linked servers, xp_cmdshell, lateral SQL | ✅ v3.1 (plan) |
 | 14 | Golden Throne · Domain Dominance | Tickets forjados, ADCS certs, DSRM, AdminSDHolder | ✅ v3.1 (plan) |
-| 15 | Forest & Trust Abuse | Cross-forest, SID history/filtering | ⏳ |
+| 15 | Forest Reign · Trust Abuse | Extra SID, SID Filtering, cross-forest lateral | ✅ v3.1 (plan) |
 | 16 | Extending the C2 | BOFs, Malleable C2, Aggressor | ⏳ |
 | 17 | Exfiltration & Reporting | Data hunting, exfil, OPSEC, reporte | ⏳ |
 | 18 | Capstone — Exam Simulation | Cadena completa, Defender ON, por objetivos | ⏳ |
