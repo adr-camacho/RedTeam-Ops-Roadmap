@@ -46,7 +46,7 @@ a la cobertura del temario.
 | 08 | Black Beacon · C2 Foundations | C2, listeners, staged/stageless, OPSEC, CS↔Sliver | ✅ v3.1 (concepto) |
 | 09 | First Contact · Situational Awareness | Host recon, postura defensiva, árbol de decisión 1ª hora | ✅ v3.1 (concepto) |
 | 10 | Deep Root · Host Persist & PrivEsc | Token abuse, servicios, UAC; Run/Task/Service/COM/WMI | ✅ v3.1 (plan) |
-| 11 | Evasión I — Defender/AMSI/ETW | AV/AMSI evasion, Artifact/Resource Kit | ⏳ |
+| 11 | Ghost Signal · Evasion I | Defender/AMSI/ETW, firma vs comportamiento, kits CS | ✅ v3.1 (concepto) |
 | 12 | Evasión II — App Control | AppLocker, CLM, LOLBAS | ⏳ |
 | 13 | MS SQL Server Attacks | MSSQL enum, linked servers, escalada | ⏳ |
 | 14 | Domain Dominance & Persistence | Golden/Silver/Diamond, forged certs, DSRM | ⏳ |
