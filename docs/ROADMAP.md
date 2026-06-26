@@ -49,7 +49,7 @@ a la cobertura del temario.
 | 11 | Ghost Signal · Evasion I | Defender/AMSI/ETW, firma vs comportamiento, kits CS | ✅ v3.1 (concepto) |
 | 12 | Iron Veil · Evasion II | AppLocker/CLM/LOLBAS, lógica de whitelisting | ✅ v3.1 (concepto) |
 | 13 | Linked Shadows · MSSQL | Enum, linked servers, xp_cmdshell, lateral SQL | ✅ v3.1 (plan) |
-| 14 | Domain Dominance & Persistence | Golden/Silver/Diamond, forged certs, DSRM | ⏳ |
+| 14 | Golden Throne · Domain Dominance | Tickets forjados, ADCS certs, DSRM, AdminSDHolder | ✅ v3.1 (plan) |
 | 15 | Forest & Trust Abuse | Cross-forest, SID history/filtering | ⏳ |
 | 16 | Extending the C2 | BOFs, Malleable C2, Aggressor | ⏳ |
 | 17 | Exfiltration & Reporting | Data hunting, exfil, OPSEC, reporte | ⏳ |
