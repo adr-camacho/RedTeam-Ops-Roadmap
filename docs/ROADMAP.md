@@ -53,7 +53,7 @@ a la cobertura del temario.
 | 15 | Forest Reign · Trust Abuse | Extra SID, SID Filtering, cross-forest lateral | ✅ v3.1 (plan) |
 | 16 | Custom Arsenal · Extending C2 | Malleable profiles, BOFs, Aggressor, footprint | ✅ v3.1 (concepto) |
 | 17 | Silent Exit · Exfil & Report | Data hunting, RAR+cloud, salida limpia, reporte | ✅ v3.1 (plan) |
-| 18 | Capstone — Exam Simulation | Cadena completa, Defender ON, por objetivos | ⏳ |
+| 18 | Final Verdict · Capstone | Cadena completa 48h, Defender ON, multi-dominio, examen | ✅ v3.1 (plan) |
 
 ---
 

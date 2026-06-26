@@ -55,7 +55,7 @@
 | Lab-15: Forest Reign | ✅ Operación v3.1 (plan) | Forest & Trust Abuse | — | — |
 | Lab-16: Custom Arsenal | ✅ Concepto v3.1 | Extending C2: Malleable/BOFs/Aggressor | — | — |
 | Lab-17: Silent Exit | ✅ Operación v3.1 (plan) | Exfiltration & Reporting | — | — |
-| Lab-18: Final Verdict | ⏳ Pendiente | Capstone — Exam Simulation | — | — |
+| Lab-18: Final Verdict | ✅ Operación v3.1 (plan) | Capstone: Exam Simulation 48h | — | — |
 
 ---
 
