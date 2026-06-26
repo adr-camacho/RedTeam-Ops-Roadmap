@@ -54,7 +54,7 @@
 | Lab-14: Golden Throne | ✅ Operación v3.1 (plan) | Domain Dominance & Persistence | — | — |
 | Lab-15: Forest Reign | ✅ Operación v3.1 (plan) | Forest & Trust Abuse | — | — |
 | Lab-16: Custom Arsenal | ✅ Concepto v3.1 | Extending C2: Malleable/BOFs/Aggressor | — | — |
-| Lab-17: Silent Exit | ⏳ Pendiente | Data Exfiltration & Reporting | — | — |
+| Lab-17: Silent Exit | ✅ Operación v3.1 (plan) | Exfiltration & Reporting | — | — |
 | Lab-18: Final Verdict | ⏳ Pendiente | Capstone — Exam Simulation | — | — |
 
 ---
