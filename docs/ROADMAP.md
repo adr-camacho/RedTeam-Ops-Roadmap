@@ -47,7 +47,7 @@ a la cobertura del temario.
 | 09 | First Contact · Situational Awareness | Host recon, postura defensiva, árbol de decisión 1ª hora | ✅ v3.1 (concepto) |
 | 10 | Deep Root · Host Persist & PrivEsc | Token abuse, servicios, UAC; Run/Task/Service/COM/WMI | ✅ v3.1 (plan) |
 | 11 | Ghost Signal · Evasion I | Defender/AMSI/ETW, firma vs comportamiento, kits CS | ✅ v3.1 (concepto) |
-| 12 | Evasión II — App Control | AppLocker, CLM, LOLBAS | ⏳ |
+| 12 | Iron Veil · Evasion II | AppLocker/CLM/LOLBAS, lógica de whitelisting | ✅ v3.1 (concepto) |
 | 13 | MS SQL Server Attacks | MSSQL enum, linked servers, escalada | ⏳ |
 | 14 | Domain Dominance & Persistence | Golden/Silver/Diamond, forged certs, DSRM | ⏳ |
 | 15 | Forest & Trust Abuse | Cross-forest, SID history/filtering | ⏳ |
