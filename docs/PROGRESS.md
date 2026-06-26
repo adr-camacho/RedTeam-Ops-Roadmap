@@ -53,7 +53,7 @@
 | Lab-13: Linked Shadows | ✅ Operación v3.1 (plan) | MSSQL: linked servers, xp_cmdshell | — | — |
 | Lab-14: Golden Throne | ✅ Operación v3.1 (plan) | Domain Dominance & Persistence | — | — |
 | Lab-15: Forest Reign | ✅ Operación v3.1 (plan) | Forest & Trust Abuse | — | — |
-| Lab-16: Custom Arsenal | ⏳ Pendiente | Extending the C2 (BOFs/Malleable/Aggressor) | — | — |
+| Lab-16: Custom Arsenal | ✅ Concepto v3.1 | Extending C2: Malleable/BOFs/Aggressor | — | — |
 | Lab-17: Silent Exit | ⏳ Pendiente | Data Exfiltration & Reporting | — | — |
 | Lab-18: Final Verdict | ⏳ Pendiente | Capstone — Exam Simulation | — | — |
 
