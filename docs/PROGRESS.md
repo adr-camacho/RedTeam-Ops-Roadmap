@@ -50,7 +50,7 @@
 
 | Lab | Estado | Bloque CRTO | Horas | Writeup |
 |-----|--------|-------------|-------|---------|
-| Lab-13: Linked Shadows | ⏳ Pendiente | MS SQL Servers | — | — |
+| Lab-13: Linked Shadows | ✅ Operación v3.1 (plan) | MSSQL: linked servers, xp_cmdshell | — | — |
 | Lab-14: Golden Throne | ⏳ Pendiente | Domain Dominance & Persistence | — | — |
 | Lab-15: Forest Reign | ⏳ Pendiente | Forest & Domain Trusts | — | — |
 | Lab-16: Custom Arsenal | ⏳ Pendiente | Extending the C2 (BOFs/Malleable/Aggressor) | — | — |
