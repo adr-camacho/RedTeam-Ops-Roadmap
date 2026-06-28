@@ -9,10 +9,10 @@
 
 | Métrica | Valor |
 |---------|-------|
-| Última actualización | 18/06/2026 |
+| Última actualización | 28/06/2026 |
 | Plan vigente | ROADMAP v3.0 — 18 labs alineados a CRTO (`docs/design/ROADMAP.md`) |
-| Labs completados | 7 / 18 |
-| Fase actual | Phase-03 en autoría · Lab-08 Black Beacon (concepto) validado v3.1 |
+| Labs completados | 7 / 18 ejecutados · 18 / 18 documentados v3.1 |
+| Fase actual | Fase de autoría COMPLETA — Labs 08-18 documentados v3.1 · Ejecutar con curso CRTO |
 | Horas totales invertidas | ~143h |
 
 ---

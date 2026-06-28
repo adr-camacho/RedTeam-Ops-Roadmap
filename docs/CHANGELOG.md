@@ -108,8 +108,45 @@
 ### ADD — CrownJewels ejecutados
 - Labs 01-07 CrownJewels ejecutados en nuevo DC-01 WS2025
 
+## [2026-06-28] — Fase de autoría completa (Labs 08-18) + fix gaps
+
+### ADD
+- Lab-18 Final Verdict: capstone exam simulation, playbook 48h, checklist pre-examen Labs 01-18
+- Lab-17 Silent Exit: exfiltración y reporting, RAR+cloud (APT10 documentado)
+- Lab-16 Custom Arsenal: Malleable C2, BOFs, Aggressor (concepto)
+- Lab-15 Forest Reign: Extra SID Attack, cross-forest, trust abuse (APT10 Cloud Hopper)
+- Lab-14 Golden Throne: Golden/ADCS/DSRM/AdminSDHolder (honestidad APT29 declarada)
+- Lab-13 Linked Shadows: MSSQL, linked servers, xp_cmdshell (APT10, primer lab Phase-04)
+- Lab-12 Iron Veil: AppLocker/CLM/LOLBAS, protocolo de observación (concepto)
+- Lab-11 Ghost Signal: Defender/AMSI/ETW, firma vs comportamiento (Lazarus literal)
+- Lab-10 Deep Root: PrivEsc + persistencia de host (Lazarus, arquetipo operación)
+- Lab-09 First Contact: reconvertido a Situational Awareness — árbol de decisión 1ª hora
+- Lab-08 Black Beacon: C2 Foundations (concepto B, primer lab de autoría)
+- `docs/PHASE_03_04_DESIGN.md`: diseño del arco narrativo Phase-03/04
+- `docs/adversaries/Lazarus.md`: perfil Lazarus Group (ancla Phase-03)
+- `docs/adversaries/APT10.md`: perfil APT10 / Stone Panda (ancla Phase-04)
+- README.md raíz: reescritura completa reflejando 18 labs documentados, anatomía v3.1, arco narrativo
+
+### FIX
+- Lab-10: `technique.md` (faltaba — detectado vía auditoría de zip)
+- Lab-11: `technique.md`, `emulation.md`, `detection.md`, `lessons.md` (faltaban — detectados vía auditoría)
+
 ---
 
+## [2026-06-25] — Retrofit v3.1 completo (Labs 01-07) + diseño arco Phase-03/04
+
+### REFACTOR (retrofit v3.1 de Labs 01-07)
+- Labs 01-07: migración a anatomía v3.1 (`technique · emulation · detection · lessons · execution`)
+- Absorbidos todos los `_relocated_from_lab01/` (cero carpetas temporales en el repo)
+- Promovido `BloodHound_METHODOLOGY.md` a `docs/reference/` (referencia transversal)
+- Fix `.gitignore`: regla `BloodHound_*` → `BloodHound_*.json` (no ignorar el .md de metodología)
+- Lab-07: recuperado log DPAPI real desde `exploitation.md` consolidado redundante; eliminado duplicado `dpapi_extraction.md` falso
+
+### ADD
+- `docs/adversaries/APT28.md`, `APT29.md`, `APT41.md`: perfiles de adversario
+- `docs/reference/BLOODHOUND_METHODOLOGY.md`: metodología BloodHound (Labs 04+)
+
+---
 ## [2026-06-02] — Lab-06 BLACK POLICY Fase 04 — GPO Abuse
 
 ### ADD — Lab-06 Fase 04
